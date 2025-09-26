@@ -1,0 +1,7 @@
+.cache
+.lib
+.config
+.env
+AGENTS.md
+# Personal secrets
+.config/zsh/secrets.zsh
