@@ -20,7 +20,6 @@ in {
         "curl"
         "yt-dlp"
         "nodejs"
-        "sst/tap/opencode"
         "ruff"
         "libmagic"
         "ghostscript"
