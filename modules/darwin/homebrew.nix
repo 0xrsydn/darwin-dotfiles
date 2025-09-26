@@ -34,7 +34,7 @@ in {
         "bitwarden"
         "chromium"
         "dbngin"
-        "pgadmin14"
+        "pgadmin4"
         "docker-desktop"
         "spotify"
         "discord"
