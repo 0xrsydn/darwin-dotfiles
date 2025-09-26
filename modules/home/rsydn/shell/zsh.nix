@@ -77,9 +77,7 @@ in {
         };
       };
     }
-    {
-      programs.zsh.initContent = lib.mkOrder 550 cfg.extraBeforeCompInit;
-    }
+    { programs.zsh.initContent = lib.mkOrder 550 cfg.extraBeforeCompInit; }
     (mkIf cfg.enableVimMode {
       programs.zsh.initContent = lib.mkBefore ''
         bindkey -v
