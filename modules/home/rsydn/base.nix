@@ -13,6 +13,7 @@
   rsydn.shell.zsh = {
     enable = true;
     enableVimMode = true;
+    powerlevel10kConfigFile = ./shell/p10k.zsh;
   };
 
   programs.git.enable = true;
