@@ -1,4 +1,6 @@
 { config, pkgs, lib, ... }: {
+  home.stateVersion = "24.05";
+
   imports = [
     ./programs/helix.nix
     ./programs/neovim.nix

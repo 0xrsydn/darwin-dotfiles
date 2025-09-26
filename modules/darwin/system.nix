@@ -1,7 +1,5 @@
-{ config, pkgs, lib, ... }: {
+{ config, pkgs, lib, user, ... }: {
   imports = [ ./homebrew.nix ./devtools.nix ];
-
-  services.nix-daemon.enable = true;
 
   nix = {
     package = pkgs.nix;
@@ -11,9 +9,9 @@
     '';
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
-      auto-optimise-store = true;
       warn-dirty = false;
     };
+    optimise.automatic = true;
     gc = {
       automatic = true;
       interval = {
@@ -26,7 +24,8 @@
   };
 
   system = {
-    stateVersion = "24.05";
+    primaryUser = user;
+    stateVersion = 6;
 
     defaults = {
       NSGlobalDomain = {
@@ -46,5 +45,5 @@
     };
   };
 
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 }
