@@ -35,7 +35,7 @@
 
       sharedModules = [ ./modules/darwin/system.nix ];
 
-      user = "rsydn";
+      user = "rasyidanakbar";
 
       mkDarwin = { system ? "aarch64-darwin", extraModules ? [ ]
         , homeFile ? ./modules/home/rsydn/base.nix }:
