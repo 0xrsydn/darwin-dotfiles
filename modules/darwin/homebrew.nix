@@ -20,7 +20,6 @@ in {
         "curl"
         "yt-dlp"
         "nodejs"
-        "charmbracelet/tap/crush"
         "sst/tap/opencode"
         "ruff"
         "libmagic"
