@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  inherit (lib) mkEnableOption mkIf mkOption types;
+  inherit (lib) mkEnableOption mkIf mkMerge mkOption types;
   cfg = config.rsydn.shell.zsh;
 in {
   options.rsydn.shell.zsh = {
@@ -60,24 +60,30 @@ in {
     };
   };
 
-  config = mkIf cfg.enable {
-    programs.zsh = {
-      enable = true;
-      enableCompletion = true;
-      autosuggestion.enable = cfg.enableAutoSuggestion;
-      syntaxHighlighting.enable = cfg.enableSyntaxHighlighting;
-      shellAliases = cfg.aliases;
-      initExtraBeforeCompInit = cfg.extraBeforeCompInit;
-      initExtraFirst = lib.optionalString cfg.enableVimMode ''
+  config = mkIf cfg.enable (mkMerge [
+    {
+      programs.zsh = {
+        enable = true;
+        enableCompletion = true;
+        autosuggestion.enable = cfg.enableAutoSuggestion;
+        syntaxHighlighting.enable = cfg.enableSyntaxHighlighting;
+        shellAliases = cfg.aliases;
+        initExtra = cfg.extraAfter;
+
+        oh-my-zsh = {
+          enable = true;
+          theme = cfg.theme;
+          plugins = cfg.plugins;
+        };
+      };
+    }
+    {
+      programs.zsh.initContent = lib.mkOrder 550 cfg.extraBeforeCompInit;
+    }
+    (mkIf cfg.enableVimMode {
+      programs.zsh.initContent = lib.mkBefore ''
         bindkey -v
       '';
-      initExtra = cfg.extraAfter;
-
-      oh-my-zsh = {
-        enable = true;
-        theme = cfg.theme;
-        plugins = cfg.plugins;
-      };
-    };
-  };
+    })
+  ]);
 }
