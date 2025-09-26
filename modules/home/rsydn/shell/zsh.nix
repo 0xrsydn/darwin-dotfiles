@@ -9,13 +9,8 @@ in {
     theme = mkOption {
       type = types.str;
       default = "powerlevel10k/powerlevel10k";
-      description = "Oh My Zsh theme name.";
-    };
-
-    plugins = mkOption {
-      type = types.listOf types.str;
-      default = [ ];
-      description = "Oh My Zsh plugins to load.";
+      description =
+        "Prompt theme identifier (powerlevel10k supported out of the box).";
     };
 
     aliases = mkOption {
@@ -38,7 +33,22 @@ in {
     extraAfter = mkOption {
       type = types.lines;
       default = "";
-      description = "Additional script appended after Oh My Zsh loads.";
+      description =
+        "Additional script appended after the standard zsh setup runs.";
+    };
+
+    promptInit = mkOption {
+      type = types.lines;
+      default = "";
+      description =
+        "Custom prompt initialization snippet appended after theme setup.";
+    };
+
+    powerlevel10kConfigFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description =
+        "Optional path to a Powerlevel10k config that will be linked to ~/.p10k.zsh.";
     };
 
     enableAutoSuggestion = mkOption {
@@ -69,15 +79,23 @@ in {
         syntaxHighlighting.enable = cfg.enableSyntaxHighlighting;
         shellAliases = cfg.aliases;
         initExtra = cfg.extraAfter;
-
-        oh-my-zsh = {
-          enable = true;
-          theme = cfg.theme;
-          plugins = cfg.plugins;
-        };
       };
     }
     { programs.zsh.initContent = lib.mkOrder 550 cfg.extraBeforeCompInit; }
+    (mkIf (cfg.theme == "powerlevel10k/powerlevel10k") {
+      programs.zsh.initExtraFirst = lib.mkBefore ''
+        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+      '';
+    })
+    (mkIf (cfg.powerlevel10kConfigFile != null) {
+      home.file.".p10k.zsh".source = cfg.powerlevel10kConfigFile;
+      programs.zsh.initExtraFirst = lib.mkAfter ''
+        source ~/.p10k.zsh
+      '';
+    })
+    (mkIf (cfg.promptInit != "") {
+      programs.zsh.initExtraFirst = lib.mkAfter cfg.promptInit;
+    })
     (mkIf cfg.enableVimMode {
       programs.zsh.initContent = lib.mkBefore ''
         bindkey -v

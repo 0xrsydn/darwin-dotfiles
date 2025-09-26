@@ -44,6 +44,7 @@ in {
         "visual-studio-code"
         "google-chrome@canary"
         "mactex"
+        "ghostty"
       ];
       description = "Homebrew casks to install.";
     };

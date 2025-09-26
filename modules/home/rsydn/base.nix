@@ -11,7 +11,6 @@
 
   rsydn.shell.zsh = {
     enable = true;
-    plugins = [ ];
     enableVimMode = true;
   };
 
