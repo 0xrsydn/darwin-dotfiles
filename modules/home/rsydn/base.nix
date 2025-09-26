@@ -4,6 +4,7 @@
   imports = [
     ./programs/helix.nix
     ./programs/neovim.nix
+    ./programs/ghostty.nix
     ./shell/zsh.nix
     ./shell/tmux.nix
     ./devtools/default.nix
