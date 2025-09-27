@@ -69,7 +69,8 @@ in {
         "complete-word"
         "fzf-completion"
       ];
-      description = "Widgets that should accept autosuggestions before running (ZSH_AUTOSUGGEST_ACCEPT_WIDGETS).";
+      description =
+        "Widgets that should accept autosuggestions before running (ZSH_AUTOSUGGEST_ACCEPT_WIDGETS).";
     };
 
     enableSyntaxHighlighting = mkOption {
