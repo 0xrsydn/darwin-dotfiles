@@ -17,14 +17,17 @@
     aliases = { ll = "ls -alF"; };
     extraAfter = ''
       function rsydn-accept-autosuggest-or-complete() {
-        if [[ -n "''${POSTDISPLAY:-}" ]]; then
-          zle autosuggest-accept
-        else
+        local original_buffer=$BUFFER
+        local original_cursor=$CURSOR
+        zle autosuggest-accept 2>/dev/null
+        if [[ $BUFFER == "$original_buffer" && $CURSOR -eq $original_cursor ]]; then
           zle expand-or-complete
         fi
       }
       zle -N rsydn-accept-autosuggest-or-complete
-      bindkey '^I' rsydn-accept-autosuggest-or-complete
+      for keymap in main viins; do
+        bindkey -M "$keymap" '^I' rsydn-accept-autosuggest-or-complete || true
+      done
     '';
   };
 

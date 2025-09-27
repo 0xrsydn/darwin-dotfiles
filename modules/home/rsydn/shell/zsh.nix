@@ -78,7 +78,7 @@ in {
         autosuggestion.enable = cfg.enableAutoSuggestion;
         syntaxHighlighting.enable = cfg.enableSyntaxHighlighting;
         shellAliases = cfg.aliases;
-        initExtra = cfg.extraAfter;
+        initContent = lib.mkAfter cfg.extraAfter;
       };
     }
     { programs.zsh.initContent = lib.mkOrder 550 cfg.extraBeforeCompInit; }
