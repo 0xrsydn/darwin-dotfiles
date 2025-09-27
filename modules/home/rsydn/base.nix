@@ -25,9 +25,25 @@
         fi
       }
       zle -N rsydn-accept-autosuggest-or-complete
-      for keymap in main viins; do
-        bindkey -M "$keymap" '^I' rsydn-accept-autosuggest-or-complete || true
-      done
+      function rsydn-bind-tab-autosuggest() {
+        bindkey '^I' rsydn-accept-autosuggest-or-complete 2>/dev/null || true
+        bindkey -M viins '^I' rsydn-accept-autosuggest-or-complete 2>/dev/null || true
+      }
+      function rsydn-ensure-tab-autosuggest() {
+        local default_binding
+        default_binding=$(bindkey '^I' 2>/dev/null || true)
+        if [[ $default_binding != *rsydn-accept-autosuggest-or-complete* ]]; then
+          rsydn-bind-tab-autosuggest
+        fi
+        local viins_binding
+        viins_binding=$(bindkey -M viins '^I' 2>/dev/null || true)
+        if [[ $viins_binding != *rsydn-accept-autosuggest-or-complete* ]]; then
+          bindkey -M viins '^I' rsydn-accept-autosuggest-or-complete 2>/dev/null || true
+        fi
+      }
+      autoload -Uz add-zsh-hook
+      add-zsh-hook precmd rsydn-ensure-tab-autosuggest
+      rsydn-ensure-tab-autosuggest
     '';
   };
 
