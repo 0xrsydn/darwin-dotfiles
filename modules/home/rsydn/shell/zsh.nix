@@ -57,6 +57,21 @@ in {
       description = "Enable zsh-autosuggestions.";
     };
 
+    autosuggestAcceptWidgets = mkOption {
+      type = types.listOf types.str;
+      default = [
+        "forward-char"
+        "end-of-line"
+        "vi-forward-char"
+        "vi-end-of-line"
+        "vi-add-eol"
+        "expand-or-complete"
+        "complete-word"
+        "fzf-completion"
+      ];
+      description = "Widgets that should accept autosuggestions before running (ZSH_AUTOSUGGEST_ACCEPT_WIDGETS).";
+    };
+
     enableSyntaxHighlighting = mkOption {
       type = types.bool;
       default = true;
@@ -79,6 +94,9 @@ in {
         syntaxHighlighting.enable = cfg.enableSyntaxHighlighting;
         shellAliases = cfg.aliases;
         initContent = lib.mkAfter cfg.extraAfter;
+        localVariables = lib.mkIf cfg.enableAutoSuggestion {
+          ZSH_AUTOSUGGEST_ACCEPT_WIDGETS = cfg.autosuggestAcceptWidgets;
+        };
       };
     }
     { programs.zsh.initContent = lib.mkOrder 550 cfg.extraBeforeCompInit; }
