@@ -15,6 +15,10 @@
     enableVimMode = true;
     powerlevel10kConfigFile = ./shell/p10k.zsh;
     aliases = { ll = "ls -alF"; };
+    extraAfter = ''
+      export BUN_INSTALL="$HOME/.bun"
+      export PATH="$BUN_INSTALL/bin:$PATH"
+    '';
   };
 
   programs.git.enable = true;
@@ -23,6 +27,6 @@
 
   rsydn.devTools = {
     enable = lib.mkDefault false;
-    packages = [ ];
+    packages = with pkgs; [ bun cloudflared ];
   };
 }
