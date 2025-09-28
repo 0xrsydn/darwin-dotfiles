@@ -26,7 +26,7 @@
   home.packages = with pkgs; [ docker docker-compose ];
 
   rsydn.devTools = {
-    enable = lib.mkDefault false;
+    enable = lib.mkDefault true;
     packages = with pkgs; [ bun cloudflared ];
   };
 }
