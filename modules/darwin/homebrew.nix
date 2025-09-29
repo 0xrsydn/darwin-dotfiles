@@ -25,6 +25,7 @@ in {
         "ghostscript"
         "infisical"
         "fastfetch"
+        "neofetch"
       ];
       description = "Homebrew formulae to install.";
     };
