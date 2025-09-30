@@ -17,7 +17,6 @@ in {
         duckdb
         ffmpeg
         fzf
-        go
         htop
         jetbrains-mono
         jq
@@ -26,18 +25,12 @@ in {
         lorri
         neovim
         pandoc
-        postgresql_18
-        python312
-        python312Packages.uv
         ripgrep
-        rustc
-        rustup
         tree
         vim
         yq
         tmux
         tailscale
-        sqlite
         wget
       ];
       description = "System packages to install for development tooling.";

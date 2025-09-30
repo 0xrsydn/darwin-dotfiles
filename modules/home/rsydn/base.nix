@@ -5,25 +5,19 @@
     ./programs/helix.nix
     ./programs/neovim.nix
     ./programs/ghostty.nix
-    ./shell/zsh.nix
+    ./shell/nushell.nix
     ./shell/tmux.nix
+    ./devtools/ai-tools.nix
     ./devtools/default.nix
   ];
 
-  rsydn.shell.zsh = {
-    enable = true;
-    enableVimMode = true;
-    powerlevel10kConfigFile = ./shell/p10k.zsh;
-    aliases = { ll = "ls -alF"; };
-    extraAfter = ''
-      export BUN_INSTALL="$HOME/.bun"
-      export PATH="$BUN_INSTALL/bin:$PATH"
-    '';
-  };
+  programs.nushell.enable = true;
 
   programs.git.enable = true;
 
   home.packages = with pkgs; [ docker docker-compose ];
+
+  rsydn.aiTools.enable = lib.mkDefault true;
 
   rsydn.devTools = {
     enable = lib.mkDefault true;

@@ -14,9 +14,13 @@
 
     nvim-bundle.url = "github:jla2000/nvim-bundle";
     nvim-bundle.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-ai-tools.url = "github:numtide/nix-ai-tools";
+    nix-ai-tools.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, ... }:
+  outputs =
+    inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
 
