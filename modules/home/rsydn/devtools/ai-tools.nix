@@ -1,6 +1,14 @@
 { config, lib, pkgs, inputs, ... }:
 let
-  inherit (lib) mkEnableOption mkOption types mkIf concatMap unique warn;
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    types
+    mkIf
+    concatMap
+    unique
+    warn
+    escapeShellArg;
   cfg = config.rsydn.aiTools;
 
   nodePackages = if builtins.hasAttr "nodePackages_latest" pkgs then
@@ -43,7 +51,13 @@ let
   claudeDefault =
     choosePackage [ (getNodePackage "@anthropic-ai/claude-code") ];
 
-  toolOption = { name, description, defaultPackage }:
+  toolOption =
+    { name
+    , description
+    , defaultPackage
+    , extraOptions ? { }
+    , extraDefaults ? { }
+    }:
     mkOption {
       type = types.submodule {
         options = {
@@ -58,12 +72,12 @@ let
             description =
               "Package providing ${name}. Set to null to skip installation.";
           };
-        };
+        } // extraOptions;
       };
       default = {
         enable = true;
         package = defaultPackage;
-      };
+      } // extraDefaults;
       description = description;
     };
 
@@ -99,6 +113,40 @@ let
     }
   ];
 
+  zaiWrapperPackages =
+    let
+      claudeCfg = cfg.claude;
+      zaiCfg = claudeCfg.zai or { enable = false; };
+    in if claudeCfg.enable && zaiCfg.enable then
+      if claudeCfg.package != null then
+        let
+          claudeExe = lib.getExe claudeCfg.package;
+          commandName = zaiCfg.commandName;
+          baseUrl = zaiCfg.baseUrl;
+          model = zaiCfg.model;
+          tokenEnvVar = zaiCfg.tokenEnvVar;
+        in [
+          (pkgs.writeShellApplication {
+            name = commandName;
+            text = ''
+              if [ -z "''${${tokenEnvVar}:-}" ]; then
+                echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
+                exit 1
+              fi
+
+              export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
+              export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
+              export ANTHROPIC_MODEL=${escapeShellArg model}
+
+              exec ${claudeExe} "$@"
+            '';
+          })
+        ]
+      else
+        warn "rsydn.aiTools.claude: Z.AI wrapper requested but package is null" [ ]
+    else
+      [ ];
+
 in {
   options.rsydn.aiTools = {
     enable = mkEnableOption "AI-oriented command line tooling";
@@ -125,6 +173,47 @@ in {
       name = "Claude Code";
       description = "Anthropic Claude Code CLI assistant.";
       defaultPackage = claudeDefault;
+      extraOptions = {
+        zai = mkOption {
+          type = types.submodule {
+            options = {
+              enable = mkEnableOption
+                "Expose the Z.AI Gateway wrapper command for Claude.";
+              commandName = mkOption {
+                type = types.str;
+                default = "glm";
+                description =
+                  "Name of the wrapper command that launches Claude via Z.AI.";
+              };
+              baseUrl = mkOption {
+                type = types.str;
+                default = "https://api.z.ai/api/anthropic";
+                description = "Gateway base URL used for the Anthropic client.";
+              };
+              model = mkOption {
+                type = types.str;
+                default = "glm-4.6";
+                description = "Model identifier passed via ANTHROPIC_MODEL.";
+              };
+              tokenEnvVar = mkOption {
+                type = types.str;
+                default = "ZAI_API_KEY";
+                description =
+                  "Environment variable that stores the Z.AI API token.";
+              };
+            };
+          };
+          default = {
+            enable = false;
+            commandName = "glm";
+            baseUrl = "https://api.z.ai/api/anthropic";
+            model = "glm-4.6";
+            tokenEnvVar = "ZAI_API_KEY";
+          };
+          description =
+            "Configuration for the Claude wrapper that targets the Z.AI gateway.";
+        };
+      };
     };
 
     extraPackages = mkOption {
@@ -136,6 +225,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = unique (toolPackages ++ cfg.extraPackages);
+    home.packages = unique (toolPackages ++ zaiWrapperPackages ++ cfg.extraPackages);
   };
 }
