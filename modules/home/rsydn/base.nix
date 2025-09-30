@@ -10,6 +10,7 @@
     ./devtools/ai-tools.nix
     ./devtools/languages.nix
     ./devtools/default.nix
+    ./secrets.nix
   ];
 
   programs.nushell.enable = true;
@@ -45,4 +46,6 @@
   };
 
   rsydn.languages.enable = lib.mkDefault true;
+
+  rsydn.secrets.enable = lib.mkDefault true;
 }
