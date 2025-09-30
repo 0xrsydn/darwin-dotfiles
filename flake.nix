@@ -25,8 +25,8 @@
     zig-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools, sops-nix, ... }:
+  outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools
+    , sops-nix, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
