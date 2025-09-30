@@ -1,14 +1,7 @@
 { config, lib, pkgs, inputs, ... }:
 let
   inherit (lib)
-    mkEnableOption
-    mkOption
-    types
-    mkIf
-    concatMap
-    unique
-    warn
-    escapeShellArg;
+    mkEnableOption mkOption types mkIf concatMap unique warn escapeShellArg;
   cfg = config.rsydn.aiTools;
 
   nodePackages = if builtins.hasAttr "nodePackages_latest" pkgs then
@@ -51,13 +44,8 @@ let
   claudeDefault =
     choosePackage [ (getNodePackage "@anthropic-ai/claude-code") ];
 
-  toolOption =
-    { name
-    , description
-    , defaultPackage
-    , extraOptions ? { }
-    , extraDefaults ? { }
-    }:
+  toolOption = { name, description, defaultPackage, extraOptions ? { }
+    , extraDefaults ? { } }:
     mkOption {
       type = types.submodule {
         options = {
@@ -113,39 +101,39 @@ let
     }
   ];
 
-  zaiWrapperPackages =
-    let
-      claudeCfg = cfg.claude;
-      zaiCfg = claudeCfg.zai or { enable = false; };
-    in if claudeCfg.enable && zaiCfg.enable then
-      if claudeCfg.package != null then
-        let
-          claudeExe = lib.getExe claudeCfg.package;
-          commandName = zaiCfg.commandName;
-          baseUrl = zaiCfg.baseUrl;
-          model = zaiCfg.model;
-          tokenEnvVar = zaiCfg.tokenEnvVar;
-        in [
-          (pkgs.writeShellApplication {
-            name = commandName;
-            text = ''
-              if [ -z "''${${tokenEnvVar}:-}" ]; then
-                echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
-                exit 1
-              fi
+  zaiWrapperPackages = let
+    claudeCfg = cfg.claude;
+    zaiCfg = claudeCfg.zai or { enable = false; };
+  in if claudeCfg.enable && zaiCfg.enable then
+    if claudeCfg.package != null then
+      let
+        claudeExe = lib.getExe claudeCfg.package;
+        commandName = zaiCfg.commandName;
+        baseUrl = zaiCfg.baseUrl;
+        model = zaiCfg.model;
+        tokenEnvVar = zaiCfg.tokenEnvVar;
+      in [
+        (pkgs.writeShellApplication {
+          name = commandName;
+          text = ''
+            if [ -z "''${${tokenEnvVar}:-}" ]; then
+              echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
+              exit 1
+            fi
 
-              export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
-              export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
-              export ANTHROPIC_MODEL=${escapeShellArg model}
+            export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
+            export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
+            export ANTHROPIC_MODEL=${escapeShellArg model}
 
-              exec ${claudeExe} "$@"
-            '';
-          })
-        ]
-      else
-        warn "rsydn.aiTools.claude: Z.AI wrapper requested but package is null" [ ]
+            exec ${claudeExe} "$@"
+          '';
+        })
+      ]
     else
-      [ ];
+      warn "rsydn.aiTools.claude: Z.AI wrapper requested but package is null"
+      [ ]
+  else
+    [ ];
 
 in {
   options.rsydn.aiTools = {
@@ -225,6 +213,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = unique (toolPackages ++ zaiWrapperPackages ++ cfg.extraPackages);
+    home.packages =
+      unique (toolPackages ++ zaiWrapperPackages ++ cfg.extraPackages);
   };
 }
