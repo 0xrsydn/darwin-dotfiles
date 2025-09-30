@@ -18,12 +18,15 @@
     nix-ai-tools.url = "github:numtide/nix-ai-tools";
     nix-ai-tools.inputs.nixpkgs.follows = "nixpkgs";
 
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     zig-overlay.url = "github:mitchellh/zig-overlay";
     zig-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
-    inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools, ... }:
+    inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools, sops-nix, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
