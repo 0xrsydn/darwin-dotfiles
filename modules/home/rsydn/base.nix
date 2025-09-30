@@ -8,6 +8,7 @@
     ./shell/nushell.nix
     ./shell/tmux.nix
     ./devtools/ai-tools.nix
+    ./devtools/languages.nix
     ./devtools/default.nix
   ];
 
@@ -21,6 +22,27 @@
 
   rsydn.devTools = {
     enable = lib.mkDefault true;
-    packages = with pkgs; [ bun cloudflared ];
+    packages = with pkgs; [
+      ast-grep
+      cloudflared
+      ffmpeg
+      fzf
+      htop
+      jetbrains-mono
+      jq
+      lazydocker
+      lazygit
+      lorri
+      neovim
+      pandoc
+      ripgrep
+      tmux
+      tree
+      vim
+      wget
+      yq
+    ];
   };
+
+  rsydn.languages.enable = lib.mkDefault true;
 }

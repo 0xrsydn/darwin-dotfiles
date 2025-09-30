@@ -12,28 +12,9 @@ in {
 
     packages = mkOption {
       type = types.listOf types.package;
-      default = with pkgs; [
-        ast-grep
-        duckdb
-        ffmpeg
-        fzf
-        htop
-        jetbrains-mono
-        jq
-        lazydocker
-        lazygit
-        lorri
-        neovim
-        pandoc
-        ripgrep
-        tree
-        vim
-        yq
-        tmux
-        tailscale
-        wget
-      ];
-      description = "System packages to install for development tooling.";
+      default = with pkgs; [ tailscale ];
+      description =
+        "System packages that must be available globally across macOS.";
     };
   };
 

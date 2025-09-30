@@ -17,18 +17,27 @@
 
     nix-ai-tools.url = "github:numtide/nix-ai-tools";
     nix-ai-tools.inputs.nixpkgs.follows = "nixpkgs";
+
+    zig-overlay.url = "github:mitchellh/zig-overlay";
+    zig-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
     inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
+      lib = nixpkgs.lib;
 
       systems = [ "aarch64-darwin" "x86_64-darwin" ];
 
       forEachSystem = f: genAttrs systems (system: f system);
 
       overlaysList = [ ghostty.overlays.default ];
+
+      zigOverlay = if builtins.hasAttr "zig-overlay" inputs then
+        inputs."zig-overlay"
+      else
+        null;
 
       mkPkgs = system:
         import nixpkgs {
@@ -67,16 +76,116 @@
       darwinConfigurations = { macbook-pro = mkDarwin { }; };
 
       devShells = forEachSystem (system:
-        let pkgs = mkPkgs system;
-        in {
-          default = pkgs.mkShell {
-            packages = with pkgs; [ git nixfmt-classic ];
-            shellHook = ''
-              echo "Loaded default shell for ${system}"
-            '';
-          };
+        let
+          pkgs = mkPkgs system;
+          python = if builtins.hasAttr "python312" pkgs then
+            pkgs.python312
+          else
+            pkgs.python3;
 
-        });
+          zigPackages =
+            if zigOverlay != null && builtins.hasAttr "packages" zigOverlay then
+              zigOverlay.packages
+            else
+              { };
+
+          zigCandidate =
+            if zigOverlay != null && system == "aarch64-darwin" then
+              lib.attrByPath [ system "master" "zig" ] null zigPackages
+            else
+              null;
+
+          zigCandidateBroken = if zigCandidate != null then
+            if zigCandidate ? meta && zigCandidate.meta ? broken then
+              zigCandidate.meta.broken
+            else
+              false
+          else
+            true;
+
+          zigFallback = pkgs.zig;
+          zigFallbackBroken =
+            if zigFallback ? meta && zigFallback.meta ? broken then
+              zigFallback.meta.broken
+            else
+              false;
+
+          zigPackage =
+            if zigCandidate != null && zigCandidateBroken == false then
+              zigCandidate
+            else if zigFallbackBroken == false then
+              zigFallback
+            else
+              null;
+
+          zlsBroken = if pkgs.zls ? meta && pkgs.zls.meta ? broken then
+            pkgs.zls.meta.broken
+          else
+            false;
+
+          zigShell =
+            lib.optionalAttrs (zigPackage != null && zlsBroken == false) {
+              zig-nightly = pkgs.mkShell {
+                name = "zig-nightly";
+                packages =
+                  [ zigPackage pkgs.zls pkgs.pkg-config pkgs.cmake pkgs.gdb ];
+                shellHook = ''
+                  mkdir -p "$PWD/.cache/zig"
+                  export ZIG_GLOBAL_CACHE_DIR="$PWD/.cache/zig"
+                  echo "Zig shell using ${zigPackage.pname or "zig"} ${
+                    zigPackage.version or ""
+                  }"
+                '';
+              };
+            };
+
+          baseShells = {
+            default = pkgs.mkShell {
+              name = "default";
+              packages = with pkgs; [ git nixfmt-classic ];
+              shellHook = ''
+                echo "Loaded default shell for ${system}"
+              '';
+            };
+
+            python-uv = pkgs.mkShell {
+              name = "python-uv";
+              packages = [ python pkgs.uv pkgs.ruff pkgs.pyright ];
+              shellHook = ''
+                export UV_PYTHON="${python}/bin/python3"
+                export UV_LINK_MODE=copy
+                echo "Python (uv) shell ready"
+              '';
+            };
+
+            go = pkgs.mkShell {
+              name = "go";
+              packages = with pkgs; [ go gopls golangci-lint delve git ];
+              shellHook = ''
+                mkdir -p "$PWD/.cache/go" "$PWD/.cache/gomod"
+                export GOPATH="$PWD/.cache/go"
+                export GOMODCACHE="$PWD/.cache/gomod"
+                echo "Go toolchain shell ready"
+              '';
+            };
+
+            web-bun = pkgs.mkShell {
+              name = "web-bun";
+              packages = with pkgs; [
+                bun
+                nodejs_20
+                yarn
+                esbuild
+                vscode-langservers-extracted
+              ];
+              shellHook = ''
+                mkdir -p "$PWD/.cache/bun"
+                export BUN_INSTALL_CACHE="$PWD/.cache/bun"
+                echo "Bun/Node web shell ready"
+              '';
+            };
+          };
+        in baseShells // zigShell);
 
       formatter = forEachSystem (system: (mkPkgs system).nixfmt-classic);
 
