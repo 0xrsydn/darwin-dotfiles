@@ -1,48 +1,18 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, ... }:
 let
   inherit (lib)
     mkEnableOption mkOption types mkIf concatMap unique warn escapeShellArg;
   cfg = config.rsydn.aiTools;
 
-  nodePackages = if builtins.hasAttr "nodePackages_latest" pkgs then
-    pkgs.nodePackages_latest
-  else if builtins.hasAttr "nodePackages" pkgs then
-    pkgs.nodePackages
-  else
-    { };
+  getPkgsPackage = name: lib.attrByPath [ name ] null pkgs;
 
-  hasNodePackage = name: builtins.hasAttr name nodePackages;
-  getNodePackage = name:
-    if hasNodePackage name then nodePackages.${name} else null;
+  codexDefault = getPkgsPackage "codex";
 
-  choosePackage = packages:
-    let filtered = lib.filter (pkg: pkg != null) packages;
-    in if filtered == [ ] then null else lib.head filtered;
+  crushDefault = getPkgsPackage "crush";
 
-  codexDefault = choosePackage [ (getNodePackage "@openai/codex") ];
+  opencodeDefault = getPkgsPackage "opencode";
 
-  crushFromInput = if builtins.hasAttr "nix-ai-tools" inputs then
-    let
-      pkgSet = inputs."nix-ai-tools".packages or { };
-      system = pkgs.stdenv.hostPlatform.system;
-    in if builtins.hasAttr system pkgSet then
-      let systemPackages = builtins.getAttr system pkgSet;
-      in if builtins.hasAttr "crush" systemPackages then
-        builtins.getAttr "crush" systemPackages
-      else
-        null
-    else
-      null
-  else
-    null;
-
-  crushDefault =
-    choosePackage [ crushFromInput (getNodePackage "@charmland/crush") ];
-
-  opencodeDefault = choosePackage [ (getNodePackage "opencode-ai") ];
-
-  claudeDefault =
-    choosePackage [ (getNodePackage "@anthropic-ai/claude-code") ];
+  claudeDefault = getPkgsPackage "claude-code";
 
   toolOption = { name, description, defaultPackage, extraOptions ? { }
     , extraDefaults ? { } }:
@@ -141,25 +111,25 @@ in {
 
     codex = toolOption {
       name = "Codex";
-      description = "OpenAI Codex CLI (npm @openai/codex).";
+      description = "OpenAI Codex CLI packaged in nixpkgs.";
       defaultPackage = codexDefault;
     };
 
     crush = toolOption {
       name = "Crush";
-      description = "Charmbracelet Crush CLI for natural language shell.";
+      description = "Charmbracelet Crush CLI packaged in nixpkgs.";
       defaultPackage = crushDefault;
     };
 
     opencode = toolOption {
       name = "OpenCode";
-      description = "OpenCode AI collaborative CLI.";
+      description = "OpenCode AI collaborative CLI packaged in nixpkgs.";
       defaultPackage = opencodeDefault;
     };
 
     claude = toolOption {
       name = "Claude Code";
-      description = "Anthropic Claude Code CLI assistant.";
+      description = "Anthropic Claude Code CLI packaged in nixpkgs.";
       defaultPackage = claudeDefault;
       extraOptions = {
         zai = mkOption {
