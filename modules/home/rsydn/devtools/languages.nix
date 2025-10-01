@@ -47,6 +47,7 @@ let
     pkgs.nodejs_20
   else
     getPkg "nodejs";
+  cargoPackage = getPkg "cargo";
 
   toolSpecs = [
     {
@@ -63,6 +64,11 @@ let
       name = "node";
       cfg = cfg.node;
       defaultPackage = nodePackage;
+    }
+    {
+      name = "cargo";
+      cfg = cfg.cargo;
+      defaultPackage = cargoPackage;
     }
   ];
 
@@ -88,6 +94,12 @@ in {
       name = "Node.js";
       defaultPackage = nodePackage;
       description = "Node.js runtime for CLI tooling.";
+    };
+
+    cargo = mkToolOption {
+      name = "Cargo";
+      defaultPackage = cargoPackage;
+      description = "Rust package manager and toolchain.";
     };
 
     extraPackages = mkOption {
