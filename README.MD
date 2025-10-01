@@ -17,7 +17,7 @@ So far, the dotfiles only used for my macOS configuration, maybe in the future I
 - Containers: docker, lazydocker, orbstack
 - CLI utils: fzf, ripgrep, ast-grep, jq, yq, pandoc, ffmpeg, tree, htop
 - Tmux with dracula theme (plugins: cpu-usage, battery, network-bandwidth monitoring)
-- Per programming language using `nix develop` (still tweaking to see whats the best)
+- Hybrid approach of globally installed programming language tooling and specific programming language tooling using `nix develop` (still tweaking to see whats the best)
 
 ## AI Tools
 
