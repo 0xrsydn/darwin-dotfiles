@@ -2,7 +2,7 @@
   home.stateVersion = "24.05";
 
   imports = [
-    ./programs/aerospace.nix
+    ./programs/aerospace
     ./programs/helix.nix
     ./programs/neovim.nix
     ./programs/ghostty.nix
