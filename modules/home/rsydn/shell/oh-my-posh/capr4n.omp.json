@@ -56,8 +56,11 @@
           "background": "#95ffa4",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
+          "properties": {
+            "fetch_status": true
+          },
           "style": "powerline",
-          "template": " {{ .HEAD }} ",
+          "template": " {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{- $staged := add .Staging.Added (add .Staging.Modified (add .Staging.Deleted .Staging.Unmerged)) -}}{{ if gt $staged 0 }} ^{{$staged}}{{ end }}{{ if gt .Working.Modified 0 }} ~{{ .Working.Modified }}{{ end }}{{ if gt .Working.Deleted 0 }} -{{ .Working.Deleted }}{{ end }}{{ if gt .Working.Untracked 0 }} +{{ .Working.Untracked }}{{ end }} ",
           "type": "git"
         }
       ],
