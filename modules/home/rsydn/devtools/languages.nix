@@ -48,6 +48,7 @@ let
   else
     getPkg "nodejs";
   cargoPackage = getPkg "cargo";
+  bunPackage = getPkg "bun";
 
   toolSpecs = [
     {
@@ -69,6 +70,11 @@ let
       name = "cargo";
       cfg = cfg.cargo;
       defaultPackage = cargoPackage;
+    }
+    {
+      name = "bun";
+      cfg = cfg.bun;
+      defaultPackage = bunPackage;
     }
   ];
 
@@ -100,6 +106,12 @@ in {
       name = "Cargo";
       defaultPackage = cargoPackage;
       description = "Rust package manager and toolchain.";
+    };
+
+    bun = mkToolOption {
+      name = "Bun";
+      defaultPackage = bunPackage;
+      description = "Fast all-in-one JavaScript runtime.";
     };
 
     extraPackages = mkOption {
