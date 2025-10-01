@@ -23,6 +23,10 @@
     };
   };
 
+  environment.shells = [ pkgs.nushell ];
+
+  users.users.${user}.shell = pkgs.nushell;
+
   system = {
     primaryUser = user;
     stateVersion = 6;
