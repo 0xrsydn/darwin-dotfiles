@@ -34,7 +34,6 @@
       lazydocker
       lazygit
       lorri
-      neovim
       pandoc
       ripgrep
       tmux
