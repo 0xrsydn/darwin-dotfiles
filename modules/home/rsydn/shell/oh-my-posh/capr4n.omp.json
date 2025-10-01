@@ -62,6 +62,19 @@
         }
       ],
       "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#61AFEF",
+          "style": "plain",
+          "template": "❯ ",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
     }
   ],
   "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.UserName}} \u2794 📁{{.Folder}}",
