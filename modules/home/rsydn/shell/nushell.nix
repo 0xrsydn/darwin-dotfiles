@@ -16,30 +16,31 @@ let
     lib.unique [ homebrewBin homebrewSbin ]
   else
     [ ];
-  formatPathList = paths: lib.concatMapStrings (path: "      \"${path}\"\n") paths;
+  formatPathList = paths:
+    lib.concatMapStrings (path: "      \"${path}\"\n") paths;
 in {
   programs.nushell.enable = lib.mkDefault true;
 
   programs.nushell.envFile.text = ''
-    let nix_paths = [
-${formatPathList [ profileBin systemBin defaultBin ]}    ]
+        let nix_paths = [
+    ${formatPathList [ profileBin systemBin defaultBin ]}    ]
 
-    let homebrew_paths = [
-${formatPathList homebrewPaths}    ]
+        let homebrew_paths = [
+    ${formatPathList homebrewPaths}    ]
 
-    let path_candidates = ($nix_paths | append $homebrew_paths | flatten)
+        let path_candidates = ($nix_paths | append $homebrew_paths | flatten)
 
-    if ($env.PATH? == null) {
-      $env.PATH = $path_candidates
-    } else {
-      for path in $path_candidates {
-        if not ($env.PATH | any {|it| $it == $path}) {
-          $env.PATH = ($env.PATH | append $path)
+        if ($env.PATH? == null) {
+          $env.PATH = $path_candidates
+        } else {
+          for path in $path_candidates {
+            if not ($env.PATH | any {|it| $it == $path}) {
+              $env.PATH = ($env.PATH | append $path)
+            }
+          }
         }
-      }
-    }
 
-    $env.NIX_PROFILES = "/run/current-system/sw ${config.home.profileDirectory}"
+        $env.NIX_PROFILES = "/run/current-system/sw ${config.home.profileDirectory}"
   '';
 
   programs.oh-my-posh = {
