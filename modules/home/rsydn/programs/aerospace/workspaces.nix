@@ -13,6 +13,4 @@ let
     name = "alt-shift-${ws}";
     value = "move-node-to-workspace ${ws}";
   }) workspaceNumbers);
-in {
-  inherit workspaceNumbers workspaceFocusBindings workspaceSendBindings;
-}
+in { inherit workspaceNumbers workspaceFocusBindings workspaceSendBindings; }

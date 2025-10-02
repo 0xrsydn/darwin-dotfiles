@@ -6,9 +6,7 @@ let
     inherit (workspaceHelpers) workspaceFocusBindings workspaceSendBindings;
   };
 
-  userSettings = import ./user-settings.nix {
-    modes = modes;
-  };
+  userSettings = import ./user-settings.nix { modes = modes; };
 in {
   programs.aerospace = {
     enable = true;

@@ -1,5 +1,4 @@
-{ workspaceFocusBindings, workspaceSendBindings }:
-{
+{ workspaceFocusBindings, workspaceSendBindings }: {
   main.binding = {
     "alt-h" = "focus left";
     "alt-j" = "focus down";
