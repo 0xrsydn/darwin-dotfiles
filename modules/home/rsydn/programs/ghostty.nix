@@ -5,7 +5,7 @@
 
     settings = {
       theme = "dracula";
-      command = "shell:tmux new-session -A -s ghostty";
+      command = "shell:$SHELL -lc 'tmux new-session -A -s ghostty'";
     };
 
     themes.dracula = {
