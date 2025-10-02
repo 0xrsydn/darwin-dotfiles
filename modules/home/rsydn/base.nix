@@ -20,7 +20,10 @@
 
   home.packages = with pkgs; [ docker docker-compose ];
 
-  rsydn.aiTools.enable = lib.mkDefault true;
+  rsydn.aiTools = {
+    enable = lib.mkDefault true;
+    claude.zai.enable = lib.mkDefault true;
+  };
 
   rsydn.devTools = {
     enable = lib.mkDefault true;
