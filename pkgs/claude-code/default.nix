@@ -7,8 +7,7 @@ stdenv.mkDerivation rec {
   src = fetchurl {
     url =
       "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-    hash =
-      "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Update with actual hash
+    hash = "sha256-bDnRkUGd3XMFCgVr8m3BZacT+C0/Scbyu3j6kpQWUOM=";
   };
 
   nativeBuildInputs = [ nodejs ];
