@@ -3,7 +3,10 @@
     enable = true;
     package = null;
 
-    settings = { theme = "dracula"; };
+    settings = {
+      theme = "dracula";
+      command = "shell:tmux new-session -A -s ghostty";
+    };
 
     themes.dracula = {
       background = "282a36";
