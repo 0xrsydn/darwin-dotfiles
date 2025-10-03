@@ -1,11 +1,12 @@
-{ ... }: {
+{ config, ... }: {
   programs.ghostty = {
     enable = true;
     package = null;
 
     settings = {
       theme = "dracula";
-      command = "shell:$SHELL -lc 'tmux new-session -A -s ghostty'";
+      command =
+        "shell:${config.home.profileDirectory}/bin/tmux new-session -A -s ghostty";
     };
 
     themes.dracula = {
