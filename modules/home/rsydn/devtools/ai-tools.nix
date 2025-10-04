@@ -12,7 +12,7 @@ let
 
   opencodeDefault = getPkgsPackage "opencode";
 
-  claudeDefault = getPkgsPackage "claude-code-v2";
+  claudeDefault = getPkgsPackage "claude-code";
 
   toolOption = { name, description, defaultPackage, extraOptions ? { }
     , extraDefaults ? { } }:

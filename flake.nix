@@ -35,12 +35,7 @@
 
       forEachSystem = f: genAttrs systems (system: f system);
 
-      overlaysList = [
-        ghostty.overlays.default
-        (final: prev: {
-          claude-code-v2 = prev.callPackage ./pkgs/claude-code { };
-        })
-      ];
+      overlaysList = [ ghostty.overlays.default ];
 
       zigOverlay = if builtins.hasAttr "zig-overlay" inputs then
         inputs."zig-overlay"
