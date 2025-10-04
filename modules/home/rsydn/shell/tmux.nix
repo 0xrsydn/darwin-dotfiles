@@ -18,6 +18,8 @@
       '';
     }];
     extraConfig = ''
+      set -s extended-keys on
+      set -as terminal-features 'xterm-ghostty:extkeys'
       set-option -g status-style "bg=#282a36 fg=#f8f8f2"
       set -g status-interval 5
       setw -g automatic-rename on
@@ -28,6 +30,7 @@
       unbind '"'
       unbind %
       set -g display-panes-time 1500
+      bind K send-keys -R \; send-keys C-l \; clear-history
     '';
   };
 }
