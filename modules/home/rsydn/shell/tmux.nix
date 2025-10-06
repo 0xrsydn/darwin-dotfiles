@@ -30,7 +30,7 @@
       unbind '"'
       unbind %
       set -g display-panes-time 1500
-      bind K send-keys -R \; send-keys C-l \; clear-history
+      bind k send-keys -R \; send-keys C-l \; clear-history
     '';
   };
 }
