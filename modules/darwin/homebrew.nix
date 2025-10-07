@@ -18,7 +18,7 @@ in {
       type = types.listOf types.str;
       default = [
         "curl"
-        "yt-dlp" 
+        "yt-dlp"
         "ruff"
         "libmagic"
         "ghostscript"
