@@ -48,7 +48,16 @@
     ];
   };
 
-  rsydn.languages.enable = lib.mkDefault true;
+  rsydn.languages = {
+    enable = lib.mkDefault true;
+    # Disable global language tools - use nix develop shells instead
+    cargo.enable = false;
+    go.enable = false;
+    bun.enable = false;
+    # Keep uv for MCP server and node for npx/tooling
+    uv.enable = true;
+    node.enable = true;
+  };
 
   rsydn.secrets = {
     enable = lib.mkDefault true;
