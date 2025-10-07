@@ -37,6 +37,7 @@ in {
         "dbngin"
         "pgadmin4"
         "docker-desktop"
+        "iterm2"
         "spotify"
         "discord"
         "obs"

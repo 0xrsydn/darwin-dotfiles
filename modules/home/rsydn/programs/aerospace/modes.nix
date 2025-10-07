@@ -19,6 +19,7 @@
     "alt-space" = "layout floating tiling";
 
     "alt-enter" = ''exec-and-forget open -na "Ghostty"'';
+    "alt-shift-enter" = ''exec-and-forget open -na "iTerm.app"'';
     "alt-backspace" = "close";
 
     "alt-tab" = "workspace-back-and-forth";
