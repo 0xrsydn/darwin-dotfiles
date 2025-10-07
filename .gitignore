@@ -4,3 +4,7 @@
 .env
 # Personal secrets
 .config/zsh/secrets.zsh
+
+# Nix build results
+result
+result-*

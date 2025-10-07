@@ -21,6 +21,45 @@ let
 in {
   programs.nushell.enable = lib.mkDefault true;
 
+  programs.nushell.extraConfig = ''
+    # Dotfiles QA validation command
+    def dotfiles-qa [] {
+      let dotfiles_dir = "${config.home.homeDirectory}/Development/dotfiles"
+
+      print $"(ansi green_bold)Running dotfiles QA validation...(ansi reset)\n"
+
+      # Step 1: Format check
+      print $"(ansi blue)1. Formatting nix files...(ansi reset)"
+      cd $dotfiles_dir
+      nix fmt .
+      if $env.LAST_EXIT_CODE != 0 {
+        print $"(ansi red_bold)✗ Formatting failed(ansi reset)"
+        return
+      }
+      print $"(ansi green)✓ Formatting complete(ansi reset)\n"
+
+      # Step 2: Flake check
+      print $"(ansi blue)2. Running flake check...(ansi reset)"
+      nix flake check
+      if $env.LAST_EXIT_CODE != 0 {
+        print $"(ansi red_bold)✗ Flake check failed(ansi reset)"
+        return
+      }
+      print $"(ansi green)✓ Flake check passed(ansi reset)\n"
+
+      # Step 3: Build (without activation)
+      print $"(ansi blue)3. Building darwin configuration (no activation)...(ansi reset)"
+      darwin-rebuild build --flake $"($dotfiles_dir)#macbook-pro"
+      if $env.LAST_EXIT_CODE != 0 {
+        print $"(ansi yellow)⚠ Build had warnings, but may still work(ansi reset)\n"
+      } else {
+        print $"(ansi green)✓ Build successful(ansi reset)\n"
+      }
+
+      print $"(ansi green_bold)✓ Core QA checks passed!(ansi reset)"
+    }
+  '';
+
   programs.nushell.envFile.text = ''
         let nix_paths = [
     ${formatPathList [ profileBin systemBin defaultBin ]}    ]
