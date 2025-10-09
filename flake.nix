@@ -86,6 +86,7 @@
           else
             pkgs.python3;
 
+          # Zig overlay setup for zig-nightly shell
           zigPackages =
             if zigOverlay != null && builtins.hasAttr "packages" zigOverlay then
               zigOverlay.packages
@@ -126,85 +127,22 @@
           else
             false;
 
-          zigShell =
-            lib.optionalAttrs (zigPackage != null && zlsBroken == false) {
-              zig-nightly = pkgs.mkShell {
-                name = "zig-nightly";
-                packages =
-                  [ zigPackage pkgs.zls pkgs.pkg-config pkgs.cmake pkgs.gdb ];
-                shellHook = ''
-                  mkdir -p "$PWD/.cache/zig"
-                  export ZIG_GLOBAL_CACHE_DIR="$PWD/.cache/zig"
-                  echo "Zig shell using ${zigPackage.pname or "zig"} ${
-                    zigPackage.version or ""
-                  }"
-                '';
-              };
-            };
+          # Common arguments passed to all devshell imports
+          shellArgs = { inherit pkgs lib python zigPackage; };
 
-          baseShells = {
-            default = pkgs.mkShell {
-              name = "default";
-              packages = with pkgs; [ git nixfmt-classic ];
-              shellHook = ''
-                echo "Loaded default shell for ${system}"
-              '';
-            };
+          # Import all devshells from devshells/ directory
+          importShell = name: import (./devshells + "/${name}.nix") shellArgs;
 
-            python-uv = pkgs.mkShell {
-              name = "python-uv";
-              packages = [ python pkgs.uv pkgs.ruff pkgs.pyright ];
-              shellHook = ''
-                export UV_PYTHON="${python}/bin/python3"
-                export UV_LINK_MODE=copy
-                echo "Python (uv) shell ready"
-              '';
-            };
-
-            go = pkgs.mkShell {
-              name = "go";
-              packages = with pkgs; [ go gopls golangci-lint delve git ];
-              shellHook = ''
-                mkdir -p "$PWD/.cache/go" "$PWD/.cache/gomod"
-                export GOPATH="$PWD/.cache/go"
-                export GOMODCACHE="$PWD/.cache/gomod"
-                echo "Go toolchain shell ready"
-              '';
-            };
-
-            web-bun = pkgs.mkShell {
-              name = "web-bun";
-              packages = with pkgs; [
-                bun
-                nodejs_20
-                yarn
-                esbuild
-                vscode-langservers-extracted
-              ];
-              shellHook = ''
-                mkdir -p "$PWD/.cache/bun"
-                export BUN_INSTALL_CACHE="$PWD/.cache/bun"
-                echo "Bun/Node web shell ready"
-              '';
-            };
-
-            rust = pkgs.mkShell {
-              name = "rust";
-              packages = with pkgs; [
-                cargo
-                rustc
-                rust-analyzer
-                rustfmt
-                clippy
-              ];
-              shellHook = ''
-                mkdir -p "$PWD/.cache/cargo"
-                export CARGO_HOME="$PWD/.cache/cargo"
-                echo "Rust toolchain shell ready"
-              '';
-            };
-          };
-        in baseShells // zigShell);
+        in {
+          default = importShell "default";
+          python-uv = importShell "python-uv";
+          ml-ai = importShell "ml-ai";
+          go = importShell "go";
+          web-bun = importShell "web-bun";
+          rust = importShell "rust";
+        } // lib.optionalAttrs (zigPackage != null && zlsBroken == false) {
+          zig-nightly = importShell "zig-nightly";
+        });
 
       formatter = forEachSystem (system: (mkPkgs system).nixfmt-classic);
 
