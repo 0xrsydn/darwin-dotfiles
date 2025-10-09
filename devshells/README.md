@@ -4,11 +4,13 @@ This directory contains modular Nix devShell configurations for various programm
 
 ## Available Shells
 
+> **Note:** When in the dotfiles directory, use `.#shell-name`. From other directories, use the full path `~/Development/dotfiles#shell-name`.
+
 ### `default`
 Basic shell with git and nixfmt for dotfiles development.
 
 ```bash
-nix develop
+nix develop        # or: nix develop .#default
 ```
 
 ### `python-uv`
@@ -106,18 +108,47 @@ nix develop .#zig-nightly
 
 ## Usage from Any Directory
 
-You can use these shells from anywhere by referencing your dotfiles:
+### Option 1: Direct Path Reference
+Use the full path to your dotfiles:
 
 ```bash
-# From any directory
 cd ~/my-project
 nix develop ~/Development/dotfiles#ml-ai
 ```
 
-## Auto-loading with direnv
+### Option 2: Flake Registry Alias (Recommended)
 
-To automatically load a shell when entering a directory:
+**One-time setup:**
+```bash
+nix registry add dotfiles ~/Development/dotfiles
 
+# Verify it worked
+nix registry list | grep dotfiles
+```
+
+**Then from anywhere:**
+```bash
+cd ~/any-project
+nix develop dotfiles#ml-ai
+```
+
+Benefits: Shorter commands, cleaner paths, easy to remember!
+
+### Option 3: Auto-loading with direnv (Best for per-project)
+
+**Recommended: Combine registry + direnv for cleanest setup:**
+
+```bash
+# One-time: Set up registry (if not done already)
+nix registry add dotfiles ~/Development/dotfiles
+
+# In each project:
+cd ~/my-ml-project
+echo "use flake dotfiles#ml-ai" > .envrc
+direnv allow
+```
+
+**Alternative: Without registry (using full path):**
 ```bash
 cd ~/my-ml-project
 echo "use flake ~/Development/dotfiles#ml-ai" > .envrc
@@ -125,6 +156,40 @@ direnv allow
 ```
 
 Now the shell automatically activates when you `cd` into that directory!
+
+### Option 4: Project-specific flake.nix
+
+Create a `flake.nix` in your project that imports the shell:
+
+```nix
+{
+  inputs = {
+    dotfiles.url = "path:/Users/rasyidanakbar/Development/dotfiles";
+  };
+
+  outputs = { self, dotfiles }:
+    let
+      system = "aarch64-darwin";
+    in {
+      devShells.${system}.default = dotfiles.devShells.${system}.ml-ai;
+    };
+}
+```
+
+Then simply:
+```bash
+cd ~/my-project
+nix develop
+```
+
+### Quick Reference
+
+| Method | Command | Pros |
+|--------|---------|------|
+| Direct path | `nix develop ~/Development/dotfiles#ml-ai` | Simple, no setup |
+| Registry | `nix develop dotfiles#ml-ai` | Clean, short commands |
+| direnv + registry | `echo "use flake dotfiles#ml-ai" > .envrc` | Auto-loads, clean |
+| Project flake | `nix develop` | Shareable, version-controlled |
 
 ## Adding New Shells
 
