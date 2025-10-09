@@ -5,13 +5,7 @@ let
   pythonWithHF = python.withPackages (ps: [ ps.huggingface-hub ]);
 in pkgs.mkShell {
   name = "ml-ai";
-  packages = with pkgs; [
-    pythonWithHF
-    uv
-    git-lfs
-    ruff
-    pyright
-  ];
+  packages = with pkgs; [ pythonWithHF uv git-lfs ruff pyright ];
   shellHook = ''
     # Set up UV
     export UV_PYTHON="${pythonWithHF}/bin/python3"
