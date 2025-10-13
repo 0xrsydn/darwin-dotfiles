@@ -84,11 +84,11 @@ in {
         # Load sops-managed API keys as environment variables
         let secrets_dir = "${config.xdg.configHome}/secrets"
 
-        def load-secret [secret_name: string, env_var: string] {
+        def --env load-secret [secret_name: string, env_var: string] {
           let secret_file = ($secrets_dir | path join $secret_name)
           if ($secret_file | path exists) {
             let secret_value = (open --raw $secret_file | str trim)
-            load-env { ($env_var): $secret_value }
+            {} | insert $env_var $secret_value | load-env
           }
         }
 
