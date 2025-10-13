@@ -87,7 +87,8 @@ in {
         def load-secret [secret_name: string, env_var: string] {
           let secret_file = ($secrets_dir | path join $secret_name)
           if ($secret_file | path exists) {
-            load-env { $env_var: (open $secret_file | str trim) }
+            let secret_value = (open --raw $secret_file | str trim)
+            load-env { ($env_var): $secret_value }
           }
         }
 
