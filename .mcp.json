@@ -1,14 +1,8 @@
 {
   "mcpServers": {
     "nixos": {
-      "type": "stdio",
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "/home/hackerman/Projects/mcp-nixos",
-        "mcp-nixos"
-      ]
+      "command": "uvx",
+      "args": ["mcp-nixos"]
     }
   }
 }
