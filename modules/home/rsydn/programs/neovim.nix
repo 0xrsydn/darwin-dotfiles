@@ -1,17 +1,34 @@
-{ inputs, pkgs, ... }:
-let
-  system = pkgs.stdenv.hostPlatform.system;
-  nvimPackages = inputs."nvim-bundle".packages or { };
-  neovimUnwrapped = if builtins.hasAttr system nvimPackages then
-    let bundle = builtins.getAttr system nvimPackages;
-    in bundle.neovim-unwrapped or pkgs.neovim-unwrapped
-  else
-    pkgs.neovim-unwrapped;
-in {
+{ pkgs, ... }: {
   programs.neovim = {
     enable = true;
-    package = neovimUnwrapped;
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+
     withNodeJs = true;
     withPython3 = true;
+    withRuby = true;
+
+    extraPackages = with pkgs; [
+      # LSP servers
+      lua-language-server
+      nil
+
+      # Formatters
+      stylua
+      nixfmt
+
+      # Tools
+      ripgrep
+      fd
+      git
+      ast-grep
+    ];
+  };
+
+  # Symlink LazyVim config to ~/.config/nvim
+  xdg.configFile."nvim" = {
+    source = ./nvim;
+    recursive = true;
   };
 }
