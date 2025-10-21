@@ -16,6 +16,15 @@ let
     lib.unique [ homebrewBin homebrewSbin ]
   else
     [ ];
+  # Add common macOS system paths that may contain user-installed CLIs
+  macosSystemPaths = if pkgs.stdenv.hostPlatform.isDarwin then [
+    "/usr/local/bin"
+    "/usr/bin"
+    "/bin"
+    "/usr/sbin"
+    "/sbin"
+  ] else
+    [ ];
   formatPathList = paths:
     lib.concatMapStrings (path: "      \"${path}\"\n") paths;
 in {
@@ -67,7 +76,10 @@ in {
         let homebrew_paths = [
     ${formatPathList homebrewPaths}    ]
 
-        let path_candidates = ($nix_paths | append $homebrew_paths | flatten)
+        let macos_system_paths = [
+    ${formatPathList macosSystemPaths}    ]
+
+        let path_candidates = ($nix_paths | append $homebrew_paths | append $macos_system_paths | flatten)
 
         if ($env.PATH? == null) {
           $env.PATH = $path_candidates
