@@ -13,6 +13,14 @@ Basic shell with git and nixfmt for dotfiles development.
 nix develop        # or: nix develop .#default
 ```
 
+**Includes:**
+- Git
+- nixfmt-classic
+- uv (for `uvx` commands)
+
+**MCP helper:**
+- `mcp-nixos` alias pins UV caches to `.cache/` so `uvx mcp-nixos` works without extra setup; useful before launching Codex.
+
 ### `python-uv`
 Python development with UV package manager.
 

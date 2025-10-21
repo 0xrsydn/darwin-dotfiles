@@ -51,7 +51,7 @@
       user = "rasyidanakbar";
 
       mkDarwin = { system ? "aarch64-darwin", extraModules ? [ ]
-        , homeFile ? ./modules/home/rsydn/base.nix }:
+        , homeFile ? ./modules/darwin/home/default.nix }:
         let pkgs = mkPkgs system;
         in darwin.lib.darwinSystem {
           inherit system pkgs;

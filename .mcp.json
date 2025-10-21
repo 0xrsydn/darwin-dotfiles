@@ -1,7 +1,8 @@
 {
   "mcpServers": {
     "nixos": {
-      "command": "uvx",
+      "type": "stdio",
+      "command": "/etc/profiles/per-user/rasyidanakbar/bin/uvx",
       "args": ["mcp-nixos"]
     }
   }

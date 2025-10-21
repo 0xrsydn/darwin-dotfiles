@@ -2,10 +2,8 @@
   home.stateVersion = "24.05";
 
   imports = [
-    ./programs/aerospace
     ./programs/helix.nix
     ./programs/neovim.nix
-    ./programs/ghostty.nix
     ./shell/nushell.nix
     ./shell/tmux.nix
     ./devtools/ai-tools.nix
