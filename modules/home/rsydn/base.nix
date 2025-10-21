@@ -4,7 +4,6 @@
   imports = [
     ./programs/helix.nix
     ./programs/neovim.nix
-    ./shell/nushell.nix
     ./shell/tmux.nix
     ./devtools/ai-tools.nix
     ./devtools/languages.nix
@@ -57,7 +56,7 @@
     node.enable = true;
   };
 
-  rsydn.secrets = {
+  rsydn.secrets = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
     enable = lib.mkDefault true;
     defaultSopsFile = ../../../secrets/local-ai-tokens.sops.yaml;
     secrets = {

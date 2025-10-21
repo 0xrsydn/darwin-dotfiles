@@ -28,7 +28,9 @@
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
 
-      systems = [ "aarch64-darwin" "x86_64-darwin" ];
+      darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
+      linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
+      systems = darwinSystems ++ linuxSystems;
 
       forEachSystem = f: genAttrs systems (system: f system);
 
@@ -46,7 +48,8 @@
           config.allowUnfree = true;
         };
 
-      sharedModules = [ ./modules/darwin/system.nix ];
+      sharedDarwinModules = [ ./modules/darwin/system.nix ];
+      sharedNixosModules = [ ./modules/nixos/system.nix ];
 
       user = "rasyidanakbar";
 
@@ -56,13 +59,11 @@
         in darwin.lib.darwinSystem {
           inherit system pkgs;
           specialArgs = { inherit inputs overlaysList user; };
-          modules = sharedModules ++ extraModules ++ [
+          modules = sharedDarwinModules ++ extraModules ++ [
             home-manager.darwinModules.home-manager
             {
               nix.registry.self.flake = self;
               nixpkgs.overlays = overlaysList;
-
-              users.users.${user}.home = "/Users/${user}";
 
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
@@ -72,8 +73,28 @@
             }
           ];
         };
+      mkNixos = { system ? "x86_64-linux", extraModules ? [ ]
+        , homeFile ? ./modules/nixos/home/default.nix }:
+        let pkgs = mkPkgs system;
+        in lib.nixosSystem {
+          inherit system pkgs;
+          specialArgs = { inherit inputs overlaysList user; };
+          modules = sharedNixosModules ++ extraModules ++ [
+            home-manager.nixosModules.home-manager
+            {
+              nix.registry.self.flake = self;
+              nixpkgs.overlays = overlaysList;
+
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit inputs user; };
+              home-manager.users.${user} = import homeFile;
+            }
+          ];
+        };
     in {
       darwinConfigurations = { macbook-pro = mkDarwin { }; };
+      nixosConfigurations = { };
 
       devShells = forEachSystem (system:
         let

@@ -25,7 +25,10 @@
 
   environment.shells = [ pkgs.nushell ];
 
-  users.users.${user}.shell = pkgs.nushell;
+  users.users.${user} = {
+    home = lib.mkDefault "/Users/${user}";
+    shell = pkgs.nushell;
+  };
 
   system = {
     primaryUser = user;

@@ -1,8 +1,5 @@
 { config, pkgs, lib, ... }:
 let
-  themeName = "capr4n.omp.json";
-  themeSource = ./oh-my-posh/capr4n.omp.json;
-  themeConfigPath = "${config.xdg.configHome}/oh-my-posh/${themeName}";
   profileBin = "${config.home.profileDirectory}/bin";
   systemBin = "/run/current-system/sw/bin";
   defaultBin = "/nix/var/nix/profiles/default/bin";
@@ -28,6 +25,8 @@ let
   formatPathList = paths:
     lib.concatMapStrings (path: "      \"${path}\"\n") paths;
 in {
+  imports = [ ./oh-my-posh ];
+
   programs.nushell.enable = lib.mkDefault true;
 
   programs.nushell.extraConfig = ''
@@ -115,11 +114,5 @@ in {
         load-secret "firecrawl-api-key" "FIRECRAWL_API_KEY"
   '';
 
-  programs.oh-my-posh = {
-    enable = lib.mkDefault true;
-    enableNushellIntegration = lib.mkDefault true;
-    configFile = themeConfigPath;
-  };
-
-  xdg.configFile."oh-my-posh/${themeName}".source = themeSource;
+  programs.oh-my-posh.enableNushellIntegration = lib.mkDefault true;
 }
