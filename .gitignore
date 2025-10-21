@@ -2,6 +2,8 @@
 .lib
 .config
 .env
+.mcp.json
+.claude
 # Personal secrets
 .config/zsh/secrets.zsh
 
