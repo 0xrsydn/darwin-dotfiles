@@ -2,11 +2,7 @@
 
 pkgs.mkShell {
   name = "default";
-  packages = with pkgs; [
-    git
-    nixfmt-classic
-    uv
-  ];
+  packages = with pkgs; [ git nixfmt-classic uv ];
   shellHook = ''
     export DOTFILES_ROOT="$PWD"
     export XDG_CACHE_HOME="$DOTFILES_ROOT/.cache"
