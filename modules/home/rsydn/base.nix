@@ -34,6 +34,7 @@
       lazygit
       lorri
       nil
+      nixd
       pandoc
       ripgrep
       tmux
