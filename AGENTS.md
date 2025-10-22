@@ -1,33 +1,35 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `flake.nix`/`flake.lock` drive the entire nix-darwin + Home Manager configuration; `macbook-pro` is the only declared host.
-- `modules/darwin/` contains device-level modules (`system.nix`, `homebrew.nix`, `devtools.nix`). Keep OS services and hardware toggles here.
-- `modules/home/rsydn/` provides the Home Manager profile. Subdirectories `programs/`, `shell/`, and `devtools/` house user apps, Nushell/theming, and language/AI bundles.
-- Secrets belong under `secrets/*.sops.yaml`; decrypted payloads are emitted into `~/.config/secrets/` at activation. The cached build outputs in `.cache/` stay untracked.
+- `flake.nix` defines shared helpers plus Darwin (`macbook-pro`) and NixOS (`dev-vm`) hosts; `flake.lock` pins inputs.
+- `modules/darwin/` holds macOS system modules; `modules/nixos/` mirrors that for Linux (base `system.nix` imports `users.nix`, `network.nix`, `ssh.nix`, `containerization.nix`).
+- Host overlays live under `modules/nixos/hosts/`—e.g., `dev-vm.nix` adds virtio tooling and host-only packages.
+- User configuration is in `modules/home/rsydn/` with subdirectories for `programs/`, `shell/`, and `devtools/`; Darwin layers on `shell/nushell.nix` while Linux sticks to `shell/fish.nix`.
+- Secrets stay in `secrets/*.sops.yaml`; decrypted files appear under `~/.config/secrets/` at activation and must not be committed.
 
 ## Build, Test & Development Commands
-- `nix develop` — enter the flake dev shell with `git`, `nixfmt-classic`, and Age/SOPS helpers.
-- `nix fmt` — format every Nix file via the flake’s formatter; run after edits to modules or overlays.
-- `XDG_CACHE_HOME=$PWD/.cache nix flake check` — lint and type-check all modules without touching the global cache.
-- `darwin-rebuild --dry-run --flake .#macbook-pro` — validate activation steps and surface breaking changes.
-- `darwin-rebuild switch --flake .#macbook-pro` — apply the configuration once checks succeed.
+- `nix develop` – enter the flake dev shell with `git`, `nixfmt-classic`, SOPS/Age helpers.
+- `nix fmt` – format all Nix sources; run before commits touching modules or overlays.
+- `XDG_CACHE_HOME=$PWD/.cache nix flake check` – lint and eval every host without polluting the global cache.
+- `darwin-rebuild --dry-run --flake .#macbook-pro` / `darwin-rebuild switch --flake .#macbook-pro` – preview or apply macOS changes.
+- `nix build .#nixosConfigurations.dev-vm.config.system.build.toplevel` – make sure the Linux VM evaluates and builds before switching.
 
 ## Coding Style & Naming Conventions
-- Nix sources use two-space indents, trailing commas, and lower-kebab filenames (`shell/nushell.nix`).
-- Custom options live in the `rsydn.*` namespace (`rsydn.aiTools`, `rsydn.devTools`). Extend existing option sets instead of scattering ad-hoc attributes.
-- Prefer declarative package toggles over ad-hoc installers; Nushell, AI CLIs, and prompts are all Home Manager managed.
+- Use two-space indentation, trailing commas, and lower-kebab filenames (`shell/nushell.nix`).
+- Declare custom options under the `rsydn.*` namespace (e.g., `rsydn.containerization`, `rsydn.devTools`).
+- Prefer declarative package toggles and shared modules over ad-hoc host tweaks; keep host-specific overrides in `hosts/`.
 
 ## Testing Guidelines
-- Run `nix flake check` before every PR or local switch; treat failures as blockers.
-- Capture key outputs (e.g., `darwin-rebuild --dry-run`) for substantial module changes and share in review threads.
-- If you add reusable logic, colocate regression tests beside the module using the `<option-name>.nix` pattern (e.g., `rsydn-ai-tools.nix`).
+- Treat `nix flake check` as mandatory before PRs or `switch` operations.
+- Capture key activation output: `darwin-rebuild --dry-run` for macOS, `nix build .#nixosConfigurations.dev-vm…` for the VM, and attach summaries in reviews.
+- Co-locate regression tests with the option/module they guard using the `<option-name>.nix` pattern when practical.
 
 ## Commit & Pull Request Guidelines
-- Use short, imperative commit subjects (`add nushell env path hook`); keep each commit scoped to one logical change.
-- Document validation steps in the PR body (`nix flake check`, dry-run logs) and reference related issues or TODOs.
-- Include screenshots or terminal snippets when modifying shells, prompts, or visual tooling to show the resulting UI.
+- Write short, imperative subjects (`add dev-vm virtualization module`); keep each commit scoped to one change.
+- In PRs, list validation steps (`nix flake check`, host-specific builds) and link related issues or TODOs.
+- Provide screenshots or terminal snippets when altering shell prompts, Tailscale/SSH flows, or other UX-facing pieces.
 
 ## Security & Configuration Tips
-- Age keys live at `~/.config/sops/age/keys.txt`; Home Manager generates them if absent. Do not commit decrypted files from `~/.config/secrets/`.
-- To access a secret, read the managed file (e.g., `open ~/.config/secrets/openai-api-key | str trim`) and scope the value with `with-env` instead of exporting it globally.
+- Age keys live at `~/.config/sops/age/keys.txt`; regenerate via Home Manager if missing.
+- Access secrets by reading the managed files (`open ~/.config/secrets/openai-api-key | str trim`) and scope them with `with-env` instead of exporting globally.
+- Tailscale and OpenSSH run by default on Linux; rotate auth keys regularly and audit `services.tailscale.extraUpFlags` when enabling exit nodes.

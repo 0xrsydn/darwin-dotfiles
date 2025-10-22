@@ -1,10 +1,12 @@
-{ config, pkgs, lib, user, ... }: {
-  users.users.${user} = {
-    isNormalUser = lib.mkDefault true;
-    extraGroups = lib.mkDefault [ "wheel" "networkmanager" ];
-    home = lib.mkDefault "/home/${user}";
-    shell = lib.mkDefault pkgs.fish;
-  };
+{ lib, ... }: {
+  imports = [ ./users.nix ./network.nix ./ssh.nix ./containerization.nix ];
 
-  programs.fish.enable = lib.mkDefault true;
+  nix = {
+    settings.auto-optimise-store = lib.mkDefault true;
+    optimise.automatic = lib.mkDefault true;
+    gc = {
+      automatic = lib.mkDefault true;
+      dates = lib.mkDefault "weekly";
+    };
+  };
 }

@@ -11,8 +11,6 @@
     ./secrets.nix
   ];
 
-  programs.nushell.enable = true;
-
   programs.git.enable = true;
 
   home.packages = with pkgs; [ docker docker-compose ];
@@ -39,6 +37,7 @@
       ripgrep
       tmux
       tree
+      curl
       vim
       wget
       yq

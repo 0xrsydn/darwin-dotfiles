@@ -94,7 +94,12 @@
         };
     in {
       darwinConfigurations = { macbook-pro = mkDarwin { }; };
-      nixosConfigurations = { };
+      nixosConfigurations = {
+        dev-vm = mkNixos {
+          system = "x86_64-linux";
+          extraModules = [ ./modules/nixos/hosts/dev-vm.nix ];
+        };
+      };
 
       devShells = forEachSystem (system:
         let
