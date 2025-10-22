@@ -33,6 +33,7 @@
       lazydocker
       lazygit
       lorri
+      nil
       pandoc
       ripgrep
       tmux
