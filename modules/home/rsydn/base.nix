@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }: {
+{ pkgs, lib, ... }: {
   home.stateVersion = "24.05";
 
   imports = [
@@ -30,6 +30,7 @@
       htop
       jetbrains-mono
       jq
+      jujutsu
       lazydocker
       lazygit
       lorri
