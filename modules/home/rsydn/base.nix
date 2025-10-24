@@ -1,5 +1,6 @@
 { pkgs, lib, ... }: {
   imports = [
+    ./programs/fastfetch.nix
     ./programs/helix.nix
     ./programs/neovim.nix
     ./shell/tmux.nix
