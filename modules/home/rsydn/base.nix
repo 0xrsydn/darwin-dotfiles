@@ -1,5 +1,4 @@
-{ pkgs, lib, ... }:
-{
+{ pkgs, lib, ... }: {
   imports = [
     ./programs/helix.nix
     ./programs/neovim.nix
@@ -20,10 +19,7 @@
 
     programs.git.enable = true;
 
-    home.packages = with pkgs; [
-      docker
-      docker-compose
-    ];
+    home.packages = with pkgs; [ docker docker-compose ];
 
     rsydn.aiTools = {
       enable = lib.mkDefault true;
