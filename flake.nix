@@ -17,10 +17,12 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
   };
 
   outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools
-    , sops-nix, ... }:
+    , sops-nix, chaotic, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
@@ -31,7 +33,7 @@
 
       forEachSystem = f: genAttrs systems (system: f system);
 
-      overlaysList = [ ghostty.overlays.default ];
+      overlaysList = [ ghostty.overlays.default chaotic.overlays.default ];
 
       mkPkgs = system:
         import nixpkgs {
@@ -41,12 +43,13 @@
         };
 
       sharedDarwinModules = [ ./modules/darwin/system.nix ];
-      sharedNixosModules = [ ./modules/nixos/system.nix ];
+      sharedNixosModules =
+        [ ./modules/nixos/system.nix chaotic.nixosModules.default ];
 
       user = "rasyidanakbar";
 
       mkDarwin = { system ? "aarch64-darwin", extraModules ? [ ]
-        , homeFile ? ./modules/darwin/home/default.nix }:
+        , homeFile ? ./modules/darwin/home/default.nix, }:
         let pkgs = mkPkgs system;
         in darwin.lib.darwinSystem {
           inherit system pkgs;
@@ -66,7 +69,7 @@
           ];
         };
       mkNixos = { system ? "x86_64-linux", extraModules ? [ ]
-        , homeFile ? ./modules/nixos/home/default.nix }:
+        , homeFile ? ./modules/nixos/home/default.nix, }:
         let pkgs = mkPkgs system;
         in lib.nixosSystem {
           inherit system pkgs;
@@ -90,6 +93,11 @@
         dev-vm = mkNixos {
           system = "x86_64-linux";
           extraModules = [ ./modules/nixos/hosts/dev-vm.nix ];
+        };
+        desktop = mkNixos {
+          system = "x86_64-linux";
+          extraModules = [ ./modules/nixos/hosts/desktop.nix ];
+          homeFile = ./modules/nixos/home/desktop.nix;
         };
       };
 
