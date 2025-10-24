@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   # Example gaming desktop configuration
   # Copy and modify for your actual hardware
 

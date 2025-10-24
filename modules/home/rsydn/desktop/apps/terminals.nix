@@ -1,5 +1,4 @@
-{ pkgs, lib, ... }:
-{
+{ pkgs, lib, ... }: {
   # Terminal emulators
 
   # Kitty - GPU-accelerated terminal

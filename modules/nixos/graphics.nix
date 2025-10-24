@@ -1,5 +1,4 @@
-{ lib, pkgs, ... }:
-{
+{ lib, pkgs, ... }: {
   # Hardware acceleration (OpenGL/Vulkan)
   hardware.graphics = {
     enable = lib.mkDefault true;

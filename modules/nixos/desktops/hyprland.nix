@@ -1,5 +1,4 @@
-{ pkgs, lib, ... }:
-{
+{ pkgs, lib, ... }: {
   imports = [ ./base.nix ];
 
   # Hyprland - Dynamic tiling Wayland compositor

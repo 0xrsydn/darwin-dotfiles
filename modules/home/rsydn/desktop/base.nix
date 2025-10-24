@@ -1,5 +1,4 @@
-{ lib, pkgs, config, ... }:
-{
+{ lib, pkgs, config, ... }: {
   # Base desktop user configuration
 
   # GTK theming
@@ -28,9 +27,10 @@
   };
 
   # Basic GUI packages
-  home.packages = with pkgs; [
-    # Add common desktop apps here
-    # firefox
-    # vscodium
-  ];
+  home.packages = with pkgs;
+    [
+      # Add common desktop apps here
+      # firefox
+      # vscodium
+    ];
 }

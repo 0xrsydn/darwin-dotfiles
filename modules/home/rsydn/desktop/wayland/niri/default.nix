@@ -1,14 +1,9 @@
-{ lib, pkgs, ... }:
-{
+{ lib, pkgs, ... }: {
   # Niri user configuration
   programs.niri = {
     settings = {
       # Minimal config - expand as needed
-      input = {
-        keyboard.xkb = {
-          layout = "us";
-        };
-      };
+      input = { keyboard.xkb = { layout = "us"; }; };
 
       # Example keybinds
       binds = {
@@ -31,9 +26,10 @@
   };
 
   # Niri utilities
-  home.packages = with pkgs; [
-    # fuzzel     # Launcher (recommended for niri)
-    # waybar     # Status bar
-    # dunst      # Notifications
-  ];
+  home.packages = with pkgs;
+    [
+      # fuzzel     # Launcher (recommended for niri)
+      # waybar     # Status bar
+      # dunst      # Notifications
+    ];
 }

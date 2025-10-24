@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   # Example desktop development workstation configuration
   # Copy and modify for your actual hardware
 
@@ -31,11 +30,12 @@
   # hardware.bluetooth.enable = true;
 
   # Development-specific packages
-  environment.systemPackages = with pkgs; [
-    # Add desktop dev tools here
-    # docker-compose
-    # k9s
-  ];
+  environment.systemPackages = with pkgs;
+    [
+      # Add desktop dev tools here
+      # docker-compose
+      # k9s
+    ];
 
   # This value determines the NixOS release compatibility
   system.stateVersion = "24.05";

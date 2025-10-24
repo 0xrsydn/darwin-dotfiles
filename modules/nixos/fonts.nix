@@ -1,17 +1,10 @@
-{ lib, pkgs, ... }:
-{
+{ lib, pkgs, ... }: {
   fonts = {
     enableDefaultPackages = lib.mkDefault true;
 
     packages = with pkgs; [
       # Nerd Fonts for terminal icons
-      (nerdfonts.override {
-        fonts = [
-          "FiraCode"
-          "JetBrainsMono"
-          "Iosevka"
-        ];
-      })
+      (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" "Iosevka" ]; })
 
       # Core fonts
       noto-fonts
@@ -27,10 +20,7 @@
     fontconfig = {
       enable = lib.mkDefault true;
       defaultFonts = {
-        monospace = [
-          "JetBrains Mono"
-          "FiraCode Nerd Font"
-        ];
+        monospace = [ "JetBrains Mono" "FiraCode Nerd Font" ];
         sansSerif = [ "Noto Sans" ];
         serif = [ "Noto Serif" ];
         emoji = [ "Noto Color Emoji" ];

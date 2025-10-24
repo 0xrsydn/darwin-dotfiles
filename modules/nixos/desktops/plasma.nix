@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   imports = [ ./base.nix ];
 
   # KDE Plasma 6

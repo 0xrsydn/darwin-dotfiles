@@ -1,5 +1,4 @@
-{ ... }:
-{
+{ ... }: {
   # Desktop user configuration (for Hyprland/Niri setups)
 
   imports = [

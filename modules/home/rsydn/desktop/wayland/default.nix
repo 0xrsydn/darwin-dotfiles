@@ -1,5 +1,4 @@
-{ ... }:
-{
+{ ... }: {
   # Wayland compositor configurations
   # Import the compositor you want to use
 

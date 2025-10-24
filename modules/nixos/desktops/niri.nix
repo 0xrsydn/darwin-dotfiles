@@ -1,11 +1,8 @@
-{ pkgs, lib, ... }:
-{
+{ pkgs, lib, ... }: {
   imports = [ ./base.nix ];
 
   # Niri - Scrollable-tiling Wayland compositor
-  programs.niri = {
-    enable = lib.mkDefault true;
-  };
+  programs.niri = { enable = lib.mkDefault true; };
 
   # Wayland-specific portal
   xdg.portal.wlr.enable = lib.mkDefault true;

@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   # Gaming user configuration (for KDE Plasma)
 
   imports = [
@@ -12,17 +11,18 @@
   ];
 
   # Gaming-specific user packages
-  home.packages = with pkgs; [
-    # Communication
-    # discord
-    # teamspeak_client
+  home.packages = with pkgs;
+    [
+      # Communication
+      # discord
+      # teamspeak_client
 
-    # Streaming/Recording
-    # obs-studio
+      # Streaming/Recording
+      # obs-studio
 
-    # Media
-    # spotify
-  ];
+      # Media
+      # spotify
+    ];
 
   # KDE-specific settings (optional)
   # programs.plasma = {

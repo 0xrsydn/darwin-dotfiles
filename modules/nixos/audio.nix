@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   # Modern audio stack - PipeWire replaces PulseAudio + JACK + ALSA
   services.pipewire = {
     enable = lib.mkDefault true;

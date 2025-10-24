@@ -1,11 +1,11 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   # Browser configurations
-  home.packages = with pkgs; [
-    firefox
-    # chromium
-    # brave
-  ];
+  home.packages = with pkgs;
+    [
+      firefox
+      # chromium
+      # brave
+    ];
 
   # Firefox config (expand as needed)
   # programs.firefox = {

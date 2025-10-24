@@ -1,5 +1,4 @@
-{ lib, pkgs, ... }:
-{
+{ lib, pkgs, ... }: {
   # Hyprland user configuration
   wayland.windowManager.hyprland = {
     enable = lib.mkDefault true;
@@ -31,16 +30,15 @@
         border_size = 2;
       };
 
-      decoration = {
-        rounding = 8;
-      };
+      decoration = { rounding = 8; };
     };
   };
 
   # Hyprland utilities
-  home.packages = with pkgs; [
-    # wofi       # Launcher
-    # waybar     # Status bar
-    # dunst      # Notifications
-  ];
+  home.packages = with pkgs;
+    [
+      # wofi       # Launcher
+      # waybar     # Status bar
+      # dunst      # Notifications
+    ];
 }
