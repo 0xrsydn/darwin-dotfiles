@@ -93,11 +93,14 @@
         dev-vm = mkNixos {
           system = "x86_64-linux";
           extraModules = [ ./modules/nixos/hosts/dev-vm.nix ];
+          # Uses default homeFile: ./modules/nixos/home/default.nix
         };
         desktop = mkNixos {
           system = "x86_64-linux";
           extraModules = [ ./modules/nixos/hosts/desktop.nix ];
-          homeFile = ./modules/nixos/home/desktop.nix;
+          # Home Manager configs are imported directly in desktop modules
+          # No homeFile needed - using inline home-manager.users.${user}
+          homeFile = ./modules/nixos/home/default.nix;
         };
       };
 
