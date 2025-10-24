@@ -107,13 +107,6 @@ nix develop .#rust
 - rustfmt
 - clippy
 
-### `zig-nightly` (optional)
-Zig nightly development (only available if zig overlay is working).
-
-```bash
-nix develop .#zig-nightly
-```
-
 ## Usage from Any Directory
 
 ### Option 1: Direct Path Reference

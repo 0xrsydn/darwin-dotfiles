@@ -212,8 +212,7 @@
         "home-manager": "home-manager",
         "nix-ai-tools": "nix-ai-tools",
         "nixpkgs": "nixpkgs_2",
-        "sops-nix": "sops-nix",
-        "zig-overlay": "zig-overlay"
+        "sops-nix": "sops-nix"
       }
     },
     "sops-nix": {
@@ -323,28 +322,6 @@
         "owner": "mitchellh",
         "repo": "zig-overlay",
         "rev": "365085b6652259753b598d43b723858184980bbe",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mitchellh",
-        "repo": "zig-overlay",
-        "type": "github"
-      }
-    },
-    "zig-overlay": {
-      "inputs": {
-        "flake-compat": "flake-compat_2",
-        "flake-utils": "flake-utils_2",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1760747435,
-        "narHash": "sha256-wNB/W3x+or4mdNxFPNOH5/WFckNpKgFRZk7OnOsLtm0=",
-        "owner": "mitchellh",
-        "repo": "zig-overlay",
-        "rev": "d0f239b887b1ac736c0f3dde91bf5bf2ecf3a420",
         "type": "github"
       },
       "original": {
