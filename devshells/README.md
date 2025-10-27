@@ -34,37 +34,35 @@ nix develop .#python-uv
 - Ruff (linter/formatter)
 - Pyright (type checker)
 
-### `ml-ai`
-Machine Learning and AI development with HuggingFace model management.
+### `ai-notebook`
+Notebook-focused ML/AI environment with HuggingFace tooling and JupyterLab.
 
 ```bash
-nix develop .#ml-ai
+nix develop .#ai-notebook
 ```
 
 **Includes:**
-- Python 3.12 with huggingface-hub
-- `huggingface-cli` for downloading models
-- UV for package management
-- Git LFS for large files
-- Ruff and Pyright
+- Python 3.12 with JupyterLab, NumPy/Pandas/SciPy stack
+- HuggingFace `transformers`, `datasets`, `accelerate`, `tokenizers`
+- Vision tooling: OpenCV, scikit-image, Pillow, albumentations, Altair/Plotly
+- Optional CPU PyTorch (Linux hosts) plus torchvision/torchaudio
+- UV, Ruff, Pyright, Git LFS
 
-**Model cache:** `~/.cache/huggingface` (persistent across projects)
+**HuggingFace caches:**
+- Models: `~/.cache/huggingface/hub`
+- Transformers: `~/.cache/huggingface/transformers`
 
 **Example usage:**
 ```bash
-# Download a TTS model
-huggingface-cli download facebook/mms-tts-eng
+# Launch JupyterLab with AI helpers
+jupyter lab
 
-# Download a small LLM
+# Download a model or dataset
 huggingface-cli download meta-llama/Llama-3.2-1B
+python -c "from datasets import load_dataset; load_dataset('ag_news')"
 
-# Download specific files only
-huggingface-cli download openai/whisper-large-v3 --include "*.json" "*.safetensors"
-
-# Use in your project
-uv init my-ml-project
-cd my-ml-project
-uv add transformers torch
+# Fine-tune with Accelerate
+python -m accelerate.commands.launch train.py
 ```
 
 ### `go`
@@ -114,7 +112,7 @@ Use the full path to your dotfiles:
 
 ```bash
 cd ~/my-project
-nix develop ~/Development/dotfiles#ml-ai
+nix develop ~/Development/dotfiles#ai-notebook
 ```
 
 ### Option 2: Flake Registry Alias (Recommended)
@@ -130,7 +128,7 @@ nix registry list | grep dotfiles
 **Then from anywhere:**
 ```bash
 cd ~/any-project
-nix develop dotfiles#ml-ai
+nix develop dotfiles#ai-notebook
 ```
 
 Benefits: Shorter commands, cleaner paths, easy to remember!
@@ -145,14 +143,14 @@ nix registry add dotfiles ~/Development/dotfiles
 
 # In each project:
 cd ~/my-ml-project
-echo "use flake dotfiles#ml-ai" > .envrc
+echo "use flake dotfiles#ai-notebook" > .envrc
 direnv allow
 ```
 
 **Alternative: Without registry (using full path):**
 ```bash
 cd ~/my-ml-project
-echo "use flake ~/Development/dotfiles#ml-ai" > .envrc
+echo "use flake ~/Development/dotfiles#ai-notebook" > .envrc
 direnv allow
 ```
 
@@ -172,7 +170,7 @@ Create a `flake.nix` in your project that imports the shell:
     let
       system = "aarch64-darwin";
     in {
-      devShells.${system}.default = dotfiles.devShells.${system}.ml-ai;
+      devShells.${system}.default = dotfiles.devShells.${system}.ai-notebook;
     };
 }
 ```
@@ -187,9 +185,9 @@ nix develop
 
 | Method | Command | Pros |
 |--------|---------|------|
-| Direct path | `nix develop ~/Development/dotfiles#ml-ai` | Simple, no setup |
-| Registry | `nix develop dotfiles#ml-ai` | Clean, short commands |
-| direnv + registry | `echo "use flake dotfiles#ml-ai" > .envrc` | Auto-loads, clean |
+| Direct path | `nix develop ~/Development/dotfiles#ai-notebook` | Simple, no setup |
+| Registry | `nix develop dotfiles#ai-notebook` | Clean, short commands |
+| direnv + registry | `echo "use flake dotfiles#ai-notebook" > .envrc` | Auto-loads, clean |
 | Project flake | `nix develop` | Shareable, version-controlled |
 
 ## Adding New Shells
