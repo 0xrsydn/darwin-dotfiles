@@ -26,6 +26,8 @@ let
   formatPathList = paths:
     lib.concatMapStrings (path: "      \"${path}\"\n") paths;
 in {
+  imports = [ ./starship ];
+
   programs.nushell.enable = lib.mkDefault true;
 
   programs.nushell.extraConfig = ''
