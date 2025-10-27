@@ -121,7 +121,8 @@
         in {
           default = importShell "default";
           python-uv = importShell "python-uv";
-          ml-ai = importShell "ml-ai";
+          ai-notebook = importShell "ai-notebook";
+          jupyter-notebook = importShell "jupyter-notebook";
           go = importShell "go";
           web-bun = importShell "web-bun";
           rust = importShell "rust";
