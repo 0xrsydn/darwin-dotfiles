@@ -1,12 +1,10 @@
 { lib, pkgs, ... }:
 let
-  hardwareConfigPath = builtins.toString ./.
-    + "/../desktops/hardware-configuration.nix";
-  hardwareModule = if builtins.pathExists hardwareConfigPath then
-    import hardwareConfigPath
-  else
-    (_: { });
-in {
+  hardwareConfigPath = builtins.toString ./. + "/../desktops/hardware-configuration.nix";
+  hardwareModule =
+    if builtins.pathExists hardwareConfigPath then import hardwareConfigPath else (_: { });
+in
+{
   # Unified desktop configuration for gaming and development
   # Includes both KDE Plasma and Hyprland - switch at login screen
 
@@ -14,6 +12,10 @@ in {
   imports = [
     # Hardware
     hardwareModule
+
+    # Audio & Graphics
+    ../audio.nix
+    ../graphics.nix
 
     # Desktop Environments
     ../desktops/plasma.nix # KDE Plasma (for gaming)
