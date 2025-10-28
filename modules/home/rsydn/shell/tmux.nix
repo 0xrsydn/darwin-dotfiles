@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   programs.tmux = {
     enable = lib.mkDefault true;
     clock24 = true;
@@ -21,16 +21,19 @@
       set -s extended-keys on
       set -as terminal-features 'xterm-ghostty:extkeys'
       set-option -g status-style "bg=#282a36 fg=#f8f8f2"
-      set -g status-interval 5
-      setw -g automatic-rename on
-      set -g renumber-windows on
-      bind r source-file ~/.tmux.conf \; display-message "tmux reloaded"
-      bind | split-window -h
+        set -g status-interval 5
+        setw -g automatic-rename on
+        set -g renumber-windows on
+        bind r source-file ~/.tmux.conf \; display-message "tmux reloaded"
+        bind | split-window -h
       bind - split-window -v
       unbind '"'
       unbind %
       set -g display-panes-time 1500
       bind k send-keys -R \; send-keys C-l \; clear-history
+      # Ensure tmux panes spawn login nu so Starship integration runs
+      set -g default-shell "${config.home.profileDirectory}/bin/nu"
+      set -g default-command "${config.home.profileDirectory}/bin/nu --login"
     '';
   };
 }

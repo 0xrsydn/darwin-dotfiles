@@ -1,7 +1,7 @@
 -- Declare language servers provided via Nix so LazyVim skips Mason installs.
 return {
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       opts.ensure_installed = {}
     end,
