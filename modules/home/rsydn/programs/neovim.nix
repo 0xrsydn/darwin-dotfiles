@@ -10,16 +10,6 @@
     withRuby = true;
 
     extraPackages = with pkgs; [
-      # LSP servers installed via Nix
-      lua-language-server
-      nil
-      pyright
-      nodePackages.typescript
-      nodePackages.typescript-language-server
-      rust-analyzer
-      gopls
-      clang-tools
-
       # Formatters
       stylua
       nixfmt

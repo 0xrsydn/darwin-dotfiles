@@ -1,3 +1,9 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
+-- Essential keymaps (minimal improvements over default Vim)
+local keymap = vim.keymap
+
+-- Clear search highlight with <esc>
+keymap.set("n", "<esc>", "<cmd>noh<cr>", { desc = "Clear search highlight" })
+
+-- Better indenting (stay in visual mode)
+keymap.set("v", "<", "<gv")
+keymap.set("v", ">", ">gv")
