@@ -1,70 +1,106 @@
--- Enable language servers defined in nvim-lspconfig using the Nvim 0.11 API.
+-- LSP configuration using Nix-managed servers
 return {
-  {
-    "mason-org/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      local ensure = {
-        "clangd",
-        "gopls",
-        "lua-language-server",
-        "nil",
-        "pyright",
-        "rust-analyzer",
-        "typescript-language-server",
-      }
-      for _, tool in ipairs(ensure) do
-        if not vim.tbl_contains(opts.ensure_installed, tool) then
-          table.insert(opts.ensure_installed, tool)
-        end
-      end
-    end,
-  },
+  -- Disable Mason plugins (we use Nix-managed servers instead)
+  { "mason-org/mason.nvim", enabled = false },
+  { "mason-org/mason-lspconfig.nvim", enabled = false },
+  { "jay-babu/mason-null-ls.nvim", enabled = false },
+  { "jay-babu/mason-nvim-dap.nvim", enabled = false },
+
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
-    opts = function(_, opts)
-      opts.servers = vim.tbl_deep_extend(
-        "force",
-        {
-          lua_ls = {},
-          nil_ls = {},
-          pyright = {},
-          ts_ls = {},
-          rust_analyzer = {},
-          gopls = {},
-          clangd = {},
+    dependencies = {
+      "saghen/blink.cmp", -- For LSP capabilities
+    },
+    config = function()
+      -- Get blink.cmp capabilities
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
+
+      -- Common LSP attach keybindings
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+        callback = function(ev)
+          local opts = { buffer = ev.buf }
+          vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+          vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+          vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+          vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+          vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+          vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+          vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+          vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+          vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+          vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+        end,
+      })
+
+      -- Configure each LSP server
+      local lspconfig = require("lspconfig")
+
+      -- Lua
+      lspconfig.lua_ls.setup({
+        capabilities = capabilities,
+        settings = {
+          Lua = {
+            runtime = { version = "LuaJIT" },
+            diagnostics = { globals = { "vim" } },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true),
+              checkThirdParty = false,
+            },
+            telemetry = { enable = false },
+          },
         },
-        opts.servers or {}
-      )
-    end,
-    config = function(_, opts)
-      if vim.fn.has("nvim-0.11") == 0 then
-        vim.notify("nvim-lspconfig requires Neovim 0.11+ for vim.lsp.config", vim.log.levels.ERROR)
-        return
-      end
+      })
 
-      for name, server_opts in pairs(opts.servers or {}) do
-        if server_opts ~= false then
-          local config = type(server_opts) == "table" and vim.deepcopy(server_opts) or {}
+      -- Nix
+      lspconfig.nil_ls.setup({
+        capabilities = capabilities,
+        settings = {
+          ["nil"] = {
+            formatting = { command = { "nixfmt" } },
+          },
+        },
+      })
 
-          if config.enabled ~= false then
-            config.enabled = nil
+      -- Python
+      lspconfig.pyright.setup({
+        capabilities = capabilities,
+        settings = {
+          python = {
+            analysis = {
+              typeCheckingMode = "basic",
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+            },
+          },
+        },
+      })
 
-            -- Integrate blink.cmp capabilities with LSP
-            local has_blink, blink = pcall(require, "blink.cmp")
-            if has_blink then
-              config.capabilities = blink.get_lsp_capabilities(config.capabilities)
-            end
+      -- TypeScript/JavaScript
+      lspconfig.ts_ls.setup({
+        capabilities = capabilities,
+      })
 
-            if next(config) ~= nil then
-              vim.lsp.config(name, config)
-            end
+      -- Rust
+      lspconfig.rust_analyzer.setup({
+        capabilities = capabilities,
+        settings = {
+          ["rust-analyzer"] = {
+            checkOnSave = { command = "clippy" },
+          },
+        },
+      })
 
-            vim.lsp.enable(name)
-          end
-        end
-      end
+      -- Go
+      lspconfig.gopls.setup({
+        capabilities = capabilities,
+      })
+
+      -- C/C++
+      lspconfig.clangd.setup({
+        capabilities = capabilities,
+      })
     end,
   },
 }

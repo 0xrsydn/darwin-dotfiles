@@ -18,6 +18,10 @@
       '';
     }];
     extraConfig = ''
+      # Terminal configuration for proper colors and features
+      set-option -g default-terminal "screen-256color"
+      set-option -ga terminal-overrides ",*256col*:Tc"
+      set-option -g focus-events on
       set -s extended-keys on
       set -as terminal-features 'xterm-ghostty:extkeys'
       set-option -g status-style "bg=#282a36 fg=#f8f8f2"

@@ -1,5 +1,6 @@
 return {
   -- Modern completion engine with built-in fuzzy matching
+  -- Note: Installed via Nix with pre-built Rust backend (see neovim.nix)
   {
     "saghen/blink.cmp",
     dependencies = {
@@ -7,6 +8,7 @@ return {
     },
     version = "1.*",
     event = "InsertEnter",
+    build = nil, -- Disable build since Nix provides pre-compiled version
     opts = {
       -- Keymap preset options: 'default' | 'super-tab' | 'enter'
       keymap = { preset = "default" },
@@ -34,9 +36,11 @@ return {
       },
 
       -- Fuzzy matching implementation
-      -- Options: "prefer_rust_with_warning" | "rust" | "lua"
+      -- Using "rust" since Nix provides pre-built native module
       fuzzy = {
-        implementation = "prefer_rust_with_warning",
+        use_typo_resistance = true,
+        use_frecency = true,
+        use_proximity = true,
       },
     },
     opts_extend = { "sources.default" },

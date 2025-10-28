@@ -17,11 +17,20 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 require("lazy").setup({
   spec = {
+    {
+      "LazyVim/LazyVim",
+      import = "lazyvim.plugins",
+    },
 
     { import = "plugins" },
     { import = "config.lazyvim" },
   },
 
+
+  defaults = {
+    lazy = false,
+    version = false,
+  },
 
   install = { colorscheme = { "gruvbox", "habamax" } },
 

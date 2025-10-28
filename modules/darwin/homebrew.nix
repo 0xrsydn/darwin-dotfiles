@@ -16,7 +16,7 @@ in {
     };
     brews = mkOption {
       type = types.listOf types.str;
-      default = [ "curl" "yt-dlp" "ruff" "libmagic" "ghostscript" "infisical" ];
+      default = [ "curl" "yt-dlp" "ruff" "libmagic" "infisical" ];
       description = "Homebrew formulae to install.";
     };
     casks = mkOption {
@@ -24,6 +24,7 @@ in {
       default = [
         "bitwarden"
         "brave-browser"
+        "firefox"
         "pgadmin4"
         "docker-desktop"
         "spotify"

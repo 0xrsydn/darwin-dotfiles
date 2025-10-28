@@ -2,9 +2,13 @@ return {
   -- gruvbox
   {
     "ellisonleao/gruvbox.nvim",
-    lazy = true,
+    lazy = false,
     priority = 1000,
     opts = {},
+    config = function()
+      require("gruvbox").setup({})
+      vim.cmd.colorscheme("gruvbox")
+    end,
   },
 
   -- tokyonight
@@ -17,7 +21,7 @@ return {
   -- catppuccin
   {
     "catppuccin/nvim",
-    lazy = false,
+    lazy = true,
     priority = 1000,
     name = "catppuccin",
     opts = {

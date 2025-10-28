@@ -15,19 +15,15 @@ return {
     },
     opts = {
       defaults = {
-        mappings = {
-          i = {
-            ["<C-h>"] = "which_key",
-          },
-        },
+        -- Removed which_key mapping - mini.clue handles keybind hints globally
       },
     },
   },
 
   -- Telescope FZF native - Better sorting performance
+  -- Note: Installed via Nix (see neovim.nix) to avoid build issues
   {
     "nvim-telescope/telescope-fzf-native.nvim",
-    build = "make",
     dependencies = { "nvim-telescope/telescope.nvim" },
     config = function()
       require("telescope").load_extension("fzf")

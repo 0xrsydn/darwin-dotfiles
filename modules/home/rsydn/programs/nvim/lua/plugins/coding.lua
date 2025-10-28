@@ -58,11 +58,7 @@ return {
     end,
     config = function(_, opts)
       require("mini.ai").setup(opts)
-      LazyVim.on_load("which-key.nvim", function()
-        vim.schedule(function()
-          LazyVim.mini.ai_whichkey(opts)
-        end)
-      end)
+      -- mini.clue handles text object hints automatically
     end,
   },
 
