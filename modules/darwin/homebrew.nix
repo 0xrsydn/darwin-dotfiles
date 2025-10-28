@@ -23,7 +23,7 @@ in {
       type = types.listOf types.str;
       default = [
         "bitwarden"
-        "chromium"
+        "brave-browser"
         "pgadmin4"
         "docker-desktop"
         "spotify"
