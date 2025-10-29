@@ -14,98 +14,143 @@
       type = "file";
       source = "~/.config/fastfetch/oguri-logo.txt";
       padding = {
-        top = 1;
-        right = 2;
+        top = 2;
+        right = 6;
+        left = 2;
       };
     };
 
-    display = {
-      separator = " → ";
-      color = {
-        keys = "cyan";
-        title = "blue";
-      };
-    };
+    display = { separator = " → "; };
 
     modules = [
+      "break"
+
+      # Hardware Section
       {
-        type = "title";
-        format = "{user-name}@{host-name}";
+        type = "custom";
+        format = "\\u001b[90m┌──────────────────────Hardware──────────────────────┐";
       }
       {
-        type = "separator";
-        string = "─";
-      }
-      {
-        type = "os";
-        key = "OS";
-        keyColor = "cyan";
-      }
-      {
-        type = "kernel";
-        key = "Kernel";
-      }
-      {
-        type = "uptime";
-        key = "Uptime";
-      }
-      {
-        type = "packages";
-        key = "Packages";
-      }
-      {
-        type = "shell";
-        key = "Shell";
-      }
-      {
-        type = "display";
-        key = "Display";
-        compactType = "scaled";
-      }
-      {
-        type = "de";
-        key = "DE";
-      }
-      {
-        type = "wm";
-        key = "WM";
-      }
-      {
-        type = "terminal";
-        key = "Terminal";
-      }
-      {
-        type = "terminalfont";
-        key = "Font";
+        type = "host";
+        key = " PC";
+        keyColor = "green";
       }
       {
         type = "cpu";
-        key = "CPU";
-        temp = true;
+        key = "│ ├";
+        showPeCoreCount = true;
+        keyColor = "green";
       }
       {
         type = "gpu";
-        key = "GPU";
-        temp = true;
+        key = "│ ├";
+        detectionMethod = "pci";
+        keyColor = "green";
       }
       {
-        type = "memory";
-        key = "Memory";
+        type = "display";
+        key = "│ ├󱄄";
+        keyColor = "green";
       }
       {
         type = "disk";
-        key = "Disk (/)";
-        folders = "/";
+        key = "│ ├󰋊";
+        keyColor = "green";
       }
       {
-        type = "separator";
-        string = "─";
+        type = "memory";
+        key = "│ ├";
+        keyColor = "green";
       }
       {
-        type = "colors";
-        paddingLeft = 2;
-        symbol = "circle";
+        type = "swap";
+        key = "└ └󰓡 ";
+        keyColor = "green";
       }
+      {
+        type = "custom";
+        format = "\\u001b[90m└────────────────────────────────────────────────────┘";
+      }
+      "break"
+
+      # Software Section
+      {
+        type = "custom";
+        format = "\\u001b[90m┌──────────────────────Software──────────────────────┐";
+      }
+      {
+        type = "os";
+        key = " OS";
+        keyColor = "blue";
+      }
+      {
+        type = "kernel";
+        key = "│ ├";
+        keyColor = "blue";
+      }
+      {
+        type = "wm";
+        key = "│ ├";
+        keyColor = "blue";
+      }
+      {
+        type = "de";
+        key = " DE";
+        keyColor = "blue";
+      }
+      {
+        type = "terminal";
+        key = "│ ├";
+        keyColor = "blue";
+      }
+      {
+        type = "shell";
+        key = "│ ├";
+        keyColor = "blue";
+      }
+      {
+        type = "packages";
+        key = "│ ├󰏖";
+        keyColor = "blue";
+      }
+      {
+        type = "wmtheme";
+        key = "│ ├󰉼";
+        keyColor = "blue";
+      }
+      {
+        type = "terminalfont";
+        key = "└ └";
+        keyColor = "blue";
+      }
+      {
+        type = "custom";
+        format = "\\u001b[90m└────────────────────────────────────────────────────┘";
+      }
+      "break"
+
+      # Uptime / Age Section
+      {
+        type = "custom";
+        format = "\\u001b[90m┌────────────────────Uptime / Age────────────────────┐";
+      }
+      {
+        type = "command";
+        key = "󱦟 OS Age";
+        keyColor = "magenta";
+        # macOS compatible stat command
+        text = "if [ $(uname) = 'Darwin' ]; then birth=$(stat -f %B /); else birth=$(stat -c %W /); fi; current=$(date +%s); days=$(( (current - birth) / 86400 )); echo \"$days days\"";
+      }
+      {
+        type = "uptime";
+        key = "󱫐 Uptime";
+        keyColor = "magenta";
+      }
+      {
+        type = "custom";
+        format = "\\u001b[90m└────────────────────────────────────────────────────┘";
+      }
+      "break"
     ];
   };
 }
