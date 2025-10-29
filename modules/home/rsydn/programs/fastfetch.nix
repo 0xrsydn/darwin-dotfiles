@@ -6,7 +6,9 @@
   # Copy the custom logo file
   xdg.configFile."fastfetch/oguri-logo.txt".source = ./fastfetch/oguri-logo.txt;
 
-  xdg.configFile."fastfetch/config.jsonc".text = builtins.toJSON {
+  xdg.configFile."fastfetch/config.jsonc".text = let
+    esc = builtins.fromJSON "\"\\u001b\"";
+  in builtins.toJSON {
     "$schema" =
       "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";
 
@@ -33,7 +35,7 @@
       {
         type = "custom";
         format =
-          "\\u001b[32m── Hardware──────────────────────────────────────────\\u001b[0m";
+          "${esc}[32m── Hardware──────────────────────────────────────────${esc}[0m";
       }
       {
         type = "host";
@@ -78,7 +80,7 @@
       {
         type = "custom";
         format =
-          "\\u001b[34m── Software──────────────────────────────────────────\\u001b[0m";
+          "${esc}[34m── Software──────────────────────────────────────────${esc}[0m";
       }
       {
         type = "command";
@@ -133,7 +135,7 @@
       {
         type = "custom";
         format =
-          "\\u001b[35m── Uptime / Age─────────────────────────────────────\\u001b[0m";
+          "${esc}[35m── Uptime / Age─────────────────────────────────────${esc}[0m";
       }
       {
         type = "command";
