@@ -5,6 +5,7 @@
 
     settings = {
       theme = "dracula";
+      background-opacity = 0.75;
       command =
         "shell:${config.home.profileDirectory}/bin/tmux new-session -A -s ghostty";
       keybind = [ "cmd+k=text:\\x01K" ];

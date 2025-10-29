@@ -22,8 +22,8 @@
       set-option -g default-terminal "screen-256color"
       set-option -ga terminal-overrides ",*256col*:Tc"
       set-option -g focus-events on
-      set -s extended-keys on
-      set -as terminal-features 'xterm-ghostty:extkeys'
+      # Avoid CSI-u newline remapping that breaks Neovim pastes
+      set -as terminal-features 'xterm-ghostty:bpaste,clipboard,RGB'
       set-option -g status-style "bg=#282a36 fg=#f8f8f2"
         set -g status-interval 5
         setw -g automatic-rename on
