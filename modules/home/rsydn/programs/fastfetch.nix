@@ -13,6 +13,7 @@
     logo = {
       type = "file";
       source = "~/.config/fastfetch/oguri-logo.txt";
+      color."1" = "green";
       padding = {
         top = 2;
         right = 6;
@@ -20,7 +21,10 @@
       };
     };
 
-    display = { separator = " → "; };
+    display = {
+      separator = " → ";
+      key = { width = 16; };
+    };
 
     modules = [
       "break"
@@ -28,127 +32,121 @@
       # Hardware Section
       {
         type = "custom";
-        format = "\\u001b[90m┌──────────────────────Hardware──────────────────────┐";
+        format =
+          "\\u001b[32m── Hardware──────────────────────────────────────────\\u001b[0m";
       }
       {
         type = "host";
-        key = " PC";
+        key = " PC";
         keyColor = "green";
       }
       {
         type = "cpu";
-        key = "│ ├";
+        key = " CPU";
         showPeCoreCount = true;
         keyColor = "green";
       }
       {
         type = "gpu";
-        key = "│ ├";
+        key = " GPU";
         detectionMethod = "pci";
         keyColor = "green";
       }
       {
         type = "display";
-        key = "│ ├󱄄";
+        key = "󱄄 Display";
         keyColor = "green";
       }
       {
         type = "disk";
-        key = "│ ├󰋊";
+        key = "󰋊 Disk";
         keyColor = "green";
       }
       {
         type = "memory";
-        key = "│ ├";
+        key = " Memory";
         keyColor = "green";
       }
       {
         type = "swap";
-        key = "└ └󰓡 ";
+        key = "󰓡 Swap";
         keyColor = "green";
-      }
-      {
-        type = "custom";
-        format = "\\u001b[90m└────────────────────────────────────────────────────┘";
       }
       "break"
 
       # Software Section
       {
         type = "custom";
-        format = "\\u001b[90m┌──────────────────────Software──────────────────────┐";
+        format =
+          "\\u001b[34m── Software──────────────────────────────────────────\\u001b[0m";
       }
       {
-        type = "os";
-        key = " OS";
+        type = "command";
+        key = "\ue900 OS";
         keyColor = "blue";
+        text = "version=$(omarchy-version); echo \"Omarchy $version\"";
+      }
+      {
+        type = "command";
+        key = "󰘬 Branch";
+        keyColor = "blue";
+        text = "branch=$(omarchy-version-branch); echo \"$branch\"";
       }
       {
         type = "kernel";
-        key = "│ ├";
+        key = " Kernel";
         keyColor = "blue";
       }
       {
         type = "wm";
-        key = "│ ├";
+        key = " WM";
         keyColor = "blue";
       }
       {
         type = "de";
-        key = " DE";
+        key = " DE";
         keyColor = "blue";
       }
       {
         type = "terminal";
-        key = "│ ├";
-        keyColor = "blue";
-      }
-      {
-        type = "shell";
-        key = "│ ├";
+        key = " Terminal";
         keyColor = "blue";
       }
       {
         type = "packages";
-        key = "│ ├󰏖";
+        key = "󰏖 Packages";
         keyColor = "blue";
       }
       {
         type = "wmtheme";
-        key = "│ ├󰉼";
+        key = "󰉼 WM Theme";
         keyColor = "blue";
       }
       {
         type = "terminalfont";
-        key = "└ └";
+        key = " Terminal Font";
         keyColor = "blue";
-      }
-      {
-        type = "custom";
-        format = "\\u001b[90m└────────────────────────────────────────────────────┘";
       }
       "break"
 
       # Uptime / Age Section
       {
         type = "custom";
-        format = "\\u001b[90m┌────────────────────Uptime / Age────────────────────┐";
+        format =
+          "\\u001b[35m── Uptime / Age─────────────────────────────────────\\u001b[0m";
       }
       {
         type = "command";
         key = "󱦟 OS Age";
         keyColor = "magenta";
         # macOS compatible stat command
-        text = "if [ $(uname) = 'Darwin' ]; then birth=$(stat -f %B /); else birth=$(stat -c %W /); fi; current=$(date +%s); days=$(( (current - birth) / 86400 )); echo \"$days days\"";
+        text = ''
+          if [ $(uname) = 'Darwin' ]; then birth=$(stat -f %B /); else birth=$(stat -c %W /); fi; current=$(date +%s); days=$(( (current - birth) / 86400 )); echo "$days days"'';
       }
       {
         type = "uptime";
         key = "󱫐 Uptime";
         keyColor = "magenta";
-      }
-      {
-        type = "custom";
-        format = "\\u001b[90m└────────────────────────────────────────────────────┘";
       }
       "break"
     ];
