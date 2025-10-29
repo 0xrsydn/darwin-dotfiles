@@ -7,7 +7,7 @@ So far, the dotfiles only used for my macOS configuration, maybe in the future I
 ## Core System
 
 - OS: macOS (nix-darwin)
-- Shell: nushell with oh-my-posh 
+- Shell: nushell with starship prompt
 - Terminal: ghostty with dracula theme
 - Package Management: mix of nix and homebrew 
 

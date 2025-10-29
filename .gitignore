@@ -11,5 +11,5 @@
 result
 result-*
 
-# Neovim lazy.nvim lock file
+# Neovim
 modules/home/rsydn/programs/nvim/lazy-lock.json

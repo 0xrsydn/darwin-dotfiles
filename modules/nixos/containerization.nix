@@ -1,15 +1,46 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, user, ... }:
 let
-  inherit (lib) mkEnableOption mkOption mkIf types mkMerge mkAfter optionals;
+  inherit (lib)
+    mkEnableOption mkOption mkIf types mkMerge mkAfter optionals mkDefault;
   cfg = config.rsydn.containerization;
 in {
   options.rsydn.containerization = {
-    docker = {
+    podman = {
       enable = mkOption {
         type = types.bool;
         default = true;
         description =
-          "Enable the Docker daemon with sane defaults for development.";
+          "Enable Podman for rootless containers as the primary engine.";
+      };
+
+      dockerCompat = mkOption {
+        type = types.bool;
+        default = true;
+        description =
+          "Expose the Docker-compatible socket for CLI compatibility.";
+      };
+
+      enableDnsnamePlugin = mkOption {
+        type = types.bool;
+        default = true;
+        description =
+          "Enable the dnsname CNI plugin so containers can resolve each other.";
+      };
+
+      extraPackages = mkOption {
+        type = types.listOf types.package;
+        default = with pkgs; [ podman-compose podman-tui ];
+        description =
+          "Additional Podman-related packages to install system-wide.";
+      };
+    };
+
+    docker = {
+      enable = mkOption {
+        type = types.bool;
+        default = false;
+        description =
+          "Enable the Docker daemon alongside Podman when explicitly requested.";
       };
 
       autoPrune = mkOption {
@@ -58,6 +89,27 @@ in {
   };
 
   config = mkMerge [
+    (mkIf cfg.podman.enable {
+      virtualisation.podman = {
+        enable = true;
+        dockerCompat = cfg.podman.dockerCompat;
+        defaultNetwork.settings.dnsname.enable = cfg.podman.enableDnsnamePlugin;
+      };
+
+      environment.systemPackages = mkAfter cfg.podman.extraPackages;
+
+      users.users.${user} = {
+        subUidRanges = mkDefault [{
+          startUid = 100000;
+          count = 65536;
+        }];
+        subGidRanges = mkDefault [{
+          startGid = 100000;
+          count = 65536;
+        }];
+      };
+    })
+
     (mkIf cfg.docker.enable {
       virtualisation.docker = {
         enable = true;

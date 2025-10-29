@@ -23,11 +23,20 @@
     };
   };
 
-  environment.shells = [ pkgs.nushell ];
+  environment.shells = [ pkgs.nushell "/etc/profiles/per-user/${user}/bin/nu" ];
+
+  # Set XDG Base Directory environment variables globally
+  # This ensures nushell and other XDG-compliant tools use ~/.config
+  environment.variables = {
+    XDG_CONFIG_HOME = "$HOME/.config";
+    XDG_DATA_HOME = "$HOME/.local/share";
+    XDG_CACHE_HOME = "$HOME/.cache";
+  };
 
   users.users.${user} = {
     home = lib.mkDefault "/Users/${user}";
-    shell = pkgs.nushell;
+    # Use the Home Manager nushell which has proper config setup
+    shell = "/etc/profiles/per-user/${user}/bin/nu";
   };
 
   system = {

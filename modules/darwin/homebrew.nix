@@ -16,35 +16,22 @@ in {
     };
     brews = mkOption {
       type = types.listOf types.str;
-      default = [
-        "curl"
-        "yt-dlp"
-        "ruff"
-        "libmagic"
-        "ghostscript"
-        "infisical"
-        "fastfetch"
-        "neofetch"
-      ];
+      default = [ "curl" "yt-dlp" "ruff" "libmagic" "infisical" ];
       description = "Homebrew formulae to install.";
     };
     casks = mkOption {
       type = types.listOf types.str;
       default = [
         "bitwarden"
-        "chromium"
-        "dbngin"
+        "brave-browser"
+        "firefox"
         "pgadmin4"
         "docker-desktop"
-        "iterm2"
         "spotify"
-        "discord"
+        "vesktop"
         "obs"
         "neohtop"
         "orbstack"
-        "visual-studio-code"
-        "google-chrome@canary"
-        "mactex"
         "ghostty"
       ];
       description = "Homebrew casks to install.";

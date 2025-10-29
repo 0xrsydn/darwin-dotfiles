@@ -14,6 +14,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    # Core utilities
     coreutils
     ast-grep
     ripgrep
@@ -21,12 +22,30 @@
     tree
     zip
     unzip
-    htop
     jq
     psmisc # provides killall and friends
     gh
     tree-sitter
+
+    # System monitoring & debugging tools
+    htop # Process viewer
+    iotop # I/O monitoring
+    lsof # List open files
+    strace # System call tracing
+    ltrace # Library call tracing
+    gdb # GNU debugger
+    tcpdump # Network packet analyzer
+    ncdu # Disk usage analyzer
   ];
+
+  services.qemuGuest.enable = true;
+
+  services.openssh.openFirewall = false;
+
+  networking.firewall = {
+    allowedTCPPorts = [ ];
+    interfaces."tailscale0".allowedTCPPorts = [ 22 ];
+  };
 
   imports = [ ../virtualization.nix ];
 }

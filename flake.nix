@@ -18,12 +18,11 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-    zig-overlay.url = "github:mitchellh/zig-overlay";
-    zig-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
   };
 
   outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools
-    , sops-nix, ... }:
+    , sops-nix, chaotic, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
@@ -34,12 +33,7 @@
 
       forEachSystem = f: genAttrs systems (system: f system);
 
-      overlaysList = [ ghostty.overlays.default ];
-
-      zigOverlay = if builtins.hasAttr "zig-overlay" inputs then
-        inputs."zig-overlay"
-      else
-        null;
+      overlaysList = [ ghostty.overlays.default chaotic.overlays.default ];
 
       mkPkgs = system:
         import nixpkgs {
@@ -49,12 +43,13 @@
         };
 
       sharedDarwinModules = [ ./modules/darwin/system.nix ];
-      sharedNixosModules = [ ./modules/nixos/system.nix ];
+      sharedNixosModules =
+        [ ./modules/nixos/system.nix chaotic.nixosModules.default ];
 
       user = "rasyidanakbar";
 
       mkDarwin = { system ? "aarch64-darwin", extraModules ? [ ]
-        , homeFile ? ./modules/darwin/home/default.nix }:
+        , homeFile ? ./modules/darwin/home/default.nix, }:
         let pkgs = mkPkgs system;
         in darwin.lib.darwinSystem {
           inherit system pkgs;
@@ -74,7 +69,7 @@
           ];
         };
       mkNixos = { system ? "x86_64-linux", extraModules ? [ ]
-        , homeFile ? ./modules/nixos/home/default.nix }:
+        , homeFile ? ./modules/nixos/home/default.nix, }:
         let pkgs = mkPkgs system;
         in lib.nixosSystem {
           inherit system pkgs;
@@ -98,6 +93,14 @@
         dev-vm = mkNixos {
           system = "x86_64-linux";
           extraModules = [ ./modules/nixos/hosts/dev-vm.nix ];
+          # Uses default homeFile: ./modules/nixos/home/default.nix
+        };
+        desktop = mkNixos {
+          system = "x86_64-linux";
+          extraModules = [ ./modules/nixos/hosts/desktop.nix ];
+          # Home Manager configs are imported directly in desktop modules
+          # No homeFile needed - using inline home-manager.users.${user}
+          homeFile = ./modules/nixos/home/default.nix;
         };
       };
 
@@ -109,49 +112,8 @@
           else
             pkgs.python3;
 
-          # Zig overlay setup for zig-nightly shell
-          zigPackages =
-            if zigOverlay != null && builtins.hasAttr "packages" zigOverlay then
-              zigOverlay.packages
-            else
-              { };
-
-          zigCandidate =
-            if zigOverlay != null && system == "aarch64-darwin" then
-              lib.attrByPath [ system "master" "zig" ] null zigPackages
-            else
-              null;
-
-          zigCandidateBroken = if zigCandidate != null then
-            if zigCandidate ? meta && zigCandidate.meta ? broken then
-              zigCandidate.meta.broken
-            else
-              false
-          else
-            true;
-
-          zigFallback = pkgs.zig;
-          zigFallbackBroken =
-            if zigFallback ? meta && zigFallback.meta ? broken then
-              zigFallback.meta.broken
-            else
-              false;
-
-          zigPackage =
-            if zigCandidate != null && zigCandidateBroken == false then
-              zigCandidate
-            else if zigFallbackBroken == false then
-              zigFallback
-            else
-              null;
-
-          zlsBroken = if pkgs.zls ? meta && pkgs.zls.meta ? broken then
-            pkgs.zls.meta.broken
-          else
-            false;
-
           # Common arguments passed to all devshell imports
-          shellArgs = { inherit pkgs lib python zigPackage; };
+          shellArgs = { inherit pkgs lib python; };
 
           # Import all devshells from devshells/ directory
           importShell = name: import (./devshells + "/${name}.nix") shellArgs;
@@ -159,12 +121,11 @@
         in {
           default = importShell "default";
           python-uv = importShell "python-uv";
-          ml-ai = importShell "ml-ai";
+          ai-notebook = importShell "ai-notebook";
+          jupyter-notebook = importShell "jupyter-notebook";
           go = importShell "go";
           web-bun = importShell "web-bun";
           rust = importShell "rust";
-        } // lib.optionalAttrs (zigPackage != null && zlsBroken == false) {
-          zig-nightly = importShell "zig-nightly";
         });
 
       formatter = forEachSystem (system: (mkPkgs system).nixfmt-classic);
