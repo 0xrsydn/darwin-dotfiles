@@ -10,3 +10,6 @@
 # Nix build results
 result
 result-*
+
+# Neovim lazy.nvim lock file
+modules/home/rsydn/programs/nvim/lazy-lock.json
