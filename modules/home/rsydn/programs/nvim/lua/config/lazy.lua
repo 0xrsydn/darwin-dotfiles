@@ -23,7 +23,6 @@ require("lazy").setup({
     },
 
     { import = "plugins" },
-    { import = "config.lazyvim" },
   },
 
 
