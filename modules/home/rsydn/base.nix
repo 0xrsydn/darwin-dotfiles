@@ -1,6 +1,6 @@
 { pkgs, lib, ... }: {
   imports = [
-    ./programs/fastfetch.nix
+    ./programs/fastfetch
     ./programs/helix.nix
     ./programs/neovim.nix
     ./shell/tmux.nix
@@ -41,7 +41,6 @@
         jujutsu
         lazydocker
         lazygit
-        lorri
         nil
         nixd
         pandoc

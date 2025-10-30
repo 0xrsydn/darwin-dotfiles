@@ -4,7 +4,7 @@
   home.packages = [ pkgs.fastfetch ];
 
   # Copy the custom logo file
-  xdg.configFile."fastfetch/oguri-logo.txt".source = ./fastfetch/oguri-logo.txt;
+  xdg.configFile."fastfetch/oguri-logo.txt".source = ./oguri-logo.txt;
 
   xdg.configFile."fastfetch/config.jsonc".text =
     let esc = builtins.fromJSON ''"\u001b"'';

@@ -5,6 +5,7 @@
     ../../home/rsydn/shell/nushell.nix
     ./programs/aerospace
     ./programs/ghostty.nix
+    ./programs/sketchybar
   ];
 
   # Darwin-specific secrets configuration
