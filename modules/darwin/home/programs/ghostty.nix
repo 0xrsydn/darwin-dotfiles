@@ -4,36 +4,37 @@
     package = null;
 
     settings = {
-      theme = "dracula";
-      background-opacity = 0.8;
+      theme = "gruvbox";
+      background-opacity = 0.9;
       command =
         "shell:${config.home.profileDirectory}/bin/tmux new-session -A -s ghostty";
       keybind = [ "cmd+k=text:\\x01K" ];
     };
 
-    themes.dracula = {
-      background = "282a36";
-      foreground = "f8f8f2";
-      cursor-color = "f8f8f2";
-      selection-background = "44475a";
-      selection-foreground = "f8f8f2";
+    themes.gruvbox = {
+      background = "282828";
+      foreground = "ebdbb2";
+      cursor-color = "ebdbb2";
+      cursor-text = "282828";
+      selection-background = "ebdbb2";
+      selection-foreground = "282828";
       palette = [
-        "0=#21222c"
-        "1=#ff5555"
-        "2=#50fa7b"
-        "3=#f1fa8c"
-        "4=#bd93f9"
-        "5=#ff79c6"
-        "6=#8be9fd"
-        "7=#f8f8f2"
-        "8=#6272a4"
-        "9=#ff6e6e"
-        "10=#69ff94"
-        "11=#ffffa5"
-        "12=#d6acff"
-        "13=#ff92df"
-        "14=#a4ffff"
-        "15=#ffffff"
+        "0=#282828"
+        "1=#cc241d"
+        "2=#98971a"
+        "3=#d79921"
+        "4=#458588"
+        "5=#b16286"
+        "6=#689d6a"
+        "7=#a89984"
+        "8=#928374"
+        "9=#fb4934"
+        "10=#b8bb26"
+        "11=#fabd2f"
+        "12=#83a598"
+        "13=#d3869b"
+        "14=#8ec07c"
+        "15=#ebdbb2"
       ];
     };
   };

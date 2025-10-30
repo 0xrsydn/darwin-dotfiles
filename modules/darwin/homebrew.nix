@@ -11,7 +11,7 @@ in {
     };
     taps = mkOption {
       type = types.listOf types.str;
-      default = [ ];
+      default = [ "FelixKratz/formulae" ];
       description = "Homebrew taps to add.";
     };
     brews = mkOption {

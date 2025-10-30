@@ -9,13 +9,7 @@
     escapeTime = 0;
     aggressiveResize = true;
     plugins = [{
-      plugin = pkgs.tmuxPlugins.dracula;
-      extraConfig = ''
-        set -g @dracula-pane-border-style "fg=#44475a"
-        set -g @dracula-plugins "cpu-usage battery network-bandwidth time"
-        set -g @dracula-show-empty-plugins off
-        set -g @dracula-refresh-rate 5
-      '';
+      plugin = pkgs.tmuxPlugins.gruvbox;
     }];
     extraConfig = ''
       # Terminal configuration for proper colors and features
@@ -24,8 +18,7 @@
       set-option -g focus-events on
       # Avoid CSI-u newline remapping that breaks Neovim pastes
       set -as terminal-features 'xterm-ghostty:bpaste,clipboard,RGB'
-      set-option -g status-style "bg=#282a36 fg=#f8f8f2"
-        set -g status-interval 5
+      set -g status-interval 5
         setw -g automatic-rename on
         set -g renumber-windows on
         bind r source-file ~/.tmux.conf \; display-message "tmux reloaded"
