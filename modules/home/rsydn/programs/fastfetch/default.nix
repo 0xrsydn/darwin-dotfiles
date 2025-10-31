@@ -83,16 +83,15 @@
             "${esc}[34m── Software──────────────────────────────────────────${esc}[0m";
         }
         {
-          type = "command";
-          key = "ue900 OS";
+          type = "os";
+          key = " OS";
           keyColor = "blue";
-          text = ''version=$(omarchy-version); echo "Omarchy $version"'';
         }
         {
           type = "command";
           key = "󰘬 Branch";
           keyColor = "blue";
-          text = ''branch=$(omarchy-version-branch); echo "$branch"'';
+          text = ''branch=$(git -C ~/Development/dotfiles branch --show-current 2>/dev/null || echo "unknown"); echo "$branch"'';
         }
         {
           type = "kernel";
