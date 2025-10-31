@@ -91,13 +91,6 @@
           "if [ $(uname) = 'Darwin' ]; then ver=$(sw_vers -productVersion); major=$(echo $ver | cut -d. -f1); case $major in 15) name='Sequoia';; 14) name='Sonoma';; 13) name='Ventura';; 12) name='Monterey';; 11) name='Big Sur';; *) name=''';; esac; echo \"macOS $name $major\"; else echo \"$(cat /etc/os-release | grep PRETTY_NAME | cut -d'\\\"' -f2)\"; fi";
       }
       {
-        type = "command";
-        key = "󰘬 Branch";
-        keyColor = "blue";
-        text = ''
-          branch=$(git -C ~/Development/dotfiles branch --show-current 2>/dev/null || echo "unknown"); echo "$branch"'';
-      }
-      {
         type = "kernel";
         key = " Kernel";
         keyColor = "blue";
