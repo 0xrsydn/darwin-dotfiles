@@ -26,8 +26,21 @@
     "alt-shift-tab" = "move-workspace-to-monitor --wrap-around next";
 
     "alt-r" = "mode resize";
+    "alt-f" = "mode float";
     "alt-shift-semicolon" = "mode service";
   } // workspaceFocusBindings // workspaceSendBindings;
+
+  float.binding = {
+    enter = ''exec-and-forget open -na "Ghostty" && aerospace layout floating'';
+    i = [
+      ''exec-and-forget open -na "iTerm.app"''
+      "layout floating"
+      "mode main"
+    ];
+    g =
+      [ ''exec-and-forget open -na "Ghostty"'' "layout floating" "mode main" ];
+    esc = "mode main";
+  };
 
   resize.binding = {
     h = "resize width -100";

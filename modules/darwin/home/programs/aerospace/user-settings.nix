@@ -21,5 +21,11 @@
   on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
   on-focus-changed = [ "move-mouse window-lazy-center" ];
 
+  on-window-detected = [{
+    "if".app-id = "com.mitchellh.ghostty";
+    "if".workspace = "5";
+    run = [ "layout floating" ];
+  }];
+
   mode = modes;
 }
