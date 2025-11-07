@@ -6,9 +6,22 @@
     settings = {
       theme = "gruvbox";
       background-opacity = 0.9;
-      command =
-        "shell:${config.home.profileDirectory}/bin/tmux new-session -A -s ghostty";
-      keybind = [ "cmd+k=text:\\x01K" ];
+      shell-integration = "detect";
+      working-directory = "inherit";
+      window-inherit-working-directory = true;
+      keybind = [
+        "super+a>c=new_tab"
+        "super+a>n=new_window"
+        "super+a>|=new_split:right"
+        "super+a>-=new_split:down"
+        "super+a>h=goto_split:left"
+        "super+a>j=goto_split:down"
+        "super+a>k=goto_split:up"
+        "super+a>l=goto_split:right"
+        "super+a>z=toggle_split_zoom"
+        "super+a>x=close_surface"
+        "super+a>r=reload_config"
+      ];
     };
 
     themes.gruvbox = {
