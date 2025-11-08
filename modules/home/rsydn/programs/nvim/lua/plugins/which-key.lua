@@ -63,6 +63,7 @@ return {
           { mode = "n", keys = "<Leader>o", desc = "+open" },
           { mode = "n", keys = "<Leader>r", desc = "+rename" },
           { mode = "n", keys = "<Leader>s", desc = "+search" },
+          { mode = "n", keys = "<Leader>t", desc = "+toggle" },
         },
 
         window = {
