@@ -26,7 +26,6 @@ in {
         "brave-browser"
         "firefox"
         "pgadmin4"
-        "docker-desktop"
         "spotify"
         "vesktop"
         "obs"

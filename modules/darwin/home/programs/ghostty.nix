@@ -7,17 +7,19 @@
       theme = "gruvbox";
       background-opacity = 0.9;
       shell-integration = "detect";
-      working-directory = "inherit";
+      working-directory = "home";
       window-inherit-working-directory = true;
       keybind = [
-        "super+a>c=new_tab"
         "super+a>n=new_window"
-        "super+a>|=new_split:right"
-        "super+a>-=new_split:down"
+        # Split bindings - using v and s instead of | and - for better reliability
+        "super+a>v=new_split:right"
+        "super+a>s=new_split:down"
+        # Navigation
         "super+a>h=goto_split:left"
         "super+a>j=goto_split:down"
         "super+a>k=goto_split:up"
         "super+a>l=goto_split:right"
+        # Other actions
         "super+a>z=toggle_split_zoom"
         "super+a>x=close_surface"
         "super+a>r=reload_config"
