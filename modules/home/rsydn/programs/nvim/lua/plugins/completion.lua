@@ -11,7 +11,7 @@ return {
     build = nil, -- Disable build since Nix provides pre-compiled version
     opts = {
       -- Keymap preset options: 'default' | 'super-tab' | 'enter'
-      keymap = { preset = "default" },
+      keymap = { preset = "super-tab" },
 
       appearance = {
         -- Use mono nerd font variant
