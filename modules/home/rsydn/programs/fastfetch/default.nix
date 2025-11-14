@@ -122,7 +122,7 @@
       }
       {
         type = "terminalfont";
-        key = " Terminal Font";
+        key = " Font";
         keyColor = "blue";
       }
       "break"
