@@ -17,6 +17,6 @@ in {
       keepAlive = true;
     };
 
-    userSettings = userSettings;
+    settings = userSettings;
   };
 }
