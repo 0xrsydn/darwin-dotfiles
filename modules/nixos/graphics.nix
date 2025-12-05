@@ -6,7 +6,7 @@
 
     extraPackages = with pkgs; [
       # Common drivers (expand based on your hardware)
-      mesa.drivers
+      mesa
       vulkan-validation-layers
       vulkan-tools
 
