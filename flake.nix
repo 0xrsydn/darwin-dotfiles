@@ -19,10 +19,13 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+
+    try.url = "github:tobi/try";
+    try.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools
-    , sops-nix, chaotic, ... }:
+    , sops-nix, chaotic, try, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
@@ -63,7 +66,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
-              home-manager.extraSpecialArgs = { inherit inputs user; };
+              home-manager.extraSpecialArgs = { inherit inputs user try; };
               home-manager.users.${user} = import homeFile;
             }
           ];
@@ -82,7 +85,7 @@
 
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = { inherit inputs user; };
+              home-manager.extraSpecialArgs = { inherit inputs user try; };
               home-manager.users.${user} = import homeFile;
             }
           ];

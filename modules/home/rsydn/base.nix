@@ -8,6 +8,7 @@
     ./devtools/ai-tools.nix
     ./devtools/languages.nix
     ./devtools/default.nix
+    ./devtools/try.nix
     ./secrets.nix
   ];
 
@@ -26,6 +27,11 @@
     rsydn.aiTools = {
       enable = lib.mkDefault true;
       claude.zai.enable = lib.mkDefault true;
+    };
+
+    rsydn.try = {
+      enable = lib.mkDefault true;
+      path = "~/src/tries";
     };
 
     rsydn.devTools = {
