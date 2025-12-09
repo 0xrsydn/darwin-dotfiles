@@ -8,6 +8,7 @@
     ./devtools/ai-tools.nix
     ./devtools/languages.nix
     ./devtools/default.nix
+    ./devtools/direnv.nix
     ./devtools/try.nix
     ./secrets.nix
   ];
@@ -33,6 +34,8 @@
       enable = lib.mkDefault true;
       path = "~/src/tries";
     };
+
+    rsydn.direnv.enable = lib.mkDefault true;
 
     rsydn.devTools = {
       enable = lib.mkDefault true;
