@@ -106,18 +106,19 @@
     in {
       darwinConfigurations = { macbook-pro = mkDarwin { }; };
       nixosConfigurations = {
-        dev-vm = mkNixos {
-          system = "x86_64-linux";
-          extraModules = [ ./hosts/dev-vm.nix ];
-          # Uses default homeFile: ./modules/nixos/home/default.nix
-        };
-        desktop = mkNixos {
-          system = "x86_64-linux";
-          extraModules = [ ./hosts/desktop.nix ];
-          # Home Manager configs are imported directly in desktop modules
-          # No homeFile needed - using inline home-manager.users.${user}
-          homeFile = ./modules/nixos/home/default.nix;
-        };
+        # Temporarily disabled for testing
+        # dev-vm = mkNixos {
+        #   system = "x86_64-linux";
+        #   extraModules = [ ./hosts/dev-vm.nix ];
+        #   # Uses default homeFile: ./modules/nixos/home/default.nix
+        # };
+        # desktop = mkNixos {
+        #   system = "x86_64-linux";
+        #   extraModules = [ ./hosts/desktop.nix ];
+        #   # Home Manager configs are imported directly in desktop modules
+        #   # No homeFile needed - using inline home-manager.users.${user}
+        #   homeFile = ./modules/nixos/home/default.nix;
+        # };
       };
 
       devShells = forEachSystem (system:
