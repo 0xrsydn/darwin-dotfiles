@@ -22,10 +22,13 @@
 
     try.url = "github:tobi/try";
     try.inputs.nixpkgs.follows = "nixpkgs";
+
+    beads.url = "github:steveyegge/beads";
+    beads.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools
-    , sops-nix, chaotic, try, ... }:
+    , sops-nix, chaotic, try, beads, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
@@ -53,7 +56,9 @@
 
       mkDarwin = { system ? "aarch64-darwin", extraModules ? [ ]
         , homeFile ? ./modules/darwin/home/default.nix, }:
-        let pkgs = mkPkgs system;
+        let
+          pkgs = mkPkgs system;
+          customPkgs = import ./packages { inherit pkgs lib beads; };
         in darwin.lib.darwinSystem {
           inherit system pkgs;
           specialArgs = { inherit inputs overlaysList user; };
@@ -66,14 +71,18 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
-              home-manager.extraSpecialArgs = { inherit inputs user try; };
+              home-manager.extraSpecialArgs = {
+                inherit inputs user try customPkgs;
+              };
               home-manager.users.${user} = import homeFile;
             }
           ];
         };
       mkNixos = { system ? "x86_64-linux", extraModules ? [ ]
         , homeFile ? ./modules/nixos/home/default.nix, }:
-        let pkgs = mkPkgs system;
+        let
+          pkgs = mkPkgs system;
+          customPkgs = import ./packages { inherit pkgs lib beads; };
         in lib.nixosSystem {
           inherit system pkgs;
           specialArgs = { inherit inputs overlaysList user; };
@@ -85,7 +94,9 @@
 
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = { inherit inputs user try; };
+              home-manager.extraSpecialArgs = {
+                inherit inputs user try customPkgs;
+              };
               home-manager.users.${user} = import homeFile;
             }
           ];
@@ -95,12 +106,12 @@
       nixosConfigurations = {
         dev-vm = mkNixos {
           system = "x86_64-linux";
-          extraModules = [ ./modules/nixos/hosts/dev-vm.nix ];
+          extraModules = [ ./hosts/dev-vm.nix ];
           # Uses default homeFile: ./modules/nixos/home/default.nix
         };
         desktop = mkNixos {
           system = "x86_64-linux";
-          extraModules = [ ./modules/nixos/hosts/desktop.nix ];
+          extraModules = [ ./hosts/desktop.nix ];
           # Home Manager configs are imported directly in desktop modules
           # No homeFile needed - using inline home-manager.users.${user}
           homeFile = ./modules/nixos/home/default.nix;
@@ -115,11 +126,14 @@
           else
             pkgs.python3;
 
-          # Common arguments passed to all devshell imports
-          shellArgs = { inherit pkgs lib python; };
+          # Custom packages (osgrep, beads, etc.)
+          customPkgs = import ./packages { inherit pkgs lib beads; };
 
-          # Import all devshells from devshells/ directory
-          importShell = name: import (./devshells + "/${name}.nix") shellArgs;
+          # Common arguments passed to all devshell imports
+          shellArgs = { inherit pkgs lib python customPkgs; };
+
+          # Import all shells from shells/ directory
+          importShell = name: import (./shells + "/${name}.nix") shellArgs;
 
         in {
           default = importShell "default";
@@ -129,10 +143,21 @@
           go = importShell "go";
           web-bun = importShell "web-bun";
           rust = importShell "rust";
+          ai-agent = importShell "ai-agent";
         });
 
       formatter = forEachSystem (system: (mkPkgs system).nixfmt-classic);
 
-      packages = forEachSystem (system: { inherit (mkPkgs system) git; });
+      packages = forEachSystem (system:
+        let
+          pkgs = mkPkgs system;
+          customPkgs = import ./packages { inherit pkgs lib beads; };
+        in customPkgs // { inherit (pkgs) git; });
+
+      checks = forEachSystem (system:
+        let
+          pkgs = mkPkgs system;
+          customPkgs = import ./packages { inherit pkgs lib beads; };
+        in { inherit (customPkgs) osgrep opencode beads; });
     };
 }

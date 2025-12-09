@@ -67,6 +67,71 @@ in {
 
         print $"(ansi green_bold)✓ Core QA checks passed!(ansi reset)"
       }
+
+    # Beads helper functions for AI agent workflows
+    # Safe Beads initialization with git repository check
+    def bd-init [] {
+      if not (".git" | path exists) and not (".git" | path type) == "dir" {
+        print $"(ansi red_bold)Error: Not in a git repository(ansi reset)"
+        print "Beads requires a git repository. Initialize git first:"
+        print "  git init"
+        return
+      }
+
+      if (".beads" | path exists) {
+        print $"(ansi yellow)Beads already initialized in this project(ansi reset)"
+        return
+      }
+
+      print $"(ansi green)Initializing Beads...(ansi reset)"
+      bd init
+      if $env.LAST_EXIT_CODE == 0 {
+        print $"(ansi green_bold)✓ Beads initialized successfully(ansi reset)"
+        print ""
+        print "Next steps:"
+        print "  bd create --title \"Your task\" --type feature"
+        print "  bd ready"
+      }
+    }
+
+    # View ready tasks with structured output
+    def bd-ready [] {
+      if not (".beads" | path exists) {
+        print $"(ansi red)Not a Beads project. Run 'bd-init' first.(ansi reset)"
+        return
+      }
+
+      let ready_tasks = (bd ready --json | from json)
+
+      if ($ready_tasks | is-empty) {
+        print $"(ansi yellow)No ready tasks(ansi reset)"
+        return
+      }
+
+      print $"(ansi green_bold)Ready Tasks:(ansi reset)\n"
+      $ready_tasks | each {|task|
+        print $"(ansi cyan)[$($task.id)](ansi reset) ($task.title)"
+        print $"  Type: ($task.type) | Priority: ($task.priority) | Status: ($task.status)"
+        if ($task.description? != null) and ($task.description | str length) > 0 {
+          print $"  ($task.description)"
+        }
+        print ""
+      } | ignore
+    }
+
+    # Sync Beads database with git
+    def bd-sync [] {
+      if not (".beads" | path exists) {
+        print $"(ansi red)Not a Beads project(ansi reset)"
+        return
+      }
+
+      print $"(ansi blue)Syncing Beads database...(ansi reset)"
+      bd sync
+      if $env.LAST_EXIT_CODE == 0 {
+        print $"(ansi green)✓ Sync complete(ansi reset)"
+      }
+    }
   '';
 
   programs.nushell.envFile.text = ''

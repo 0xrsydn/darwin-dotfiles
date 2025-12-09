@@ -4,9 +4,9 @@
   # Desktop configs are handled directly in nixos/desktops/* modules
 
   imports = [
-    ../../home/rsydn/base.nix # Base CLI tools (git, tmux, etc.)
-    ../../home/rsydn/shell/fish.nix # Shell configuration
-    ../../home/rsydn/shell/nushell.nix # Secondary Nushell setup
+    ../../home/base.nix # Base CLI tools (git, tmux, etc.)
+    ../../home/shell/fish.nix # Shell configuration
+    ../../home/shell/nushell.nix # Secondary Nushell setup
   ];
 
   config.programs.tmux.extraConfig = lib.mkAfter ''

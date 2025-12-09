@@ -10,8 +10,6 @@ let
 
   crushDefault = getPkgsPackage "crush";
 
-  opencodeDefault = getPkgsPackage "opencode";
-
   claudeDefault = getPkgsPackage "claude-code";
 
   toolOption = { name, description, defaultPackage, extraOptions ? { }
@@ -60,10 +58,6 @@ let
     {
       name = "crush";
       cfg = cfg.crush;
-    }
-    {
-      name = "opencode";
-      cfg = cfg.opencode;
     }
     {
       name = "claude";
@@ -121,11 +115,7 @@ in {
       defaultPackage = crushDefault;
     };
 
-    opencode = toolOption {
-      name = "OpenCode";
-      description = "OpenCode AI collaborative CLI packaged in nixpkgs.";
-      defaultPackage = opencodeDefault;
-    };
+    # Note: OpenCode is now managed by its own module at ./opencode.nix
 
     claude = toolOption {
       name = "Claude Code";

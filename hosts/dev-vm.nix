@@ -47,5 +47,5 @@
     interfaces."tailscale0".allowedTCPPorts = [ 22 ];
   };
 
-  imports = [ ../virtualization.nix ];
+  imports = [ ../modules/nixos/virtualization.nix ];
 }

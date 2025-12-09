@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 let
   hardwareConfigPath = builtins.toString ./.
-    + "/../desktops/hardware-configuration.nix";
+    + "/../modules/nixos/desktops/hardware-configuration.nix";
   hardwareModule = if builtins.pathExists hardwareConfigPath then
     import hardwareConfigPath
   else
@@ -16,21 +16,21 @@ in {
     hardwareModule
 
     # Audio & Graphics
-    ../audio.nix
-    ../graphics.nix
+    ../modules/nixos/audio.nix
+    ../modules/nixos/graphics.nix
 
     # Desktop Environments
-    ../desktops/plasma.nix # KDE Plasma (for gaming)
-    ../desktops/hyprland # Hyprland (for development)
+    ../modules/nixos/desktops/plasma.nix # KDE Plasma (for gaming)
+    ../modules/nixos/desktops/hyprland # Hyprland (for development)
 
     # Desktop Apps & Theme
-    ../desktops/apps/browsers.nix
-    ../desktops/apps/terminals.nix
-    ../desktops/themes/catppuccin.nix # Or use themes/default.nix for Adwaita
+    ../modules/nixos/desktops/apps/browsers.nix
+    ../modules/nixos/desktops/apps/terminals.nix
+    ../modules/nixos/desktops/themes/catppuccin.nix # Or use themes/default.nix for Adwaita
 
     # Gaming & Features
-    ../desktops/gaming.nix
-    ../bluetooth.nix
+    ../modules/nixos/desktops/gaming.nix
+    ../modules/nixos/bluetooth.nix
   ];
 
   # Boot configuration with CachyOS LTS kernel
