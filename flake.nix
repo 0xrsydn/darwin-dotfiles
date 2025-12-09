@@ -60,7 +60,8 @@
           pkgs = mkPkgs system;
           customPkgs = import ./packages { inherit pkgs lib beads; };
         in darwin.lib.darwinSystem {
-          inherit system pkgs;
+          inherit pkgs;
+          system = pkgs.stdenv.hostPlatform.system;
           specialArgs = { inherit inputs overlaysList user; };
           modules = sharedDarwinModules ++ extraModules ++ [
             home-manager.darwinModules.home-manager
@@ -84,7 +85,8 @@
           pkgs = mkPkgs system;
           customPkgs = import ./packages { inherit pkgs lib beads; };
         in lib.nixosSystem {
-          inherit system pkgs;
+          inherit pkgs;
+          system = pkgs.stdenv.hostPlatform.system;
           specialArgs = { inherit inputs overlaysList user; };
           modules = sharedNixosModules ++ extraModules ++ [
             home-manager.nixosModules.home-manager

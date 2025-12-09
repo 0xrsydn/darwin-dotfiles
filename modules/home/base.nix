@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, customPkgs, ... }: {
   imports = [
     ./programs/fastfetch
     ./programs/helix.nix
@@ -9,7 +9,6 @@
     ./devtools/languages.nix
     ./devtools/default.nix
     ./devtools/try.nix
-    ./devtools/opencode.nix
     ./secrets.nix
   ];
 
@@ -23,7 +22,7 @@
 
     programs.git.enable = true;
 
-    home.packages = with pkgs; [ docker docker-compose ];
+    home.packages = with pkgs; [ docker docker-compose customPkgs.opencode ];
 
     rsydn.aiTools = {
       enable = lib.mkDefault true;
@@ -33,13 +32,6 @@
     rsydn.try = {
       enable = lib.mkDefault true;
       path = "~/src/tries";
-    };
-
-    rsydn.opencode = {
-      enable = lib.mkDefault true;
-      theme = "catppuccin";
-      model = "anthropic/claude-sonnet-4-5";
-      smallModel = "anthropic/claude-haiku-3-5";
     };
 
     rsydn.devTools = {

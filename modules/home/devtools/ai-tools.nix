@@ -115,8 +115,6 @@ in {
       defaultPackage = crushDefault;
     };
 
-    # Note: OpenCode is now managed by its own module at ./opencode.nix
-
     claude = toolOption {
       name = "Claude Code";
       description = "Anthropic Claude Code CLI packaged in nixpkgs.";
