@@ -147,6 +147,7 @@
           web-bun = importShell "web-bun";
           rust = importShell "rust";
           ai-agent = importShell "ai-agent";
+          effect-ts = importShell "effect-ts";
         });
 
       formatter = forEachSystem (system: (mkPkgs system).nixfmt-classic);

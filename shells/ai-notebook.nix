@@ -22,12 +22,11 @@ let
         scikit-image
         scikit-learn
         seaborn
-        sentencepiece
         tokenizers
         transformers
       ];
       linuxOnlyPackages = lib.optionals pkgs.stdenv.isLinux
-        (with ps; [ torch torchaudio torchvision ]);
+        (with ps; [ sentencepiece torch torchaudio torchvision ]);
     in basePackages ++ linuxOnlyPackages);
 in pkgs.mkShell {
   name = "ai-notebook";
