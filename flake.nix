@@ -12,8 +12,8 @@
     ghostty.url = "github:ghostty-org/ghostty";
     ghostty.inputs.nixpkgs.follows = "nixpkgs";
 
-    nix-ai-tools.url = "github:numtide/nix-ai-tools";
-    nix-ai-tools.inputs.nixpkgs.follows = "nixpkgs";
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    llm-agents.inputs.nixpkgs.follows = "nixpkgs";
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -22,13 +22,10 @@
 
     try.url = "github:tobi/try";
     try.inputs.nixpkgs.follows = "nixpkgs";
-
-    beads.url = "github:steveyegge/beads";
-    beads.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, nix-ai-tools
-    , sops-nix, chaotic, try, beads, ... }:
+  outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, llm-agents
+    , sops-nix, chaotic, try, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
@@ -58,7 +55,7 @@
         , homeFile ? ./modules/darwin/home/default.nix, }:
         let
           pkgs = mkPkgs system;
-          customPkgs = import ./packages { inherit pkgs lib beads; };
+          customPkgs = import ./packages { inherit pkgs lib llm-agents; };
         in darwin.lib.darwinSystem {
           inherit pkgs;
           system = pkgs.stdenv.hostPlatform.system;
@@ -83,7 +80,7 @@
         , homeFile ? ./modules/nixos/home/default.nix, }:
         let
           pkgs = mkPkgs system;
-          customPkgs = import ./packages { inherit pkgs lib beads; };
+          customPkgs = import ./packages { inherit pkgs lib llm-agents; };
         in lib.nixosSystem {
           inherit pkgs;
           system = pkgs.stdenv.hostPlatform.system;
@@ -130,7 +127,7 @@
             pkgs.python3;
 
           # Custom packages (osgrep, beads, etc.)
-          customPkgs = import ./packages { inherit pkgs lib beads; };
+          customPkgs = import ./packages { inherit pkgs lib llm-agents; };
 
           # Common arguments passed to all devshell imports
           shellArgs = { inherit pkgs lib python customPkgs; };
@@ -155,13 +152,13 @@
       packages = forEachSystem (system:
         let
           pkgs = mkPkgs system;
-          customPkgs = import ./packages { inherit pkgs lib beads; };
+          customPkgs = import ./packages { inherit pkgs lib llm-agents; };
         in customPkgs // { inherit (pkgs) git; });
 
       checks = forEachSystem (system:
         let
           pkgs = mkPkgs system;
-          customPkgs = import ./packages { inherit pkgs lib beads; };
+          customPkgs = import ./packages { inherit pkgs lib llm-agents; };
         in { inherit (customPkgs) osgrep opencode beads; });
     };
 }

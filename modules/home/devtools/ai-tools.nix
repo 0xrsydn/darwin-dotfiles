@@ -1,165 +1,81 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
-  inherit (lib)
-    mkEnableOption mkOption types mkIf concatMap unique warn escapeShellArg;
+  inherit (lib) mkEnableOption mkOption types mkIf escapeShellArg;
   cfg = config.rsydn.aiTools;
+  system = pkgs.stdenv.hostPlatform.system;
+  llmPkgs = inputs.llm-agents.packages.${system};
 
-  getPkgsPackage = name: lib.attrByPath [ name ] null pkgs;
+  # Z.AI Gateway wrapper for Claude Code
+  zaiWrapperPackages = let zaiCfg = cfg.zai;
+  in if zaiCfg.enable then
+    let
+      claudeExe = lib.getExe llmPkgs.claude-code;
+      commandName = zaiCfg.commandName;
+      baseUrl = zaiCfg.baseUrl;
+      model = zaiCfg.model;
+      tokenEnvVar = zaiCfg.tokenEnvVar;
+    in [
+      (pkgs.writeShellApplication {
+        name = commandName;
+        text = ''
+          if [ -z "''${${tokenEnvVar}:-}" ]; then
+            echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
+            exit 1
+          fi
 
-  codexDefault = getPkgsPackage "codex";
+          export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
+          export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
+          export ANTHROPIC_MODEL=${escapeShellArg model}
 
-  crushDefault = getPkgsPackage "crush";
-
-  claudeDefault = getPkgsPackage "claude-code";
-
-  toolOption = { name, description, defaultPackage, extraOptions ? { }
-    , extraDefaults ? { } }:
-    mkOption {
-      type = types.submodule {
-        options = {
-          enable = mkOption {
-            type = types.bool;
-            default = true;
-            description = "Enable the ${name} CLI.";
-          };
-          package = mkOption {
-            type = types.nullOr types.package;
-            default = defaultPackage;
-            description =
-              "Package providing ${name}. Set to null to skip installation.";
-          };
-        } // extraOptions;
-      };
-      default = {
-        enable = true;
-        package = defaultPackage;
-      } // extraDefaults;
-      description = description;
-    };
-
-  gatherToolPackages = tools:
-    concatMap (tool:
-      let
-        name = tool.name;
-        cfgTool = tool.cfg;
-      in if cfgTool.enable then
-        if cfgTool.package != null then
-          [ cfgTool.package ]
-        else
-          warn "rsydn.aiTools.${name}: package is null, skipping install" [ ]
-      else
-        [ ]) tools;
-
-  toolPackages = gatherToolPackages [
-    {
-      name = "codex";
-      cfg = cfg.codex;
-    }
-    {
-      name = "crush";
-      cfg = cfg.crush;
-    }
-    {
-      name = "claude";
-      cfg = cfg.claude;
-    }
-  ];
-
-  zaiWrapperPackages = let
-    claudeCfg = cfg.claude;
-    zaiCfg = claudeCfg.zai or { enable = false; };
-  in if claudeCfg.enable && zaiCfg.enable then
-    if claudeCfg.package != null then
-      let
-        claudeExe = lib.getExe claudeCfg.package;
-        commandName = zaiCfg.commandName;
-        baseUrl = zaiCfg.baseUrl;
-        model = zaiCfg.model;
-        tokenEnvVar = zaiCfg.tokenEnvVar;
-      in [
-        (pkgs.writeShellApplication {
-          name = commandName;
-          text = ''
-            if [ -z "''${${tokenEnvVar}:-}" ]; then
-              echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
-              exit 1
-            fi
-
-            export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
-            export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
-            export ANTHROPIC_MODEL=${escapeShellArg model}
-
-            exec ${claudeExe} "$@"
-          '';
-        })
-      ]
-    else
-      warn "rsydn.aiTools.claude: Z.AI wrapper requested but package is null"
-      [ ]
+          exec ${claudeExe} "$@"
+        '';
+      })
+    ]
   else
     [ ];
 
 in {
   options.rsydn.aiTools = {
-    enable = mkEnableOption "AI-oriented command line tooling";
+    enable = mkEnableOption "AI CLI tools from llm-agents.nix";
 
-    codex = toolOption {
-      name = "Codex";
-      description = "OpenAI Codex CLI packaged in nixpkgs.";
-      defaultPackage = codexDefault;
-    };
-
-    crush = toolOption {
-      name = "Crush";
-      description = "Charmbracelet Crush CLI packaged in nixpkgs.";
-      defaultPackage = crushDefault;
-    };
-
-    claude = toolOption {
-      name = "Claude Code";
-      description = "Anthropic Claude Code CLI packaged in nixpkgs.";
-      defaultPackage = claudeDefault;
-      extraOptions = {
-        zai = mkOption {
-          type = types.submodule {
-            options = {
-              enable = mkEnableOption
-                "Expose the Z.AI Gateway wrapper command for Claude.";
-              commandName = mkOption {
-                type = types.str;
-                default = "glm";
-                description =
-                  "Name of the wrapper command that launches Claude via Z.AI.";
-              };
-              baseUrl = mkOption {
-                type = types.str;
-                default = "https://api.z.ai/api/anthropic";
-                description = "Gateway base URL used for the Anthropic client.";
-              };
-              model = mkOption {
-                type = types.str;
-                default = "glm-4.6";
-                description = "Model identifier passed via ANTHROPIC_MODEL.";
-              };
-              tokenEnvVar = mkOption {
-                type = types.str;
-                default = "ZAI_API_KEY";
-                description =
-                  "Environment variable that stores the Z.AI API token.";
-              };
-            };
+    zai = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption
+            "Expose the Z.AI Gateway wrapper command for Claude.";
+          commandName = mkOption {
+            type = types.str;
+            default = "glm";
+            description =
+              "Name of the wrapper command that launches Claude via Z.AI.";
           };
-          default = {
-            enable = false;
-            commandName = "glm";
-            baseUrl = "https://api.z.ai/api/anthropic";
-            model = "glm-4.6";
-            tokenEnvVar = "ZAI_API_KEY";
+          baseUrl = mkOption {
+            type = types.str;
+            default = "https://api.z.ai/api/anthropic";
+            description = "Gateway base URL used for the Anthropic client.";
           };
-          description =
-            "Configuration for the Claude wrapper that targets the Z.AI gateway.";
+          model = mkOption {
+            type = types.str;
+            default = "glm-4.6";
+            description = "Model identifier passed via ANTHROPIC_MODEL.";
+          };
+          tokenEnvVar = mkOption {
+            type = types.str;
+            default = "ZAI_API_KEY";
+            description =
+              "Environment variable that stores the Z.AI API token.";
+          };
         };
       };
+      default = {
+        enable = false;
+        commandName = "glm";
+        baseUrl = "https://api.z.ai/api/anthropic";
+        model = "glm-4.6";
+        tokenEnvVar = "ZAI_API_KEY";
+      };
+      description =
+        "Configuration for the Claude wrapper that targets the Z.AI gateway.";
     };
 
     extraPackages = mkOption {
@@ -171,7 +87,13 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages =
-      unique (toolPackages ++ zaiWrapperPackages ++ cfg.extraPackages);
+    home.packages = [
+      llmPkgs.claude-code
+      llmPkgs.codex
+      llmPkgs.opencode
+      llmPkgs.crush
+      llmPkgs.ccstatusline
+      llmPkgs.ccusage
+    ] ++ zaiWrapperPackages ++ cfg.extraPackages;
   };
 }

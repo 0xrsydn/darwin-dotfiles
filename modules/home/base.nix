@@ -23,11 +23,11 @@
 
     programs.git.enable = true;
 
-    home.packages = with pkgs; [ docker docker-compose customPkgs.opencode ];
+    home.packages = with pkgs; [ docker docker-compose ];
 
     rsydn.aiTools = {
       enable = lib.mkDefault true;
-      claude.zai.enable = lib.mkDefault true;
+      zai.enable = lib.mkDefault true;
     };
 
     rsydn.try = {

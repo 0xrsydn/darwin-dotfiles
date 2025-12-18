@@ -10,6 +10,10 @@
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
+      # Numtide binary cache for llm-agents.nix packages
+      extra-substituters = [ "https://cache.numtide.com" ];
+      extra-trusted-public-keys =
+        [ "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ber8L+2z9FqRZJ+KBKGE4NNsT0=" ];
     };
     optimise.automatic = true;
     gc = {

@@ -1,8 +1,11 @@
-{ pkgs, lib, beads }:
+{ pkgs, lib, llm-agents }:
 
-{
+let
+  system = pkgs.stdenv.hostPlatform.system;
+  llmPkgs = llm-agents.packages.${system};
+in {
   osgrep = pkgs.callPackage ./osgrep.nix { };
-  opencode = pkgs.callPackage ./opencode.nix { };
-  # Re-export beads from flake input for consistent access
-  beads = beads.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  opencode = llmPkgs.opencode;
+  # Source beads from llm-agents.nix
+  beads = llmPkgs.beads;
 }
