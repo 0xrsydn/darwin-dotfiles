@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, config, ... }: {
   programs.neovim = {
     enable = true;
     viAlias = true;
@@ -59,4 +59,16 @@
     source = ./nvim;
     recursive = true;
   };
+
+  # Copy lazy-lock.json as writable (not symlinked to read-only Nix store)
+  home.activation.makeNvimLockWritable = config.lib.dag.entryAfter [ "linkGeneration" ] ''
+    lockFile="${config.xdg.configHome}/nvim/lazy-lock.json"
+    sourceLock="${./nvim/lazy-lock.json}"
+
+    if [ -L "$lockFile" ]; then
+      rm "$lockFile"
+      cp "$sourceLock" "$lockFile"
+      chmod 644 "$lockFile"
+    fi
+  '';
 }
