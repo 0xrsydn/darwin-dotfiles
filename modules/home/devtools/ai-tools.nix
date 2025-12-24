@@ -3,13 +3,17 @@ let
   inherit (lib) mkEnableOption mkOption types mkIf escapeShellArg;
   cfg = config.rsydn.aiTools;
   system = pkgs.stdenv.hostPlatform.system;
+
+  # Latest llm-agents for most tools
   llmPkgs = inputs.llm-agents.packages.${system};
+  # Pinned llm-agents for Claude Code 2.0.64
+  llmPkgsPinned = inputs.llm-agents-pinned.packages.${system};
 
   # Z.AI Gateway wrapper for Claude Code
   zaiWrapperPackages = let zaiCfg = cfg.zai;
   in if zaiCfg.enable then
     let
-      claudeExe = lib.getExe llmPkgs.claude-code;
+      claudeExe = lib.getExe llmPkgsPinned.claude-code;
       commandName = zaiCfg.commandName;
       baseUrl = zaiCfg.baseUrl;
       model = zaiCfg.model;
@@ -56,7 +60,7 @@ in {
           };
           model = mkOption {
             type = types.str;
-            default = "glm-4.6";
+            default = "glm-4.7";
             description = "Model identifier passed via ANTHROPIC_MODEL.";
           };
           tokenEnvVar = mkOption {
@@ -71,7 +75,7 @@ in {
         enable = false;
         commandName = "glm";
         baseUrl = "https://api.z.ai/api/anthropic";
-        model = "glm-4.6";
+        model = "glm-4.7";
         tokenEnvVar = "ZAI_API_KEY";
       };
       description =
@@ -88,12 +92,11 @@ in {
 
   config = mkIf cfg.enable {
     home.packages = [
-      llmPkgs.claude-code
-      llmPkgs.codex
-      llmPkgs.opencode
-      llmPkgs.crush
-      llmPkgs.ccstatusline
-      llmPkgs.ccusage
+      llmPkgsPinned.claude-code # pinned to 2.0.64
+      llmPkgs.opencode # latest
+      llmPkgs.crush # latest
+      llmPkgs.ccstatusline # latest
+      llmPkgs.ccusage # latest
     ] ++ zaiWrapperPackages ++ cfg.extraPackages;
   };
 }

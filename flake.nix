@@ -12,8 +12,12 @@
     ghostty.url = "github:ghostty-org/ghostty";
     ghostty.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Latest llm-agents for most tools (uses its own nixpkgs for compatibility)
     llm-agents.url = "github:numtide/llm-agents.nix";
-    llm-agents.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Pinned llm-agents for Claude Code 2.0.64 (uses its own nixpkgs for compatibility)
+    llm-agents-pinned.url =
+      "github:numtide/llm-agents.nix/4a12b5bef5a82b71da765603df5192c511a60cc2";
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -25,7 +29,7 @@
   };
 
   outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, llm-agents
-    , sops-nix, chaotic, try, ... }:
+    , llm-agents-pinned, sops-nix, chaotic, try, ... }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
