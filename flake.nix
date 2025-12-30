@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Stable nixpkgs for pinning packages with bugs in unstable (e.g., git 2.51.x)
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     darwin.url = "github:LnL7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -40,7 +42,15 @@
 
       forEachSystem = f: genAttrs systems (system: f system);
 
-      overlaysList = [ ghostty.overlays.default chaotic.overlays.default ];
+      # Overlay to pin git to stable version (avoids 2.51.x FamilyDisplayName warning on macOS)
+      gitOverlay = final: prev: {
+        git = (import inputs.nixpkgs-stable {
+          system = prev.stdenv.hostPlatform.system;
+        }).git;
+      };
+
+      overlaysList =
+        [ ghostty.overlays.default chaotic.overlays.default gitOverlay ];
 
       mkPkgs = system:
         import nixpkgs {
