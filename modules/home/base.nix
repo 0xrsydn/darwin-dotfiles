@@ -40,15 +40,12 @@
     rsydn.devTools = {
       enable = lib.mkDefault true;
       packages = with pkgs; [
-        ast-grep
         cloudflared
-        ffmpeg
         fzf
         htop
         jetbrains-mono
         jq
         jujutsu
-        lazydocker
         lazygit
         nil
         nixd
@@ -69,8 +66,8 @@
       cargo.enable = false;
       go.enable = false;
       bun.enable = false;
-      # Keep uv for MCP server and node for npx/tooling
-      uv.enable = true;
+      uv.enable = false;
+      # Keep node for npx/tooling
       node.enable = true;
     };
   };
