@@ -16,7 +16,7 @@ in {
     };
     brews = mkOption {
       type = types.listOf types.str;
-      default = [ "curl" "yt-dlp" "infisical" ];
+      default = [ "curl" "yt-dlp" "infisical" "mole" ];
       description = "Homebrew formulae to install.";
     };
     casks = mkOption {

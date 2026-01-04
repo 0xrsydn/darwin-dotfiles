@@ -2,7 +2,7 @@
   imports = [ ./homebrew.nix ./devtools.nix ];
 
   nix = {
-    package = pkgs.nix;
+    package = pkgs.nixVersions.nix_2_28;
     extraOptions = ''
       keep-derivations = true
       keep-outputs = true

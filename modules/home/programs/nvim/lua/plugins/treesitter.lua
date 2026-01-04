@@ -27,6 +27,7 @@ return {
         "luap",
         "markdown",
         "markdown_inline",
+        "mdx",
         "nix",
         "norg",
         "printf",

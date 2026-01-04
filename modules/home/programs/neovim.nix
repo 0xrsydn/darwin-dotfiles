@@ -21,6 +21,7 @@
       nil # Nix LSP
       pyright
       nodePackages.typescript-language-server
+      mdx-language-server
       rust-analyzer
       gopls
       clang-tools # provides clangd

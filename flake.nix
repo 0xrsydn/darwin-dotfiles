@@ -140,7 +140,7 @@
           else
             pkgs.python3;
 
-          # Custom packages (osgrep, beads, etc.)
+          # Custom packages
           customPkgs = import ./packages { inherit pkgs lib llm-agents; };
 
           # Common arguments passed to all devshell imports
@@ -173,6 +173,6 @@
         let
           pkgs = mkPkgs system;
           customPkgs = import ./packages { inherit pkgs lib llm-agents; };
-        in { inherit (customPkgs) osgrep opencode beads; });
+        in { inherit (customPkgs) opencode; });
     };
 }

@@ -101,6 +101,11 @@ return {
       lspconfig.clangd.setup({
         capabilities = capabilities,
       })
+
+      -- MDX
+      lspconfig.mdx_analyzer.setup({
+        capabilities = capabilities,
+      })
     end,
   },
 }
