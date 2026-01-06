@@ -2,6 +2,7 @@
   imports = [ ./homebrew.nix ./devtools.nix ];
 
   nix = {
+    # Use default nix version from nixpkgs (don't pin to avoid rebuild issues)
     extraOptions = ''
       keep-derivations = true
       keep-outputs = true

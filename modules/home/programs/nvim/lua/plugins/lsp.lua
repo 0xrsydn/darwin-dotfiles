@@ -53,11 +53,11 @@ return {
         },
       })
 
-      -- Nix
-      lspconfig.nil_ls.setup({
+      -- Nix (using nixd instead of nil to avoid nix 2.31.x test failures)
+      lspconfig.nixd.setup({
         capabilities = capabilities,
         settings = {
-          ["nil"] = {
+          nixd = {
             formatting = { command = { "nixfmt" } },
           },
         },

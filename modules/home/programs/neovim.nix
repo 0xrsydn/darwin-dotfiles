@@ -18,7 +18,6 @@
     extraPackages = with pkgs; [
       # LSP Servers
       lua-language-server
-      nil # Nix LSP
       pyright
       nodePackages.typescript-language-server
       mdx-language-server

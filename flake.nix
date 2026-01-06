@@ -42,29 +42,11 @@
 
       forEachSystem = f: genAttrs systems (system: f system);
 
-      # Overlay to pin git to stable version (avoids 2.51.x FamilyDisplayName warning on macOS)
-      gitOverlay = final: prev: {
-        git = (import inputs.nixpkgs-stable {
-          system = prev.stdenv.hostPlatform.system;
-        }).git;
-      };
-
-      # Overlay to skip syrupy tests (broken in nixpkgs unstable)
-      # Uses pythonPackagesExtensions to apply to all Python versions
-      syrupyOverlay = final: prev: {
-        pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-          (pyFinal: pyPrev: {
-            syrupy = pyPrev.syrupy.overrideAttrs (old: { doCheck = false; });
-          })
-        ];
-      };
-
-      overlaysList =
-        [ ghostty.overlays.default
-          chaotic.overlays.default
-          gitOverlay
-          syrupyOverlay
-        ];
+      # No overlays needed for Darwin builds
+      # - ghostty: installed via homebrew cask
+      # - gitOverlay: removed - was causing mypy to rebuild from source
+      # - chaotic: removed - only needed for NixOS, was causing nix to rebuild with failing tests
+      overlaysList = [ ];
 
       mkPkgs = system:
         import nixpkgs {

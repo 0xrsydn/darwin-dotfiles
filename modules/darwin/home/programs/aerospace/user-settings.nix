@@ -21,11 +21,21 @@
   on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
   on-focus-changed = [ "move-mouse window-lazy-center" ];
 
-  on-window-detected = [{
-    "if".app-id = "com.mitchellh.ghostty";
-    "if".workspace = "5";
-    run = [ "layout floating" ];
-  }];
+  # Flatten workspace tree on switch to prevent nested container issues
+  exec-on-workspace-change = [ "flatten-workspace-tree" ];
+
+  on-window-detected = [
+    # Default: force all windows to tile
+    {
+      run = "layout tiling";
+    }
+    # Exception: Ghostty on workspace 5 floats
+    {
+      "if".app-id = "com.mitchellh.ghostty";
+      "if".workspace = "5";
+      run = "layout floating";
+    }
+  ];
 
   mode = modes;
 }

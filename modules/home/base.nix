@@ -48,7 +48,6 @@
         jq
         jujutsu
         lazygit
-        nil
         nixd
         pandoc
         ripgrep
