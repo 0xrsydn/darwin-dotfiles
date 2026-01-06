@@ -27,7 +27,6 @@ return {
         "luap",
         "markdown",
         "markdown_inline",
-        "mdx",
         "nix",
         "norg",
         "printf",
@@ -48,5 +47,11 @@ return {
         "yaml",
       },
     },
+  },
+  -- MDX syntax highlighting (uses markdown treesitter + TSX injections)
+  {
+    "davidmh/mdx.nvim",
+    config = true,
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
   },
 }
