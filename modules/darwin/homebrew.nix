@@ -25,6 +25,7 @@ in {
         "bitwarden"
         "brave-browser"
         "firefox"
+        "font-jetbrains-mono"
         "pgadmin4"
         "spotify"
         "vesktop"

@@ -49,8 +49,22 @@
         }).git;
       };
 
+      # Overlay to skip syrupy tests (broken in nixpkgs unstable)
+      # Uses pythonPackagesExtensions to apply to all Python versions
+      syrupyOverlay = final: prev: {
+        pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+          (pyFinal: pyPrev: {
+            syrupy = pyPrev.syrupy.overrideAttrs (old: { doCheck = false; });
+          })
+        ];
+      };
+
       overlaysList =
-        [ ghostty.overlays.default chaotic.overlays.default gitOverlay ];
+        [ ghostty.overlays.default
+          chaotic.overlays.default
+          gitOverlay
+          syrupyOverlay
+        ];
 
       mkPkgs = system:
         import nixpkgs {

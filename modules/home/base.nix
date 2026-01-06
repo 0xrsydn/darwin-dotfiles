@@ -39,11 +39,12 @@
 
     rsydn.devTools = {
       enable = lib.mkDefault true;
+      # Note: jetbrains-mono removed - installed via Homebrew cask (font-jetbrains-mono)
+      # due to nixpkgs-unstable syrupy test failures breaking the font's Python build deps
       packages = with pkgs; [
         cloudflared
         fzf
         htop
-        jetbrains-mono
         jq
         jujutsu
         lazygit
