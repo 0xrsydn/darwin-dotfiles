@@ -97,6 +97,7 @@ in {
       llmPkgs.crush # latest
       llmPkgs.ccstatusline # latest
       llmPkgs.ccusage # latest
+      llmPkgs.codex
     ] ++ zaiWrapperPackages ++ cfg.extraPackages;
   };
 }
