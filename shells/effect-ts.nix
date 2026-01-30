@@ -93,7 +93,8 @@ let
         echo "  bun es list           - Browse Effect patterns"
   '';
 
-in pkgs.mkShell {
+in
+pkgs.mkShell {
   name = "effect-ts";
   packages = with pkgs; [
     bun

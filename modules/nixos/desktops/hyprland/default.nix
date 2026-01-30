@@ -1,4 +1,10 @@
-{ pkgs, lib, user, ... }: {
+{
+  pkgs,
+  lib,
+  user,
+  ...
+}:
+{
   imports = [ ../base.nix ];
 
   # System-level: Enable Hyprland
@@ -55,17 +61,18 @@
           border_size = 2;
         };
 
-        decoration = { rounding = 8; };
+        decoration = {
+          rounding = 8;
+        };
       };
     };
 
     # User packages: Hyprland utilities
-    home.packages = with pkgs;
-      [
-        # Uncomment as needed:
-        # wofi       # Launcher
-        # waybar     # Status bar
-        # dunst      # Notifications
-      ];
+    home.packages = with pkgs; [
+      # Uncomment as needed:
+      # wofi       # Launcher
+      # waybar     # Status bar
+      # dunst      # Notifications
+    ];
   };
 }

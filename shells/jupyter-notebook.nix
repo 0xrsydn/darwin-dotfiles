@@ -1,9 +1,13 @@
-{ pkgs, python ? pkgs.python312, ... }:
+{
+  pkgs,
+  python ? pkgs.python312,
+  ...
+}:
 
 let
   # Python environment with notebook tooling and core data-science libs
-  pythonWithNotebook = python.withPackages (ps:
-    with ps; [
+  pythonWithNotebook = python.withPackages (
+    ps: with ps; [
       altair
       ipykernel
       jupyterlab
@@ -15,10 +19,17 @@ let
       scipy
       scikit-learn
       seaborn
-    ]);
-in pkgs.mkShell {
+    ]
+  );
+in
+pkgs.mkShell {
   name = "jupyter-notebook";
-  packages = [ pythonWithNotebook pkgs.ruff pkgs.pyright pkgs.git ];
+  packages = [
+    pythonWithNotebook
+    pkgs.ruff
+    pkgs.pyright
+    pkgs.git
+  ];
   shellHook = ''
     export PYTHONNOUSERSITE=1
     export JUPYTER_CONFIG_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/jupyter"

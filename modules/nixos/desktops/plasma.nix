@@ -1,4 +1,10 @@
-{ lib, pkgs, user, ... }: {
+{
+  lib,
+  pkgs,
+  user,
+  ...
+}:
+{
   imports = [ ./base.nix ];
 
   # System-level: KDE Plasma 6
@@ -11,16 +17,15 @@
   };
 
   # System packages: KDE applications
-  environment.systemPackages = with pkgs;
-    [
-      # KDE applications (uncomment as needed)
-      # kdePackages.kate          # Text editor
-      # kdePackages.dolphin       # File manager
-      # kdePackages.konsole       # Terminal
-      # kdePackages.okular        # Document viewer
-      # kdePackages.gwenview      # Image viewer
-      # kdePackages.spectacle     # Screenshot tool
-    ];
+  environment.systemPackages = with pkgs; [
+    # KDE applications (uncomment as needed)
+    # kdePackages.kate          # Text editor
+    # kdePackages.dolphin       # File manager
+    # kdePackages.konsole       # Terminal
+    # kdePackages.okular        # Document viewer
+    # kdePackages.gwenview      # Image viewer
+    # kdePackages.spectacle     # Screenshot tool
+  ];
 
   # User-level: KDE Plasma settings (optional)
   home-manager.users.${user} = {
@@ -34,9 +39,8 @@
     # };
 
     # User packages for KDE environment
-    home.packages = with pkgs;
-      [
-        # Add user-specific apps here
-      ];
+    home.packages = with pkgs; [
+      # Add user-specific apps here
+    ];
   };
 }

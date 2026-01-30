@@ -1,5 +1,15 @@
-{ config, pkgs, lib, user, ... }: {
-  imports = [ ./homebrew.nix ./devtools.nix ];
+{
+  config,
+  pkgs,
+  lib,
+  user,
+  ...
+}:
+{
+  imports = [
+    ./homebrew.nix
+    ./devtools.nix
+  ];
 
   nix = {
     # Use default nix version from nixpkgs (don't pin to avoid rebuild issues)
@@ -8,12 +18,14 @@
       keep-outputs = true
     '';
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       warn-dirty = false;
       # Numtide binary cache for llm-agents.nix packages
       extra-substituters = [ "https://cache.numtide.com" ];
-      extra-trusted-public-keys =
-        [ "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ber8L+2z9FqRZJ+KBKGE4NNsT0=" ];
+      extra-trusted-public-keys = [ "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ber8L+2z9FqRZJ+KBKGE4NNsT0=" ];
     };
     optimise.automatic = true;
     gc = {
@@ -27,7 +39,10 @@
     };
   };
 
-  environment.shells = [ pkgs.nushell "/etc/profiles/per-user/${user}/bin/nu" ];
+  environment.shells = [
+    pkgs.nushell
+    "/etc/profiles/per-user/${user}/bin/nu"
+  ];
 
   # Set XDG Base Directory environment variables globally
   # This ensures nushell and other XDG-compliant tools use ~/.config

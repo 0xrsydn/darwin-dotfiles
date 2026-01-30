@@ -1,4 +1,5 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }:
+{
   programs.helix = {
     enable = lib.mkDefault true;
     settings = {
@@ -18,10 +19,12 @@
         };
       };
     };
-    languages.language = [{
-      name = "nix";
-      auto-format = true;
-      formatter.command = "${pkgs.nixfmt-classic}/bin/nixfmt";
-    }];
+    languages.language = [
+      {
+        name = "nix";
+        auto-format = true;
+        formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
+      }
+    ];
   };
 }

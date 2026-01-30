@@ -1,4 +1,9 @@
-{ pkgs, lib, customPkgs, ... }:
+{
+  pkgs,
+  lib,
+  customPkgs,
+  ...
+}:
 
 pkgs.mkShell {
   name = "ai-agent";

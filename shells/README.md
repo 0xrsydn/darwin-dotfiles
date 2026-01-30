@@ -15,7 +15,7 @@ nix develop        # or: nix develop .#default
 
 **Includes:**
 - Git
-- nixfmt-classic
+- nixfmt
 - uv (for `uvx` commands)
 
 **MCP helper:**

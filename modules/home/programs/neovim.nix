@@ -1,4 +1,5 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:
+{
   programs.neovim = {
     enable = true;
     viAlias = true;
@@ -27,7 +28,7 @@
 
       # Formatters
       stylua # Lua
-      nixfmt-classic # Nix (matches your fmt command)
+      nixfmt # Nix
       ruff # Python (formatter + linter)
       prettierd # JS/TS/JSON/YAML/Markdown
       rustfmt # Rust
@@ -61,15 +62,14 @@
   };
 
   # Copy lazy-lock.json as writable (not symlinked to read-only Nix store)
-  home.activation.makeNvimLockWritable =
-    config.lib.dag.entryAfter [ "linkGeneration" ] ''
-      lockFile="${config.xdg.configHome}/nvim/lazy-lock.json"
-      sourceLock="${./nvim/lazy-lock.json}"
+  home.activation.makeNvimLockWritable = config.lib.dag.entryAfter [ "linkGeneration" ] ''
+    lockFile="${config.xdg.configHome}/nvim/lazy-lock.json"
+    sourceLock="${./nvim/lazy-lock.json}"
 
-      if [ -L "$lockFile" ]; then
-        rm "$lockFile"
-        cp "$sourceLock" "$lockFile"
-        chmod 644 "$lockFile"
-      fi
-    '';
+    if [ -L "$lockFile" ]; then
+      rm "$lockFile"
+      cp "$sourceLock" "$lockFile"
+      chmod 644 "$lockFile"
+    fi
+  '';
 }

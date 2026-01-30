@@ -1,8 +1,14 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   inherit (lib) mkIf mkOption types;
   cfg = config.rsydn.systemPackages;
-in {
+in
+{
   options.rsydn.systemPackages = {
     enable = mkOption {
       type = types.bool;
@@ -13,8 +19,7 @@ in {
     packages = mkOption {
       type = types.listOf types.package;
       default = with pkgs; [ tailscale ];
-      description =
-        "System packages that must be available globally across macOS.";
+      description = "System packages that must be available globally across macOS.";
     };
   };
 

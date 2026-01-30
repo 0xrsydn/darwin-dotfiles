@@ -1,7 +1,13 @@
-{ pkgs, lib, python ? pkgs.python312, ... }:
+{
+  pkgs,
+  lib,
+  python ? pkgs.python312,
+  ...
+}:
 
 let
-  pythonWithAI = python.withPackages (ps:
+  pythonWithAI = python.withPackages (
+    ps:
     let
       basePackages = with ps; [
         accelerate
@@ -25,12 +31,28 @@ let
         tokenizers
         transformers
       ];
-      linuxOnlyPackages = lib.optionals pkgs.stdenv.isLinux
-        (with ps; [ sentencepiece torch torchaudio torchvision ]);
-    in basePackages ++ linuxOnlyPackages);
-in pkgs.mkShell {
+      linuxOnlyPackages = lib.optionals pkgs.stdenv.isLinux (
+        with ps;
+        [
+          sentencepiece
+          torch
+          torchaudio
+          torchvision
+        ]
+      );
+    in
+    basePackages ++ linuxOnlyPackages
+  );
+in
+pkgs.mkShell {
   name = "ai-notebook";
-  packages = with pkgs; [ pythonWithAI uv git-lfs ruff pyright ];
+  packages = with pkgs; [
+    pythonWithAI
+    uv
+    git-lfs
+    ruff
+    pyright
+  ];
 
   shellHook = ''
     export UV_PYTHON="${pythonWithAI}/bin/python3"

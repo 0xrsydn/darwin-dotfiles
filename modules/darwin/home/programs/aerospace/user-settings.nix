@@ -1,4 +1,5 @@
-{ modes }: {
+{ modes }:
+{
   enable-normalization-flatten-containers = true;
   enable-normalization-opposite-orientation-for-nested-containers = true;
   default-root-container-layout = "tiles";

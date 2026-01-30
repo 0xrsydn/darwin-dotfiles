@@ -1,7 +1,17 @@
-{ lib, pkgs, user, ... }: {
+{
+  lib,
+  pkgs,
+  user,
+  ...
+}:
+{
   users.users.${user} = {
     isNormalUser = lib.mkDefault true;
-    extraGroups = lib.mkDefault [ "wheel" "networkmanager" "docker" ];
+    extraGroups = lib.mkDefault [
+      "wheel"
+      "networkmanager"
+      "docker"
+    ];
     home = lib.mkDefault "/home/${user}";
     shell = pkgs.fish;
   };

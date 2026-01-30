@@ -1,4 +1,5 @@
-{ pkgs, user, ... }: {
+{ pkgs, user, ... }:
+{
   # Browser configurations for desktop users
 
   home-manager.users.${user} = {

@@ -7,7 +7,8 @@ let
   };
 
   userSettings = import ./user-settings.nix { modes = modes; };
-in {
+in
+{
   programs.aerospace = {
     enable = true;
     package = pkgs.aerospace;

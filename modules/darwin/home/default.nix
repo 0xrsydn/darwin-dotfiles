@@ -1,4 +1,10 @@
-{ config, pkgs, lib, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
   # Import shared cross-platform home configuration
   imports = [
     ../../home/base.nix

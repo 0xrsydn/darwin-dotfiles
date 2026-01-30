@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   programs.tmux = {
     enable = lib.mkDefault true;
     clock24 = true;
@@ -8,7 +14,7 @@
     prefix = "C-a";
     escapeTime = 0;
     aggressiveResize = true;
-    plugins = [{ plugin = pkgs.tmuxPlugins.gruvbox; }];
+    plugins = [ { plugin = pkgs.tmuxPlugins.gruvbox; } ];
     extraConfig = ''
       # Terminal configuration for proper colors and features
       set-option -g default-terminal "screen-256color"

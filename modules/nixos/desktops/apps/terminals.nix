@@ -1,4 +1,10 @@
-{ lib, pkgs, user, ... }: {
+{
+  lib,
+  pkgs,
+  user,
+  ...
+}:
+{
   # Terminal emulator configurations for desktop users
 
   home-manager.users.${user} = {

@@ -1,6 +1,13 @@
-{ pkgs, lib, llm-agents }:
+{
+  pkgs,
+  lib,
+  llm-agents,
+}:
 
 let
   system = pkgs.stdenv.hostPlatform.system;
   llmPkgs = llm-agents.packages.${system};
-in { opencode = llmPkgs.opencode; }
+in
+{
+  opencode = llmPkgs.opencode;
+}

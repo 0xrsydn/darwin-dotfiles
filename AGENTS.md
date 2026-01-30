@@ -8,7 +8,7 @@ Custom packages live in `packages/` and are exported via `packages/default.nix`.
 
 ## Build, Test, and Development Commands
 
-Use `nix develop` to enter the project shell with `git`, `nixfmt-classic`, and SOPS ready. Run `nix fmt` before committing to format all Nix sources. `XDG_CACHE_HOME=$PWD/.cache nix flake check` validates every host without polluting the global cache. For macOS changes, run `darwin-rebuild --dry-run --flake .#macbook-pro` and follow with `darwin-rebuild switch --flake .#macbook-pro`. Validate the Linux VM closure via `nix build .#nixosConfigurations.dev-vm.config.system.build.toplevel`.
+Use `nix develop` to enter the project shell with `git`, `nixfmt`, and SOPS ready. Run `nix fmt` before committing to format all Nix sources. `XDG_CACHE_HOME=$PWD/.cache nix flake check` validates every host without polluting the global cache. For macOS changes, run `darwin-rebuild --dry-run --flake .#macbook-pro` and follow with `darwin-rebuild switch --flake .#macbook-pro`. Validate the Linux VM closure via `nix build .#nixosConfigurations.dev-vm.config.system.build.toplevel`.
 
 ## AI Agent Workflow with Beads
 

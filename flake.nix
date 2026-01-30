@@ -18,8 +18,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     # Pinned llm-agents for Claude Code 2.0.64 (uses its own nixpkgs for compatibility)
-    llm-agents-pinned.url =
-      "github:numtide/llm-agents.nix/4a12b5bef5a82b71da765603df5192c511a60cc2";
+    llm-agents-pinned.url = "github:numtide/llm-agents.nix/4a12b5bef5a82b71da765603df5192c511a60cc2";
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -30,14 +29,32 @@
     try.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, darwin, home-manager, ghostty, llm-agents
-    , llm-agents-pinned, sops-nix, chaotic, try, ... }:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      darwin,
+      home-manager,
+      ghostty,
+      llm-agents,
+      llm-agents-pinned,
+      sops-nix,
+      chaotic,
+      try,
+      ...
+    }:
     let
       inherit (nixpkgs.lib) genAttrs;
       lib = nixpkgs.lib;
 
-      darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
-      linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
+      darwinSystems = [
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
+      linuxSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
       systems = darwinSystems ++ linuxSystems;
 
       forEachSystem = f: genAttrs systems (system: f system);
@@ -48,7 +65,8 @@
       # - chaotic: removed - only needed for NixOS, was causing nix to rebuild with failing tests
       overlaysList = [ ];
 
-      mkPkgs = system:
+      mkPkgs =
+        system:
         import nixpkgs {
           inherit system;
           overlays = overlaysList;
@@ -56,62 +74,93 @@
         };
 
       sharedDarwinModules = [ ./modules/darwin/system.nix ];
-      sharedNixosModules =
-        [ ./modules/nixos/system.nix chaotic.nixosModules.default ];
+      sharedNixosModules = [
+        ./modules/nixos/system.nix
+        chaotic.nixosModules.default
+      ];
 
       user = "rasyidanakbar";
 
-      mkDarwin = { system ? "aarch64-darwin", extraModules ? [ ]
-        , homeFile ? ./modules/darwin/home/default.nix, }:
+      mkDarwin =
+        {
+          system ? "aarch64-darwin",
+          extraModules ? [ ],
+          homeFile ? ./modules/darwin/home/default.nix,
+        }:
         let
           pkgs = mkPkgs system;
           customPkgs = import ./packages { inherit pkgs lib llm-agents; };
-        in darwin.lib.darwinSystem {
+        in
+        darwin.lib.darwinSystem {
           inherit pkgs;
           system = pkgs.stdenv.hostPlatform.system;
           specialArgs = { inherit inputs overlaysList user; };
-          modules = sharedDarwinModules ++ extraModules ++ [
-            home-manager.darwinModules.home-manager
-            {
-              nix.registry.self.flake = self;
-              nixpkgs.overlays = overlaysList;
+          modules =
+            sharedDarwinModules
+            ++ extraModules
+            ++ [
+              home-manager.darwinModules.home-manager
+              {
+                nix.registry.self.flake = self;
+                nixpkgs.overlays = overlaysList;
 
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.extraSpecialArgs = {
-                inherit inputs user try customPkgs;
-              };
-              home-manager.users.${user} = import homeFile;
-            }
-          ];
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.backupFileExtension = "backup";
+                home-manager.extraSpecialArgs = {
+                  inherit
+                    inputs
+                    user
+                    try
+                    customPkgs
+                    ;
+                };
+                home-manager.users.${user} = import homeFile;
+              }
+            ];
         };
-      mkNixos = { system ? "x86_64-linux", extraModules ? [ ]
-        , homeFile ? ./modules/nixos/home/default.nix, }:
+      mkNixos =
+        {
+          system ? "x86_64-linux",
+          extraModules ? [ ],
+          homeFile ? ./modules/nixos/home/default.nix,
+        }:
         let
           pkgs = mkPkgs system;
           customPkgs = import ./packages { inherit pkgs lib llm-agents; };
-        in lib.nixosSystem {
+        in
+        lib.nixosSystem {
           inherit pkgs;
           system = pkgs.stdenv.hostPlatform.system;
           specialArgs = { inherit inputs overlaysList user; };
-          modules = sharedNixosModules ++ extraModules ++ [
-            home-manager.nixosModules.home-manager
-            {
-              nix.registry.self.flake = self;
-              nixpkgs.overlays = overlaysList;
+          modules =
+            sharedNixosModules
+            ++ extraModules
+            ++ [
+              home-manager.nixosModules.home-manager
+              {
+                nix.registry.self.flake = self;
+                nixpkgs.overlays = overlaysList;
 
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = {
-                inherit inputs user try customPkgs;
-              };
-              home-manager.users.${user} = import homeFile;
-            }
-          ];
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.extraSpecialArgs = {
+                  inherit
+                    inputs
+                    user
+                    try
+                    customPkgs
+                    ;
+                };
+                home-manager.users.${user} = import homeFile;
+              }
+            ];
         };
-    in {
-      darwinConfigurations = { macbook-pro = mkDarwin { }; };
+    in
+    {
+      darwinConfigurations = {
+        macbook-pro = mkDarwin { };
+      };
       nixosConfigurations = {
         # Temporarily disabled for testing
         # dev-vm = mkNixos {
@@ -128,24 +177,30 @@
         # };
       };
 
-      devShells = forEachSystem (system:
+      devShells = forEachSystem (
+        system:
         let
           pkgs = mkPkgs system;
-          python = if builtins.hasAttr "python312" pkgs then
-            pkgs.python312
-          else
-            pkgs.python3;
+          python = if builtins.hasAttr "python312" pkgs then pkgs.python312 else pkgs.python3;
 
           # Custom packages
           customPkgs = import ./packages { inherit pkgs lib llm-agents; };
 
           # Common arguments passed to all devshell imports
-          shellArgs = { inherit pkgs lib python customPkgs; };
+          shellArgs = {
+            inherit
+              pkgs
+              lib
+              python
+              customPkgs
+              ;
+          };
 
           # Import all shells from shells/ directory
           importShell = name: import (./shells + "/${name}.nix") shellArgs;
 
-        in {
+        in
+        {
           default = importShell "default";
           python-uv = importShell "python-uv";
           ai-notebook = importShell "ai-notebook";
@@ -155,20 +210,29 @@
           rust = importShell "rust";
           ai-agent = importShell "ai-agent";
           effect-ts = importShell "effect-ts";
-        });
+        }
+      );
 
-      formatter = forEachSystem (system: (mkPkgs system).nixfmt-classic);
+      formatter = forEachSystem (system: (mkPkgs system).nixfmt);
 
-      packages = forEachSystem (system:
+      packages = forEachSystem (
+        system:
         let
           pkgs = mkPkgs system;
           customPkgs = import ./packages { inherit pkgs lib llm-agents; };
-        in customPkgs // { inherit (pkgs) git; });
+        in
+        customPkgs // { inherit (pkgs) git; }
+      );
 
-      checks = forEachSystem (system:
+      checks = forEachSystem (
+        system:
         let
           pkgs = mkPkgs system;
           customPkgs = import ./packages { inherit pkgs lib llm-agents; };
-        in { inherit (customPkgs) opencode; });
+        in
+        {
+          inherit (customPkgs) opencode;
+        }
+      );
     };
 }

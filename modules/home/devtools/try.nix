@@ -1,8 +1,20 @@
-{ config, lib, pkgs, try, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  try,
+  ...
+}:
 let
-  inherit (lib) mkEnableOption mkOption types mkIf;
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    types
+    mkIf
+    ;
   cfg = config.rsydn.try;
-in {
+in
+{
   imports = [ try.homeModules.default ];
 
   options.rsydn.try = {

@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   # Gaming configuration module
   # Steam, Proton, Vulkan, Wine, and gaming optimizations
 
@@ -9,17 +10,18 @@
     dedicatedServer.openFirewall = true;
 
     # Enable Proton compatibility layer
-    extraCompatPackages = with pkgs;
-      [
-        proton-ge-bin # GloriousEggroll's Proton builds
-      ];
+    extraCompatPackages = with pkgs; [
+      proton-ge-bin # GloriousEggroll's Proton builds
+    ];
   };
 
   # GameMode for performance optimization
   programs.gamemode = {
     enable = true;
     settings = {
-      general = { renice = 10; };
+      general = {
+        renice = 10;
+      };
       custom = {
         start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
         end = "${pkgs.libnotify}/bin/notify-send 'GameMode ended'";
@@ -72,5 +74,7 @@
   # ];
 
   # Increase file watchers for game modding tools
-  boot.kernel.sysctl = { "fs.inotify.max_user_watches" = 524288; };
+  boot.kernel.sysctl = {
+    "fs.inotify.max_user_watches" = 524288;
+  };
 }

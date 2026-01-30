@@ -1,4 +1,5 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+{
   # QEMU guest agent provides graceful shutdowns and metadata exchange.
   # Disabled by default - enable in host overlay if needed.
   services.qemuGuest.enable = lib.mkDefault false;
@@ -18,8 +19,11 @@
     "virtio_mmio"
   ];
 
-  boot.kernelModules =
-    lib.mkDefault [ "virtio_balloon" "virtio_console" "virtio_rng" ];
+  boot.kernelModules = lib.mkDefault [
+    "virtio_balloon"
+    "virtio_console"
+    "virtio_rng"
+  ];
 
   # Provide udev rules to improve virtio device behaviour.
   services.udev.extraRules = lib.mkDefault ''

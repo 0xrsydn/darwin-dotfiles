@@ -1,4 +1,5 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+{
   # Shared desktop settings (imported by all DEs)
 
   # XDG portals for desktop integration

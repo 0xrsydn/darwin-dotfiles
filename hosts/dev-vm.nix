@@ -1,4 +1,5 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+{
   networking.hostName = "dev-vm";
   # Set the baseline NixOS release used for stateful data; bump on rebuilds.
   system.stateVersion = lib.mkDefault "24.05";

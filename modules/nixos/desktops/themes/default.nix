@@ -1,4 +1,10 @@
-{ lib, pkgs, user, ... }: {
+{
+  lib,
+  pkgs,
+  user,
+  ...
+}:
+{
   # Default theme configuration for desktop
   # Simple Adwaita-dark theme that works across all desktop environments
   # Switch to catppuccin.nix or create your own for custom themes

@@ -1,4 +1,5 @@
-{ workspaceFocusBindings, workspaceSendBindings }: {
+{ workspaceFocusBindings, workspaceSendBindings }:
+{
   main.binding = {
     "alt-h" = "focus left";
     "alt-j" = "focus down";
@@ -27,7 +28,9 @@
     "alt-r" = "mode resize";
     "alt-f" = "mode float";
     "alt-shift-semicolon" = "mode service";
-  } // workspaceFocusBindings // workspaceSendBindings;
+  }
+  // workspaceFocusBindings
+  // workspaceSendBindings;
 
   float.binding = {
     enter = ''exec-and-forget open -na "Ghostty" && aerospace layout floating'';
@@ -36,8 +39,11 @@
       "layout floating"
       "mode main"
     ];
-    g =
-      [ ''exec-and-forget open -na "Ghostty"'' "layout floating" "mode main" ];
+    g = [
+      ''exec-and-forget open -na "Ghostty"''
+      "layout floating"
+      "mode main"
+    ];
     esc = "mode main";
   };
 
@@ -52,13 +58,37 @@
   };
 
   service.binding = {
-    esc = [ "reload-config" "mode main" ];
-    r = [ "flatten-workspace-tree" "mode main" ];
-    f = [ "layout floating tiling" "mode main" ];
-    backspace = [ "close-all-windows-but-current" "mode main" ];
-    h = [ "join-with left" "mode main" ];
-    j = [ "join-with down" "mode main" ];
-    k = [ "join-with up" "mode main" ];
-    l = [ "join-with right" "mode main" ];
+    esc = [
+      "reload-config"
+      "mode main"
+    ];
+    r = [
+      "flatten-workspace-tree"
+      "mode main"
+    ];
+    f = [
+      "layout floating tiling"
+      "mode main"
+    ];
+    backspace = [
+      "close-all-windows-but-current"
+      "mode main"
+    ];
+    h = [
+      "join-with left"
+      "mode main"
+    ];
+    j = [
+      "join-with down"
+      "mode main"
+    ];
+    k = [
+      "join-with up"
+      "mode main"
+    ];
+    l = [
+      "join-with right"
+      "mode main"
+    ];
   };
 }

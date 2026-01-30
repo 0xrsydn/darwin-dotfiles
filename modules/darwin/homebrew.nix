@@ -2,7 +2,8 @@
 let
   inherit (lib) mkIf mkOption types;
   cfg = config.rsydn.homebrew;
-in {
+in
+{
   options.rsydn.homebrew = {
     enable = mkOption {
       type = types.bool;
@@ -16,7 +17,12 @@ in {
     };
     brews = mkOption {
       type = types.listOf types.str;
-      default = [ "curl" "yt-dlp" "infisical" "mole" ];
+      default = [
+        "curl"
+        "yt-dlp"
+        "infisical"
+        "mole"
+      ];
       description = "Homebrew formulae to install.";
     };
     casks = mkOption {

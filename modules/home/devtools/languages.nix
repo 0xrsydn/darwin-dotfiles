@@ -1,12 +1,29 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
-  inherit (lib) mkEnableOption mkOption mkIf types warn unique;
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    mkIf
+    types
+    warn
+    unique
+    ;
   cfg = config.rsydn.languages;
 
   hasPkg = name: builtins.hasAttr name pkgs;
   getPkg = name: if hasPkg name then pkgs.${name} else null;
 
-  mkToolOption = { name, defaultPackage, description }:
+  mkToolOption =
+    {
+      name,
+      defaultPackage,
+      description,
+    }:
     mkOption {
       type = types.submodule {
         options = {
@@ -18,8 +35,7 @@ let
           package = mkOption {
             type = types.nullOr types.package;
             default = defaultPackage;
-            description =
-              "Package derivation to install for ${name}. Set to null to skip.";
+            description = "Package derivation to install for ${name}. Set to null to skip.";
           };
         };
       };
@@ -30,23 +46,25 @@ let
       description = description;
     };
 
-  mkToolPackages = specs:
-    builtins.concatMap (tool:
-      let toolCfg = tool.cfg;
-      in if toolCfg.enable then
+  mkToolPackages =
+    specs:
+    builtins.concatMap (
+      tool:
+      let
+        toolCfg = tool.cfg;
+      in
+      if toolCfg.enable then
         if toolCfg.package != null then
           [ toolCfg.package ]
         else
           warn "rsydn.languages.${tool.name}: package is null, skipping" [ ]
       else
-        [ ]) specs;
+        [ ]
+    ) specs;
 
   uvPackage = getPkg "uv";
   goPackage = getPkg "go";
-  nodePackage = if builtins.hasAttr "nodejs_20" pkgs then
-    pkgs.nodejs_20
-  else
-    getPkg "nodejs";
+  nodePackage = if builtins.hasAttr "nodejs_20" pkgs then pkgs.nodejs_20 else getPkg "nodejs";
   cargoPackage = getPkg "cargo";
   bunPackage = getPkg "bun";
 
@@ -80,7 +98,8 @@ let
 
   languagePackages = mkToolPackages toolSpecs;
 
-in {
+in
+{
   options.rsydn.languages = {
     enable = mkEnableOption "Language tooling packages for everyday workflows";
 

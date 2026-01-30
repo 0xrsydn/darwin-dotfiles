@@ -1,31 +1,40 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   profileBin = "${config.home.profileDirectory}/bin";
   # System binaries path - same on both NixOS and Darwin
   systemBin = "/run/current-system/sw/bin";
   defaultBin = "/nix/var/nix/profiles/default/bin";
-  darwinHomebrewDir = if pkgs.stdenv.hostPlatform.isAarch64 then
-    "/opt/homebrew"
-  else
-    "/usr/local";
+  darwinHomebrewDir = if pkgs.stdenv.hostPlatform.isAarch64 then "/opt/homebrew" else "/usr/local";
   homebrewBin = "${darwinHomebrewDir}/bin";
   homebrewSbin = "${darwinHomebrewDir}/sbin";
-  homebrewPaths = if pkgs.stdenv.hostPlatform.isDarwin then
-    lib.unique [ homebrewBin homebrewSbin ]
-  else
-    [ ];
+  homebrewPaths =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      lib.unique [
+        homebrewBin
+        homebrewSbin
+      ]
+    else
+      [ ];
   # Add common macOS system paths that may contain user-installed CLIs
-  macosSystemPaths = if pkgs.stdenv.hostPlatform.isDarwin then [
-    "/usr/local/bin"
-    "/usr/bin"
-    "/bin"
-    "/usr/sbin"
-    "/sbin"
-  ] else
-    [ ];
-  formatPathList = paths:
-    lib.concatMapStrings (path: "      \"${path}\"\n") paths;
-in {
+  macosSystemPaths =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      [
+        "/usr/local/bin"
+        "/usr/bin"
+        "/bin"
+        "/usr/sbin"
+        "/sbin"
+      ]
+    else
+      [ ];
+  formatPathList = paths: lib.concatMapStrings (path: "      \"${path}\"\n") paths;
+in
+{
   imports = [ ./starship ];
 
   programs.nushell.enable = lib.mkDefault true;
@@ -141,7 +150,13 @@ in {
         $env.XDG_CACHE_HOME = "${config.xdg.cacheHome}"
 
         let nix_paths = [
-    ${formatPathList [ profileBin systemBin defaultBin ]}    ]
+    ${
+      formatPathList [
+        profileBin
+        systemBin
+        defaultBin
+      ]
+    }    ]
 
         let homebrew_paths = [
     ${formatPathList homebrewPaths}    ]

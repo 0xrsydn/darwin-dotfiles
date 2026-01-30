@@ -2,13 +2,13 @@
 let
   inherit (lib) mkOption types mkIf;
   cfg = config.rsydn.direnv;
-in {
+in
+{
   options.rsydn.direnv = {
     enable = mkOption {
       type = types.bool;
       default = false;
-      description =
-        "Enable direnv with nix-direnv for automatic devshell activation.";
+      description = "Enable direnv with nix-direnv for automatic devshell activation.";
     };
     silent = mkOption {
       type = types.bool;

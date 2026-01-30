@@ -2,7 +2,13 @@
 
 pkgs.mkShell {
   name = "rust";
-  packages = with pkgs; [ cargo rustc rust-analyzer rustfmt clippy ];
+  packages = with pkgs; [
+    cargo
+    rustc
+    rust-analyzer
+    rustfmt
+    clippy
+  ];
   shellHook = ''
     mkdir -p "$PWD/.cache/cargo"
     export CARGO_HOME="$PWD/.cache/cargo"

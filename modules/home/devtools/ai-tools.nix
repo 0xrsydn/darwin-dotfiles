@@ -1,6 +1,18 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
-  inherit (lib) mkEnableOption mkOption types mkIf escapeShellArg;
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    types
+    mkIf
+    escapeShellArg
+    ;
   cfg = config.rsydn.aiTools;
   system = pkgs.stdenv.hostPlatform.system;
 
@@ -10,48 +22,51 @@ let
   llmPkgsPinned = inputs.llm-agents-pinned.packages.${system};
 
   # Z.AI Gateway wrapper for Claude Code
-  zaiWrapperPackages = let zaiCfg = cfg.zai;
-  in if zaiCfg.enable then
+  zaiWrapperPackages =
     let
-      claudeExe = lib.getExe llmPkgsPinned.claude-code;
-      commandName = zaiCfg.commandName;
-      baseUrl = zaiCfg.baseUrl;
-      model = zaiCfg.model;
-      tokenEnvVar = zaiCfg.tokenEnvVar;
-    in [
-      (pkgs.writeShellApplication {
-        name = commandName;
-        text = ''
-          if [ -z "''${${tokenEnvVar}:-}" ]; then
-            echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
-            exit 1
-          fi
+      zaiCfg = cfg.zai;
+    in
+    if zaiCfg.enable then
+      let
+        claudeExe = lib.getExe llmPkgsPinned.claude-code;
+        commandName = zaiCfg.commandName;
+        baseUrl = zaiCfg.baseUrl;
+        model = zaiCfg.model;
+        tokenEnvVar = zaiCfg.tokenEnvVar;
+      in
+      [
+        (pkgs.writeShellApplication {
+          name = commandName;
+          text = ''
+            if [ -z "''${${tokenEnvVar}:-}" ]; then
+              echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
+              exit 1
+            fi
 
-          export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
-          export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
-          export ANTHROPIC_MODEL=${escapeShellArg model}
+            export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
+            export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
+            export ANTHROPIC_MODEL=${escapeShellArg model}
 
-          exec ${claudeExe} "$@"
-        '';
-      })
-    ]
-  else
-    [ ];
+            exec ${claudeExe} "$@"
+          '';
+        })
+      ]
+    else
+      [ ];
 
-in {
+in
+{
   options.rsydn.aiTools = {
     enable = mkEnableOption "AI CLI tools from llm-agents.nix";
 
     zai = mkOption {
       type = types.submodule {
         options = {
-          enable = mkEnableOption
-            "Expose the Z.AI Gateway wrapper command for Claude.";
+          enable = mkEnableOption "Expose the Z.AI Gateway wrapper command for Claude.";
           commandName = mkOption {
             type = types.str;
             default = "glm";
-            description =
-              "Name of the wrapper command that launches Claude via Z.AI.";
+            description = "Name of the wrapper command that launches Claude via Z.AI.";
           };
           baseUrl = mkOption {
             type = types.str;
@@ -66,8 +81,7 @@ in {
           tokenEnvVar = mkOption {
             type = types.str;
             default = "ZAI_API_KEY";
-            description =
-              "Environment variable that stores the Z.AI API token.";
+            description = "Environment variable that stores the Z.AI API token.";
           };
         };
       };
@@ -78,15 +92,13 @@ in {
         model = "glm-4.7";
         tokenEnvVar = "ZAI_API_KEY";
       };
-      description =
-        "Configuration for the Claude wrapper that targets the Z.AI gateway.";
+      description = "Configuration for the Claude wrapper that targets the Z.AI gateway.";
     };
 
     extraPackages = mkOption {
       type = types.listOf types.package;
       default = [ ];
-      description =
-        "Additional AI tooling packages to add alongside the defaults.";
+      description = "Additional AI tooling packages to add alongside the defaults.";
     };
   };
 
@@ -98,6 +110,8 @@ in {
       llmPkgs.ccstatusline # latest
       llmPkgs.ccusage # latest
       llmPkgs.codex
-    ] ++ zaiWrapperPackages ++ cfg.extraPackages;
+    ]
+    ++ zaiWrapperPackages
+    ++ cfg.extraPackages;
   };
 }

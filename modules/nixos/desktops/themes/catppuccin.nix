@@ -1,4 +1,10 @@
-{ lib, pkgs, user, ... }: {
+{
+  lib,
+  pkgs,
+  user,
+  ...
+}:
+{
   # Catppuccin theme configuration
   # Soothing pastel theme for both GTK and Qt applications
   # Works with KDE Plasma, Hyprland, and other desktop environments

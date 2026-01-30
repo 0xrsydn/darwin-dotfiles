@@ -8,15 +8,17 @@ let
   '';
 
   # Generate MCP configs for GUI applications
-  mcpConfigForGUI = pkgs.writeText "mcp_settings.json" (builtins.toJSON {
-    mcpServers = {
-      nixos = {
-        type = "stdio";
-        command = "${mcpNixosWrapper}/bin/mcp-nixos-wrapper";
-        args = [ ];
+  mcpConfigForGUI = pkgs.writeText "mcp_settings.json" (
+    builtins.toJSON {
+      mcpServers = {
+        nixos = {
+          type = "stdio";
+          command = "${mcpNixosWrapper}/bin/mcp-nixos-wrapper";
+          args = [ ];
+        };
       };
-    };
-  });
+    }
+  );
 
   # Script to install MCP configs for Claude Code and Codex
   installMcpConfigs = pkgs.writeShellScriptBin "install-mcp-configs" ''
@@ -83,12 +85,13 @@ let
     "$out_link/bin/nvim" "$@"
   '';
 
-in pkgs.mkShell {
+in
+pkgs.mkShell {
   name = "default";
   packages = with pkgs; [
     git
     nix
-    nixfmt-classic
+    nixfmt
     uv
     python3
     mcpNixosWrapper
