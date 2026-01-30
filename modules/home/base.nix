@@ -43,6 +43,8 @@
       # due to nixpkgs-unstable syrupy test failures breaking the font's Python build deps
       packages = with pkgs; [
         cloudflared
+        gh
+        tea
         fzf
         htop
         jq
