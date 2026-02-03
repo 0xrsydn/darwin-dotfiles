@@ -106,7 +106,7 @@ in
     home.packages = [
       llmPkgsPinned.claude-code # pinned to 2.0.64
       llmPkgs.opencode # latest
-      llmPkgs.crush # latest
+      llmPkgs.pi
       llmPkgs.ccstatusline # latest
       llmPkgs.ccusage # latest
       llmPkgs.codex
