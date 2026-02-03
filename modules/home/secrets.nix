@@ -74,6 +74,11 @@ in
         generateKey = true;
       };
 
+      # Ensure the LaunchAgent on macOS can find `getconf` (needed by
+      # sops-install-secrets to resolve DARWIN_USER_TEMP_DIR).
+      # Without this, age.plugins produces an empty PATH.
+      environment.PATH = lib.mkForce "/usr/bin";
+
       secrets = lib.mapAttrs sanitizeSecret cfg.secrets;
     }
     // (lib.optionalAttrs (cfg.defaultSopsFile != null) {

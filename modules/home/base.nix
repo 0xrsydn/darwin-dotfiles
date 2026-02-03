@@ -37,6 +37,7 @@
     rsydn.aiTools = {
       enable = lib.mkDefault true;
       zai.enable = lib.mkDefault true;
+      kimi.enable = lib.mkDefault true;
     };
 
     rsydn.try = {

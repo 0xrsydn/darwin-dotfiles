@@ -198,5 +198,6 @@ in
         load-secret "fal-api-key" "FAL_API_KEY"
         load-secret "groq-api-key" "GROQ_API_KEY"
         load-secret "firecrawl-api-key" "FIRECRAWL_API_KEY"
+        load-secret "kimi-api-key" "KIMI_API_KEY"
   '';
 }

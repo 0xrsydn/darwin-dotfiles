@@ -54,6 +54,37 @@ let
     else
       [ ];
 
+  # Kimi Code API wrapper for Claude Code
+  kimiWrapperPackages =
+    let
+      kimiCfg = cfg.kimi;
+    in
+    if kimiCfg.enable then
+      let
+        claudeExe = lib.getExe llmPkgsPinned.claude-code;
+        commandName = kimiCfg.commandName;
+        baseUrl = kimiCfg.baseUrl;
+        tokenEnvVar = kimiCfg.tokenEnvVar;
+      in
+      [
+        (pkgs.writeShellApplication {
+          name = commandName;
+          text = ''
+            if [ -z "''${${tokenEnvVar}:-}" ]; then
+              echo "${commandName}: environment variable ${tokenEnvVar} is not set" >&2
+              exit 1
+            fi
+
+            export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
+            export ANTHROPIC_API_KEY="''${${tokenEnvVar}}"
+
+            exec ${claudeExe} "$@"
+          '';
+        })
+      ]
+    else
+      [ ];
+
 in
 {
   options.rsydn.aiTools = {
@@ -95,6 +126,36 @@ in
       description = "Configuration for the Claude wrapper that targets the Z.AI gateway.";
     };
 
+    kimi = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Expose the Kimi Code API wrapper command for Claude.";
+          commandName = mkOption {
+            type = types.str;
+            default = "kimi";
+            description = "Name of the wrapper command that launches Claude via Kimi.";
+          };
+          baseUrl = mkOption {
+            type = types.str;
+            default = "https://api.kimi.com/coding/";
+            description = "Kimi Code API base URL used for the Anthropic client.";
+          };
+          tokenEnvVar = mkOption {
+            type = types.str;
+            default = "KIMI_API_KEY";
+            description = "Environment variable that stores the Kimi API token.";
+          };
+        };
+      };
+      default = {
+        enable = false;
+        commandName = "kimi";
+        baseUrl = "https://api.kimi.com/coding/";
+        tokenEnvVar = "KIMI_API_KEY";
+      };
+      description = "Configuration for the Claude wrapper that targets the Kimi Code API.";
+    };
+
     extraPackages = mkOption {
       type = types.listOf types.package;
       default = [ ];
@@ -112,6 +173,7 @@ in
       llmPkgs.codex
     ]
     ++ zaiWrapperPackages
+    ++ kimiWrapperPackages
     ++ cfg.extraPackages;
   };
 }

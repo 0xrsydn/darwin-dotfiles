@@ -62,6 +62,11 @@
         format = "yaml";
         key = "FIRECRAWL_API_KEY";
       };
+
+      "kimi-api-key" = {
+        format = "yaml";
+        key = "KIMI_API_KEY";
+      };
     };
   };
 }
