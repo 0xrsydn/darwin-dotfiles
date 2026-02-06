@@ -28,7 +28,7 @@ let
     in
     if zaiCfg.enable then
       let
-        claudeExe = lib.getExe llmPkgsPinned.claude-code;
+        claudeExe = lib.getExe llmPkgs.claude-code;
         commandName = zaiCfg.commandName;
         baseUrl = zaiCfg.baseUrl;
         model = zaiCfg.model;
@@ -61,7 +61,7 @@ let
     in
     if kimiCfg.enable then
       let
-        claudeExe = lib.getExe llmPkgsPinned.claude-code;
+        claudeExe = lib.getExe llmPkgs.claude-code;
         commandName = kimiCfg.commandName;
         baseUrl = kimiCfg.baseUrl;
         tokenEnvVar = kimiCfg.tokenEnvVar;
@@ -165,7 +165,7 @@ in
 
   config = mkIf cfg.enable {
     home.packages = [
-      llmPkgsPinned.claude-code # pinned to 2.0.64
+      llmPkgs.claude-code # latest
       llmPkgs.opencode # latest
       llmPkgs.pi
       llmPkgs.ccstatusline # latest
