@@ -31,7 +31,9 @@ let
         claudeExe = lib.getExe llmPkgs.claude-code;
         commandName = zaiCfg.commandName;
         baseUrl = zaiCfg.baseUrl;
-        model = zaiCfg.model;
+        opusModel = zaiCfg.opusModel;
+        sonnetModel = zaiCfg.sonnetModel;
+        haikuModel = zaiCfg.haikuModel;
         tokenEnvVar = zaiCfg.tokenEnvVar;
       in
       [
@@ -45,7 +47,9 @@ let
 
             export ANTHROPIC_BASE_URL=${escapeShellArg baseUrl}
             export ANTHROPIC_AUTH_TOKEN="''${${tokenEnvVar}}"
-            export ANTHROPIC_MODEL=${escapeShellArg model}
+            export ANTHROPIC_DEFAULT_OPUS_MODEL=${escapeShellArg opusModel}
+            export ANTHROPIC_DEFAULT_SONNET_MODEL=${escapeShellArg sonnetModel}
+            export ANTHROPIC_DEFAULT_HAIKU_MODEL=${escapeShellArg haikuModel}
 
             exec ${claudeExe} "$@"
           '';
@@ -104,10 +108,20 @@ in
             default = "https://api.z.ai/api/anthropic";
             description = "Gateway base URL used for the Anthropic client.";
           };
-          model = mkOption {
+          opusModel = mkOption {
             type = types.str;
-            default = "glm-4.7";
-            description = "Model identifier passed via ANTHROPIC_MODEL.";
+            default = "glm-5";
+            description = "Model identifier passed via ANTHROPIC_DEFAULT_OPUS_MODEL.";
+          };
+          sonnetModel = mkOption {
+            type = types.str;
+            default = "glm-5";
+            description = "Model identifier passed via ANTHROPIC_DEFAULT_SONNET_MODEL.";
+          };
+          haikuModel = mkOption {
+            type = types.str;
+            default = "glm-5";
+            description = "Model identifier passed via ANTHROPIC_DEFAULT_HAIKU_MODEL.";
           };
           tokenEnvVar = mkOption {
             type = types.str;
@@ -120,7 +134,9 @@ in
         enable = false;
         commandName = "glm";
         baseUrl = "https://api.z.ai/api/anthropic";
-        model = "glm-4.7";
+        opusModel = "glm-5";
+        sonnetModel = "glm-5";
+        haikuModel = "glm-5";
         tokenEnvVar = "ZAI_API_KEY";
       };
       description = "Configuration for the Claude wrapper that targets the Z.AI gateway.";
