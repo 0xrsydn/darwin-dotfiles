@@ -25,7 +25,7 @@
       warn-dirty = false;
       # Numtide binary cache for llm-agents.nix packages
       extra-substituters = [ "https://cache.numtide.com" ];
-      extra-trusted-public-keys = [ "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ber8L+2z9FqRZJ+KBKGE4NNsT0=" ];
+      extra-trusted-public-keys = [ "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" ];
     };
     optimise.automatic = true;
     gc = {
