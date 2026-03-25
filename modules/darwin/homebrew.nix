@@ -38,7 +38,6 @@ in
         "obs"
         "neohtop"
         "orbstack"
-        "ghostty"
         "openvpn-connect"
       ];
       description = "Homebrew casks to install.";
