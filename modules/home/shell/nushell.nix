@@ -40,6 +40,9 @@ in
   programs.nushell.enable = lib.mkDefault true;
 
   programs.nushell.extraConfig = ''
+    # Use kitten ssh for proper terminfo on remote hosts
+    alias ssh = kitten ssh
+
     # Dotfiles QA validation command
       def dotfiles-qa [] {
         let dotfiles_dir = "${config.home.homeDirectory}/Development/dotfiles"
