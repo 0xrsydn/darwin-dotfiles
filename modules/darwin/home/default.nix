@@ -10,7 +10,7 @@
     ../../home/base.nix
     ../../home/shell/nushell.nix
     ./programs/aerospace
-    ./programs/ghostty.nix
+    ./programs/kitty.nix
   ];
 
   # Darwin-specific secrets configuration
