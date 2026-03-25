@@ -19,7 +19,7 @@
     "alt-comma" = "layout accordion horizontal vertical";
     "alt-space" = "layout floating tiling";
 
-    "alt-enter" = ''exec-and-forget open -na "Ghostty"'';
+    "alt-enter" = ''exec-and-forget open -na "kitty"'';
     "alt-backspace" = "close";
 
     "alt-tab" = "workspace-back-and-forth";
@@ -33,14 +33,14 @@
   // workspaceSendBindings;
 
   float.binding = {
-    enter = ''exec-and-forget open -na "Ghostty" && aerospace layout floating'';
+    enter = ''exec-and-forget open -na "kitty" && aerospace layout floating'';
     i = [
       ''exec-and-forget open -na "iTerm.app"''
       "layout floating"
       "mode main"
     ];
     g = [
-      ''exec-and-forget open -na "Ghostty"''
+      ''exec-and-forget open -na "kitty"''
       "layout floating"
       "mode main"
     ];

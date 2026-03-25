@@ -30,9 +30,9 @@
     {
       run = "layout tiling";
     }
-    # Exception: Ghostty on workspace 5 floats
+    # Exception: Kitty on workspace 5 floats
     {
-      "if".app-id = "com.mitchellh.ghostty";
+      "if".app-id = "net.kovidgoyal.kitty";
       "if".workspace = "5";
       run = "layout floating";
     }
