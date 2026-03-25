@@ -11,9 +11,6 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    ghostty.url = "github:ghostty-org/ghostty";
-    ghostty.inputs.nixpkgs.follows = "nixpkgs";
-
     # Latest llm-agents for most tools (uses its own nixpkgs for compatibility)
     llm-agents.url = "github:numtide/llm-agents.nix";
 
@@ -35,7 +32,6 @@
       nixpkgs,
       darwin,
       home-manager,
-      ghostty,
       llm-agents,
       llm-agents-pinned,
       sops-nix,
@@ -60,7 +56,6 @@
       forEachSystem = f: genAttrs systems (system: f system);
 
       # No overlays needed for Darwin builds
-      # - ghostty: installed via homebrew cask
       # - gitOverlay: removed - was causing mypy to rebuild from source
       # - chaotic: removed - only needed for NixOS, was causing nix to rebuild with failing tests
       overlaysList = [ ];

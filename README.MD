@@ -8,7 +8,7 @@ So far, the dotfiles only used for my macOS configuration, maybe in the future I
 
 - OS: macOS (nix-darwin)
 - Shell: nushell with starship prompt
-- Terminal: ghostty with dracula theme
+- Terminal: kitty with gruvbox theme
 - Package Management: mix of nix and homebrew 
 
 ## Developer Tools
@@ -16,7 +16,7 @@ So far, the dotfiles only used for my macOS configuration, maybe in the future I
 - IDE: neovim (lazyvim bundle) & Helix
 - Containers: docker, lazydocker, orbstack
 - CLI utils: fzf, ripgrep, ast-grep, jq, yq, pandoc, ffmpeg, tree, htop
-- Tmux with dracula theme (plugins: cpu-usage, battery, network-bandwidth monitoring)
+- Tmux with gruvbox theme (plugins: cpu-usage, battery, network-bandwidth monitoring)
 - Hybrid approach of globally installed programming language tooling and specific programming language tooling using `nix develop` (still tweaking to see whats the best)
 
 ## AI Tools
