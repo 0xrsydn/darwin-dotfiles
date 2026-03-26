@@ -64,7 +64,7 @@ let
 
   uvPackage = getPkg "uv";
   goPackage = getPkg "go";
-  nodePackage = if builtins.hasAttr "nodejs_20" pkgs then pkgs.nodejs_20 else getPkg "nodejs";
+  nodePackage = if builtins.hasAttr "nodejs_22" pkgs then pkgs.nodejs_22 else getPkg "nodejs";
   cargoPackage = getPkg "cargo";
   bunPackage = getPkg "bun";
 

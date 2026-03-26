@@ -6,6 +6,7 @@
     settings = {
       background_opacity = "0.9";
       confirm_os_window_close = 0;
+      enabled_layouts = "splits,stack";
 
       # Gruvbox colors
       background = "#282828";
@@ -31,6 +32,21 @@
       color13 = "#d3869b";
       color14 = "#8ec07c";
       color15 = "#ebdbb2";
+    };
+
+    keybindings = {
+      # Split bindings (cmd+a prefix, matching old ghostty bindings)
+      "cmd+a>v" = "launch --location=vsplit --cwd=current";
+      "cmd+a>s" = "launch --location=hsplit --cwd=current";
+      # Navigation
+      "cmd+a>h" = "neighboring_window left";
+      "cmd+a>j" = "neighboring_window bottom";
+      "cmd+a>k" = "neighboring_window top";
+      "cmd+a>l" = "neighboring_window right";
+      # Other actions
+      "cmd+a>n" = "new_window_with_cwd";
+      "cmd+a>z" = "toggle_layout stack";
+      "cmd+a>x" = "close_window";
     };
   };
 }

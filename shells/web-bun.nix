@@ -4,7 +4,7 @@ pkgs.mkShell {
   name = "web-bun";
   packages = with pkgs; [
     bun
-    nodejs_20
+    nodejs_22
     yarn
     esbuild
     vscode-langservers-extracted
@@ -16,6 +16,6 @@ pkgs.mkShell {
     export -f ccusage
     echo "Bun/Node web shell ready"
     echo "Bun: ${pkgs.bun.version}"
-    echo "Node: ${pkgs.nodejs_20.version}"
+    echo "Node: ${pkgs.nodejs_22.version}"
   '';
 }
