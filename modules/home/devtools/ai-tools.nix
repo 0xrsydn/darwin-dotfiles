@@ -110,17 +110,17 @@ in
           };
           opusModel = mkOption {
             type = types.str;
-            default = "glm-5";
+            default = "glm-5.1";
             description = "Model identifier passed via ANTHROPIC_DEFAULT_OPUS_MODEL.";
           };
           sonnetModel = mkOption {
             type = types.str;
-            default = "glm-5";
+            default = "glm-5.1";
             description = "Model identifier passed via ANTHROPIC_DEFAULT_SONNET_MODEL.";
           };
           haikuModel = mkOption {
             type = types.str;
-            default = "glm-5";
+            default = "glm-5.1";
             description = "Model identifier passed via ANTHROPIC_DEFAULT_HAIKU_MODEL.";
           };
           tokenEnvVar = mkOption {
@@ -134,9 +134,9 @@ in
         enable = false;
         commandName = "glm";
         baseUrl = "https://api.z.ai/api/anthropic";
-        opusModel = "glm-5";
-        sonnetModel = "glm-5";
-        haikuModel = "glm-5";
+        opusModel = "glm-5.1";
+        sonnetModel = "glm-5.1";
+        haikuModel = "glm-5.1";
         tokenEnvVar = "ZAI_API_KEY";
       };
       description = "Configuration for the Claude wrapper that targets the Z.AI gateway.";
