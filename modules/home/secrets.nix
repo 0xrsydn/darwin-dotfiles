@@ -74,10 +74,11 @@ in
         generateKey = true;
       };
 
-      # Ensure the LaunchAgent on macOS can find `getconf` (needed by
-      # sops-install-secrets to resolve DARWIN_USER_TEMP_DIR).
-      # Without this, age.plugins produces an empty PATH.
-      environment.PATH = lib.mkForce "/usr/bin";
+      # The LaunchAgent runs with a minimal PATH. sops-install-secrets needs:
+      #   /usr/bin   – getconf (resolves DARWIN_USER_TEMP_DIR)
+      #   /usr/sbin  – diskutil (RAM disk management)
+      #   /sbin      – newfs_hfs (creates the HFS RAM disk for decrypted secrets)
+      environment.PATH = lib.mkForce "/usr/bin:/usr/sbin:/sbin";
 
       secrets = lib.mapAttrs sanitizeSecret cfg.secrets;
     }
