@@ -11,6 +11,7 @@ let
     mkOption
     types
     mkIf
+    mkMerge
     escapeShellArg
     ;
   cfg = config.rsydn.aiTools;
@@ -172,6 +173,78 @@ in
       description = "Configuration for the Claude wrapper that targets the Kimi Code API.";
     };
 
+    piExtensions = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Install the global pi extensions directory.";
+          source = mkOption {
+            type = types.path;
+            default = ../../../pi/extensions;
+            description = "Source directory for the global pi extensions tree.";
+          };
+        };
+      };
+      default = {
+        enable = true;
+        source = ../../../pi/extensions;
+      };
+      description = "Configuration for the global pi extensions directory deployment.";
+    };
+
+    piSkills = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Install the global pi skills directory.";
+          source = mkOption {
+            type = types.path;
+            default = ../../../pi/skills;
+            description = "Source directory for the global pi skills tree.";
+          };
+        };
+      };
+      default = {
+        enable = true;
+        source = ../../../pi/skills;
+      };
+      description = "Configuration for the global pi skills directory deployment.";
+    };
+
+    piPrompts = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Install the global pi prompt templates directory.";
+          source = mkOption {
+            type = types.path;
+            default = ../../../pi/prompts;
+            description = "Source directory for the global pi prompt templates tree.";
+          };
+        };
+      };
+      default = {
+        enable = true;
+        source = ../../../pi/prompts;
+      };
+      description = "Configuration for the global pi prompt templates directory deployment.";
+    };
+
+    piThemes = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Install the global pi themes directory.";
+          source = mkOption {
+            type = types.path;
+            default = ../../../pi/themes;
+            description = "Source directory for the global pi themes tree.";
+          };
+        };
+      };
+      default = {
+        enable = true;
+        source = ../../../pi/themes;
+      };
+      description = "Configuration for the global pi themes directory deployment.";
+    };
+
     extraPackages = mkOption {
       type = types.listOf types.package;
       default = [ ];
@@ -192,5 +265,32 @@ in
     ++ zaiWrapperPackages
     ++ kimiWrapperPackages
     ++ cfg.extraPackages;
+
+    home.file = mkMerge [
+      (mkIf cfg.piExtensions.enable {
+        ".pi/agent/extensions" = {
+          source = cfg.piExtensions.source;
+          recursive = true;
+        };
+      })
+      (mkIf cfg.piSkills.enable {
+        ".pi/agent/skills" = {
+          source = cfg.piSkills.source;
+          recursive = true;
+        };
+      })
+      (mkIf cfg.piPrompts.enable {
+        ".pi/agent/prompts" = {
+          source = cfg.piPrompts.source;
+          recursive = true;
+        };
+      })
+      (mkIf cfg.piThemes.enable {
+        ".pi/agent/themes" = {
+          source = cfg.piThemes.source;
+          recursive = true;
+        };
+      })
+    ];
   };
 }
