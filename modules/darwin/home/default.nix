@@ -13,59 +13,16 @@
     ./programs/kitty.nix
   ];
 
-  # Darwin-specific secrets configuration
+  # Darwin-specific secrets configuration.
+  # Materialize the whole encrypted env map once, then let Nushell load it.
   rsydn.secrets = {
     enable = lib.mkDefault true;
-    defaultSopsFile = ../../../secrets/local-ai-tokens.sops.yaml;
+    defaultSopsFile = ../../../secrets/global-env.sops.yaml;
     secrets = {
-      "openai-api-key" = {
+      "global-env" = {
         format = "yaml";
-        key = "OPENAI_API_KEY";
-      };
-
-      "openrouter-api-key" = {
-        format = "yaml";
-        key = "OPENROUTER_API_KEY";
-      };
-
-      "zai-api-key" = {
-        format = "yaml";
-        key = "ZAI_API_KEY";
-      };
-
-      "moonshot-api-key" = {
-        format = "yaml";
-        key = "MOONSHOT_API_KEY";
-      };
-
-      "anthropic-api-key" = {
-        format = "yaml";
-        key = "ANTHROPIC_API_KEY";
-      };
-
-      "exa-api-key" = {
-        format = "yaml";
-        key = "EXA_API_KEY";
-      };
-
-      "fal-api-key" = {
-        format = "yaml";
-        key = "FAL_API_KEY";
-      };
-
-      "groq-api-key" = {
-        format = "yaml";
-        key = "GROQ_API_KEY";
-      };
-
-      "firecrawl-api-key" = {
-        format = "yaml";
-        key = "FIRECRAWL_API_KEY";
-      };
-
-      "kimi-api-key" = {
-        format = "yaml";
-        key = "KIMI_API_KEY";
+        key = "";
+        path = "${config.xdg.configHome}/secrets/global-env.yaml";
       };
     };
   };

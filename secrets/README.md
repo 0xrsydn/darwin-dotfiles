@@ -9,47 +9,52 @@ This repo wires [`sops-nix`](https://github.com/Mic92/sops-nix) into the Home Ma
 4. (Optional) Store the private key securely in macOS Keychain or 1Password (`security add-generic-password …`) so rebuilds work without manual prompts.
 
 ## Managing secrets
-- Declare secrets in Home Manager under `rsydn.secrets.secrets`. Each entry is forwarded to `sops.secrets.<name>` and defaults to writing `~/.config/secrets/<name>` with mode `0400`.
-- Structure encrypted data however you like (`YAML`, `JSON`, `.env`). Only the encrypted file is tracked; plaintext never leaves `sops`.
-- Keep sensitive values scoped. Per-project secrets usually live in `.env.sops` + `direnv`; long-lived device secrets belong here.
+- Global shell env vars live in one encrypted YAML file: `secrets/global-env.sops.yaml`.
+- Home Manager decrypts that file to `~/.config/secrets/global-env.yaml` during activation.
+- Nushell reads `global-env.yaml` on startup and exports each top-level key as an environment variable.
+- Only the encrypted file is tracked in git; plaintext stays local.
 
-Example snippet for `modules/home/rsydn/secrets.nix` consumers:
+Example Darwin configuration:
 
 ```nix
-rsydn.secrets.secrets = {
-  "openai-api-key" = {
-    sopsFile = ./secrets.sops.yaml;
-    path = "${config.xdg.configHome}/secrets/openai-api-key";
+rsydn.secrets = {
+  enable = true;
+  defaultSopsFile = ../../../secrets/global-env.sops.yaml;
+  secrets."global-env" = {
+    format = "yaml";
+    key = "";
+    path = "${config.xdg.configHome}/secrets/global-env.yaml";
   };
 };
 ```
 
-Create or update secrets by running:
+Create or update global env vars by running:
 
 ```bash
 SOPS_AGE_KEY_FILE=$HOME/.config/sops/age/keys.txt \
-  sops secrets/secrets.sops.yaml
+  sops secrets/global-env.sops.yaml
 ```
 
-When Home Manager activates, the secret is decrypted to the target path. Source it in Nushell with something like:
+Add entries like:
+
+```yaml
+OPENAI_API_KEY: sk-...
+ANTHROPIC_API_KEY: sk-ant-...
+GITHUB_TOKEN: ghp_...
+```
+
+After `darwin-rebuild switch --flake .#macbook-pro`, the decrypted file is refreshed and every new Nushell session automatically gets:
 
 ```nu
-let-openai-key = (open $env.XDG_CONFIG_HOME ++ "/secrets/openai-api-key" | str trim)
+$env.OPENAI_API_KEY
+$env.ANTHROPIC_API_KEY
+$env.GITHUB_TOKEN
 ```
 
-Because the secret stays on disk, prefer reading it only when needed (inside commands/functions) instead of exporting it globally. For project workflows, you can also load it into env vars temporarily:
-
-```nu
-def with-openai-key [cmd] {
-  let key = open $env.XDG_CONFIG_HOME ++ "/secrets/openai-api-key" | str trim
-  with-env { OPENAI_API_KEY: $key } { nu -c $cmd }
-}
-```
-
-To attach multiple secrets at once, use structured data (e.g. a YAML mapping) and parse it with Nushell's `from yaml`.
+For secrets that should stay file-based instead of being auto-exported, you can still declare extra entries under `rsydn.secrets.secrets` with their own `path`, `format`, and `key`.
 
 ## Rotating keys
-If you regenerate your Age key, re-encrypt the file with the new recipient (`sops updatekeys secrets/secrets.sops.yaml`) and re-run `darwin-rebuild --dry-run --flake .#macbook-pro` to verify the deployment. Remember to remove old recipients so machines without access can no longer decrypt.
+If you regenerate your Age key, re-encrypt the file with the new recipient (`sops updatekeys secrets/global-env.sops.yaml`) and re-run `darwin-rebuild --dry-run --flake .#macbook-pro` to verify the deployment. Remember to remove old recipients so machines without access can no longer decrypt.
 
 ## Frequently asked questions
 - **Where do encrypted files live?** In this repo under `secrets/*.sops.yaml`; they are safe to commit.

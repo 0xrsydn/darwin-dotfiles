@@ -181,26 +181,22 @@ in
 
         $env.NIX_PROFILES = "/run/current-system/sw ${config.home.profileDirectory}"
 
-        # Load sops-managed API keys as environment variables
-        let secrets_dir = "${config.xdg.configHome}/secrets"
+        # Load globally scoped sops-managed environment variables.
+        let global_secrets_file = "${config.xdg.configHome}/secrets/global-env.yaml"
 
-        def --env load-secret [secret_name: string, env_var: string] {
-          let secret_file = ($secrets_dir | path join $secret_name)
+        def --env load-global-secrets [secret_file: string] {
           if ($secret_file | path exists) {
-            let secret_value = (open --raw $secret_file | str trim)
-            {} | insert $env_var $secret_value | load-env
+            let secret_values = (open $secret_file)
+
+            $secret_values
+            | transpose name value
+            | reduce -f {} {|entry, acc|
+                $acc | upsert $entry.name ($entry.value | into string)
+              }
+            | load-env
           }
         }
 
-        load-secret "zai-api-key" "ZAI_API_KEY"
-        load-secret "openai-api-key" "OPENAI_API_KEY"
-        load-secret "openrouter-api-key" "OPENROUTER_API_KEY"
-        load-secret "moonshot-api-key" "MOONSHOT_API_KEY"
-        load-secret "anthropic-api-key" "ANTHROPIC_API_KEY"
-        load-secret "exa-api-key" "EXA_API_KEY"
-        load-secret "fal-api-key" "FAL_API_KEY"
-        load-secret "groq-api-key" "GROQ_API_KEY"
-        load-secret "firecrawl-api-key" "FIRECRAWL_API_KEY"
-        load-secret "kimi-api-key" "KIMI_API_KEY"
+        load-global-secrets $global_secrets_file
   '';
 }
