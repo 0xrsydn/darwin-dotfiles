@@ -187,6 +187,7 @@ in
       llmPkgs.ccstatusline # latest
       llmPkgs.ccusage # latest
       llmPkgs.codex
+      llmPkgs.rtk
     ]
     ++ zaiWrapperPackages
     ++ kimiWrapperPackages

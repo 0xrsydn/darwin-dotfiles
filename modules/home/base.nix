@@ -52,6 +52,7 @@
       # Note: jetbrains-mono removed - installed via Homebrew cask (font-jetbrains-mono)
       # due to nixpkgs-unstable syrupy test failures breaking the font's Python build deps
       packages = with pkgs; [
+        age
         cloudflared
         gh
         tea
@@ -63,6 +64,7 @@
         nixd
         pandoc
         ripgrep
+        sops
         tmux
         tree
         curl
