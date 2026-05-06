@@ -10,10 +10,6 @@ Custom packages live in `packages/` and are exported via `packages/default.nix`.
 
 Use `nix develop` to enter the project shell with `git`, `nixfmt`, and SOPS ready. Run `nix fmt` before committing to format all Nix sources. `XDG_CACHE_HOME=$PWD/.cache nix flake check` validates every host without polluting the global cache. For macOS changes, run `darwin-rebuild --dry-run --flake .#macbook-pro` and follow with `darwin-rebuild switch --flake .#macbook-pro`. Validate the Linux VM closure via `nix build .#nixosConfigurations.dev-vm.config.system.build.toplevel`.
 
-## AI Agent Workflow with Beads
-
-Beads provides persistent memory for AI coding agents through git-backed issue tracking. Enter the AI agent shell with `nix develop .#ai-agent` to access Beads (`bd`) and helper tools. Initialize in any git repository with `bd-init` (Nushell) or `bd init`. Create tasks via `bd create --title "Task name" --type feature --priority high`, track dependencies with `--blocks <id>` or `--parent <id>`, and query ready work using `bd-ready` or `bd ready --json`. The `.beads/issues.jsonl` file must be committed to git to preserve context across sessions. Claude Code can directly use `bd` commands via the Bash tool to maintain work continuity between conversations. Sync the SQLite cache after git operations with `bd-sync` or `bd sync`.
-
 ## Coding Style & Naming Conventions
 
 Indent with two spaces and keep trailing commas in attribute sets. Prefer lower-kebab filenames (e.g. `package/nushell.nix`), and expose custom options under the `rsydn.*` namespace. Format Nix with `nix fmt`; avoid ad-hoc host tweaks when a shared module fits.

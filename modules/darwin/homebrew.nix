@@ -36,7 +36,6 @@ in
         "spotify"
         "vesktop"
         "obs"
-        "neohtop"
         "orbstack"
         "openvpn-connect"
       ];

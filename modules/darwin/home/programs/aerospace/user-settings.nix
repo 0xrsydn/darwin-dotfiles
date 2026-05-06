@@ -26,9 +26,11 @@
   exec-on-workspace-change = [ "flatten-workspace-tree" ];
 
   on-window-detected = [
-    # Default: force all windows to tile
+    # Codex /pet opens an auxiliary window that should not enter the tiling tree.
     {
-      run = "layout tiling";
+      "if".app-id = "com.openai.codex";
+      "if".window-title-regex-substring = "pet|hatch";
+      run = "layout floating";
     }
     # Exception: Kitty on workspace 5 floats
     {
