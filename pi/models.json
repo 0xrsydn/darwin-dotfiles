@@ -1,0 +1,29 @@
+{
+  "providers": {
+    "crofai": {
+      "baseUrl": "https://crof.ai/v1",
+      "api": "openai-completions",
+      "apiKey": "$CROF_API_KEY",
+      "authHeader": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false
+      },
+      "models": [
+        {
+          "id": "glm-5.2",
+          "name": "CrofAI GLM 5.2",
+          "reasoning": true,
+          "contextWindow": 1000000,
+          "maxTokens": 131072,
+          "cost": {
+            "input": 0.5,
+            "output": 2.2,
+            "cacheRead": 0.08,
+            "cacheWrite": 0
+          }
+        }
+      ]
+    }
+  }
+}

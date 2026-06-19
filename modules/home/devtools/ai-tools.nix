@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  customPkgs,
   ...
 }:
 let
@@ -173,6 +174,24 @@ in
       description = "Configuration for the Claude wrapper that targets the Kimi Code API.";
     };
 
+    piInstructions = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Install the global pi AGENTS.md instructions file.";
+          source = mkOption {
+            type = types.path;
+            default = ../../../pi/AGENTS.md;
+            description = "Source file for global pi instructions.";
+          };
+        };
+      };
+      default = {
+        enable = true;
+        source = ../../../pi/AGENTS.md;
+      };
+      description = "Configuration for the global pi instructions file deployment.";
+    };
+
     piExtensions = mkOption {
       type = types.submodule {
         options = {
@@ -266,7 +285,34 @@ in
     ++ kimiWrapperPackages
     ++ cfg.extraPackages;
 
+    home.activation.installPiFff = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ -x ${lib.getExe llmPkgs.pi} ]; then
+        export PI_SKIP_VERSION_CHECK=1
+        export PI_TELEMETRY=0
+        export PATH=${pkgs.nodejs}/bin:${pkgs.git}/bin:$PATH
+
+        settings_file="$HOME/.pi/agent/settings.json"
+        mkdir -p "$(dirname "$settings_file")"
+        ${pkgs.nodejs}/bin/node -e "const fs=require('fs'); const path=process.env.HOME+'/.pi/agent/settings.json'; let settings={}; if (fs.existsSync(path)) settings=JSON.parse(fs.readFileSync(path,'utf8')); settings.theme='dark'; fs.writeFileSync(path, JSON.stringify(settings, null, 2)+String.fromCharCode(10));"
+
+        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@ff-labs/pi-fff' || \
+          ${lib.getExe llmPkgs.pi} install npm:@ff-labs/pi-fff@0.9.4
+        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@juicesharp/rpiv-ask-user-question' || \
+          ${lib.getExe llmPkgs.pi} install npm:@juicesharp/rpiv-ask-user-question@1.20.0
+      fi
+    '';
+
     home.file = mkMerge [
+      {
+        ".pi/agent/models.json" = {
+          source = ../../../pi/models.json;
+        };
+      }
+      (mkIf cfg.piInstructions.enable {
+        ".pi/agent/AGENTS.md" = {
+          source = cfg.piInstructions.source;
+        };
+      })
       (mkIf cfg.piExtensions.enable {
         ".pi/agent/extensions" = {
           source = cfg.piExtensions.source;
