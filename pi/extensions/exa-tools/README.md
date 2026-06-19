@@ -50,6 +50,3 @@ Coding context:
 Use exa_code to find examples of React hook state management patterns
 ```
 
-Subagent usage:
-
-The `librarian` subagent can use these tools once the extension is globally installed.

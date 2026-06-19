@@ -23,6 +23,18 @@ let
   # Pinned llm-agents for Claude Code 2.0.64
   llmPkgsPinned = inputs.llm-agents-pinned.packages.${system};
 
+  # pi with a local patch applied: maps Codex usage-limit errors that arrive
+  # over the (default) WebSocket transport to the same friendly
+  # "You have hit your ChatGPT usage limit" message the SSE path already emits.
+  # Without it, a normal ChatGPT-subscription quota trip surfaces as the raw,
+  # misleading "exceeded your current quota / check your billing" API text.
+  # See patches/pi/fix-codex-ws-usage-limit.mjs.
+  piPatched = llmPkgs.pi.overrideAttrs (o: {
+    postInstall = (o.postInstall or "") + ''
+      ${pkgs.nodejs}/bin/node ${./../../../patches/pi/fix-codex-ws-usage-limit.mjs} $out/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-ai/dist/api/openai-codex-responses.js
+    '';
+  });
+
   # Z.AI Gateway wrapper for Claude Code
   zaiWrapperPackages =
     let
@@ -275,18 +287,19 @@ in
     home.packages = [
       llmPkgs.claude-code # latest
       llmPkgs.opencode # latest
-      llmPkgs.pi
+      piPatched
       llmPkgs.ccstatusline # latest
       llmPkgs.ccusage # latest
       llmPkgs.codex
       llmPkgs.rtk
+      llmPkgs.cursor-agent
     ]
     ++ zaiWrapperPackages
     ++ kimiWrapperPackages
     ++ cfg.extraPackages;
 
     home.activation.installPiFff = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if [ -x ${lib.getExe llmPkgs.pi} ]; then
+      if [ -x ${lib.getExe piPatched} ]; then
         export PI_SKIP_VERSION_CHECK=1
         export PI_TELEMETRY=0
         export PATH=${pkgs.nodejs}/bin:${pkgs.git}/bin:$PATH
@@ -295,10 +308,10 @@ in
         mkdir -p "$(dirname "$settings_file")"
         ${pkgs.nodejs}/bin/node -e "const fs=require('fs'); const path=process.env.HOME+'/.pi/agent/settings.json'; let settings={}; if (fs.existsSync(path)) settings=JSON.parse(fs.readFileSync(path,'utf8')); settings.theme='dark'; fs.writeFileSync(path, JSON.stringify(settings, null, 2)+String.fromCharCode(10));"
 
-        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@ff-labs/pi-fff' || \
-          ${lib.getExe llmPkgs.pi} install npm:@ff-labs/pi-fff@0.9.4
-        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@juicesharp/rpiv-ask-user-question' || \
-          ${lib.getExe llmPkgs.pi} install npm:@juicesharp/rpiv-ask-user-question@1.20.0
+        ${lib.getExe piPatched} list | ${pkgs.gnugrep}/bin/grep -q '@ff-labs/pi-fff' || \
+          ${lib.getExe piPatched} install npm:@ff-labs/pi-fff@0.9.4
+        ${lib.getExe piPatched} list | ${pkgs.gnugrep}/bin/grep -q '@juicesharp/rpiv-ask-user-question' || \
+          ${lib.getExe piPatched} install npm:@juicesharp/rpiv-ask-user-question@1.20.0
       fi
     '';
 
