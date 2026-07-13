@@ -307,7 +307,7 @@ in
 
         settings_file="$HOME/.pi/agent/settings.json"
         mkdir -p "$(dirname "$settings_file")"
-        ${pkgs.nodejs}/bin/node -e "const fs=require('fs'); const path=process.env.HOME+'/.pi/agent/settings.json'; let settings={}; if (fs.existsSync(path)) settings=JSON.parse(fs.readFileSync(path,'utf8')); settings.theme='dark'; fs.writeFileSync(path, JSON.stringify(settings, null, 2)+String.fromCharCode(10));"
+        ${pkgs.nodejs}/bin/node -e "const fs=require('fs'); const path=process.env.HOME+'/.pi/agent/settings.json'; let settings={}; if (fs.existsSync(path)) settings=JSON.parse(fs.readFileSync(path,'utf8')); settings.theme='dark'; settings.defaultProvider='openai-codex'; fs.writeFileSync(path, JSON.stringify(settings, null, 2)+String.fromCharCode(10));"
 
         ${lib.getExe piPatched} list | ${pkgs.gnugrep}/bin/grep -q '@ff-labs/pi-fff' || \
           ${lib.getExe piPatched} install npm:@ff-labs/pi-fff@0.9.4
