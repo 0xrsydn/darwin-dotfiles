@@ -293,6 +293,7 @@ in
       llmPkgs.codex
       llmPkgs.rtk
       llmPkgs.cursor-agent
+      llmPkgs.herdr # latest - terminal agent multiplexer
     ]
     ++ zaiWrapperPackages
     ++ kimiWrapperPackages
