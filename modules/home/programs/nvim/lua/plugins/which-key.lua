@@ -13,6 +13,7 @@ return {
           -- Leader triggers
           { mode = "n", keys = "<Leader>" },
           { mode = "x", keys = "<Leader>" },
+          { mode = "n", keys = "<LocalLeader>" },
 
           -- Built-in completion
           { mode = "i", keys = "<C-x>" },
@@ -64,6 +65,7 @@ return {
           { mode = "n", keys = "<Leader>r", desc = "+rename" },
           { mode = "n", keys = "<Leader>s", desc = "+search" },
           { mode = "n", keys = "<Leader>t", desc = "+toggle" },
+          { mode = "n", keys = "<LocalLeader>n", desc = "+notes" },
         },
 
         window = {

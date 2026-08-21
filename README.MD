@@ -14,6 +14,7 @@ So far, the dotfiles only used for my macOS configuration, maybe in the future I
 ## Developer Tools
 
 - IDE: neovim (lazyvim bundle) & Helix
+- Neovim workflow: [public Notes authoring integration](modules/home/programs/nvim/NOTES.md)
 - Containers: docker, lazydocker, orbstack
 - CLI utils: fzf, ripgrep, ast-grep, jq, yq, pandoc, ffmpeg, tree, htop
 - Tmux with gruvbox theme (plugins: cpu-usage, battery, network-bandwidth monitoring)
