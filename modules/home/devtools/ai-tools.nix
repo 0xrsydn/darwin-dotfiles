@@ -283,6 +283,7 @@ in
       llmPkgs.cursor-agent
       llmPkgs.herdr # latest - terminal agent multiplexer
       llmPkgs.grok
+      llmPkgs.omp # latest - oh-my-pi terminal coding agent
     ]
     ++ zaiWrapperPackages
     ++ kimiWrapperPackages

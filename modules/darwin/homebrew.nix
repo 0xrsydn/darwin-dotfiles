@@ -12,7 +12,10 @@ in
     };
     taps = mkOption {
       type = types.listOf types.str;
-      default = [ "FelixKratz/formulae" ];
+      default = [
+        "FelixKratz/formulae"
+        "owo-network/brew"
+      ];
       description = "Homebrew taps to add.";
     };
     brews = mkOption {
@@ -22,6 +25,7 @@ in
         "yt-dlp"
         "infisical"
         "mole"
+        "herdrm"
       ];
       description = "Homebrew formulae to install.";
     };
