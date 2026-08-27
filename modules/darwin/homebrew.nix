@@ -1,7 +1,19 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  user,
+  ...
+}:
 let
-  inherit (lib) mkIf mkOption types;
+  inherit (lib)
+    mkIf
+    mkOption
+    mkAfter
+    types
+    ;
   cfg = config.rsydn.homebrew;
+  userHome = config.users.users.${user}.home;
 in
 {
   options.rsydn.homebrew = {
@@ -57,5 +69,38 @@ in
       };
       inherit (cfg) taps brews casks;
     };
+
+    # nix-darwin runs `brew bundle` via `sudo --user … --set-home env`, which
+    # strips XDG_CONFIG_HOME, so brew reads trust state from `${HOME}/.homebrew/trust.json`.
+    # Keep that file (and the XDG one used by interactive shells) in sync.
+    system.activationScripts.extraActivation.text = mkAfter ''
+      ${pkgs.python3}/bin/python3 - <<'PY'
+      import json
+      import os
+
+      home = "${userHome}"
+      rel_paths = [
+        os.path.join(".homebrew", "trust.json"),
+        os.path.join(".config", "homebrew", "trust.json"),
+      ]
+      entry = "owo-network/brew"
+
+      for rel in rel_paths:
+        path = os.path.join(home, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        data = {"trustedtaps": []}
+        try:
+            with open(path) as fh:
+                data = json.load(fh)
+        except Exception:
+            pass
+        data.setdefault("trustedtaps", [])
+        if entry not in data["trustedtaps"]:
+            data["trustedtaps"].append(entry)
+        with open(path, "w") as fh:
+            json.dump(data, fh, indent=2)
+            fh.write("\n")
+      PY
+    '';
   };
 }
