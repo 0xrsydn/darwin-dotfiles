@@ -25,7 +25,6 @@ in
         "yt-dlp"
         "infisical"
         "mole"
-        "herdrm"
       ];
       description = "Homebrew formulae to install.";
     };
@@ -41,6 +40,7 @@ in
         "obs"
         "orbstack"
         "openvpn-connect"
+        "herdrm"
       ];
       description = "Homebrew casks to install.";
     };
