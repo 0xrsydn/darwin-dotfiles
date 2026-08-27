@@ -77,8 +77,12 @@ in
       ${pkgs.python3}/bin/python3 - <<'PY'
       import json
       import os
+      import pwd
 
       home = "${userHome}"
+      user = "${user}"
+      uid = pwd.getpwnam(user).pw_uid
+      gid = pwd.getpwnam(user).pw_gid
       rel_paths = [
         os.path.join(".homebrew", "trust.json"),
         os.path.join(".config", "homebrew", "trust.json"),
@@ -100,6 +104,13 @@ in
         with open(path, "w") as fh:
             json.dump(data, fh, indent=2)
             fh.write("\n")
+        try:
+            os.chmod(path, 0o600)
+            os.chown(path, uid, gid)
+        except OSError:
+            # Not running as root (e.g. standalone activation); brew will
+            # still read the file, it just may not be able to rewrite it.
+            pass
       PY
     '';
   };
