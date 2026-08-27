@@ -64,7 +64,6 @@ in
       global.autoUpdate = false;
       onActivation = {
         autoUpdate = false;
-        cleanup = "zap";
         upgrade = false;
       };
       inherit (cfg) taps brews casks;
