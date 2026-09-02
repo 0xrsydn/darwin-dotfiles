@@ -181,22 +181,24 @@ in
 
         $env.NIX_PROFILES = "/run/current-system/sw ${config.home.profileDirectory}"
 
-        # Load globally scoped sops-managed environment variables.
-        let global_secrets_file = "${config.xdg.configHome}/secrets/global-env.yaml"
+        # Load each globally scoped sops-managed environment variable.
+        let global_secrets_dir = "${config.xdg.configHome}/secrets/global-env"
 
-        def --env load-global-secrets [secret_file: string] {
-          if ($secret_file | path exists) {
-            let secret_values = (open $secret_file)
+        def --env load-global-secrets [secret_dir: string] {
+          if ($secret_dir | path exists) {
+            let secret_values = (
+              ls $secret_dir
+              | reduce -f {} {|entry, acc|
+                  let name = ($entry.name | path basename)
+                  let value = (open --raw $entry.name | str trim)
+                  $acc | upsert $name $value
+                }
+            )
 
-            $secret_values
-            | transpose name value
-            | reduce -f {} {|entry, acc|
-                $acc | upsert $entry.name ($entry.value | into string)
-              }
-            | load-env
+            $secret_values | load-env
           }
         }
 
-        load-global-secrets $global_secrets_file
+        load-global-secrets $global_secrets_dir
   '';
 }

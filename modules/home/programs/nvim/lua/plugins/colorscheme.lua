@@ -2,13 +2,8 @@ return {
   -- gruvbox
   {
     "ellisonleao/gruvbox.nvim",
-    lazy = false,
-    priority = 1000,
+    lazy = true,
     opts = {},
-    config = function()
-      require("gruvbox").setup({})
-      vim.cmd.colorscheme("gruvbox")
-    end,
   },
 
   -- tokyonight
@@ -21,10 +16,12 @@ return {
   -- catppuccin
   {
     "catppuccin/nvim",
-    lazy = true,
+    lazy = false,
     priority = 1000,
     name = "catppuccin",
     opts = {
+      flavour = "mocha",
+      term_colors = true,
       lsp_styles = {
         underlines = {
           errors = { "undercurl" },
@@ -60,6 +57,10 @@ return {
       --   which_key = true,
       -- },
     },
+    config = function(_, opts)
+      require("catppuccin").setup(opts)
+      vim.cmd.colorscheme("catppuccin-mocha")
+    end,
     -- specs = {
     --   {
     --     "akinsho/bufferline.nvim",

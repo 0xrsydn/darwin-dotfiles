@@ -14,7 +14,15 @@
     prefix = "C-a";
     escapeTime = 0;
     aggressiveResize = true;
-    plugins = [ { plugin = pkgs.tmuxPlugins.gruvbox; } ];
+    plugins = [
+      {
+        plugin = pkgs.tmuxPlugins.catppuccin;
+        extraConfig = ''
+          set -g @catppuccin_flavor "mocha"
+          set -g @catppuccin_window_status_style "rounded"
+        '';
+      }
+    ];
     extraConfig = ''
       # Terminal configuration for proper colors and features
       set-option -g default-terminal "screen-256color"
@@ -50,9 +58,10 @@
       bind J resize-pane -D 5
       bind K resize-pane -U 5
       bind L resize-pane -R 5
-      # Ensure tmux panes spawn login nu so Starship integration runs
-      set -g default-shell "${config.home.profileDirectory}/bin/nu"
-      set -g default-command "${config.home.profileDirectory}/bin/nu --login"
+      # Start Zsh by default and keep Nushell available on prefix + C-n.
+      set -g default-shell "/bin/zsh"
+      set -g default-command "/bin/zsh --login"
+      bind-key C-n new-window -n nushell "${config.home.profileDirectory}/bin/nu --login"
     '';
   };
 }

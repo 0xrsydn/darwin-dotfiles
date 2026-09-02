@@ -1,41 +1,46 @@
 # Secrets with sops-nix
 
-This repo wires [`sops-nix`](https://github.com/Mic92/sops-nix) into the Home Manager profile so secrets are decrypted on-demand into `~/.config/secrets`. The module is enabled by default and auto-generates an Age key if one does not already exist. Only the *encrypted* payloads under `secrets/*.sops.yaml` are meant to live in git; decrypted files never leave your machine.
+This repository uses [`sops-nix`](https://github.com/Mic92/sops-nix) with Home Manager. SOPS keeps encrypted values in Git. Home Manager decrypts each global environment variable to a separate runtime file under `~/.config/secrets/global-env/`.
 
 ## One-time setup
-1. Ensure `age` and `sops` are available (e.g. `nix develop` or `nix profile install nixpkgs#age nixpkgs#sops`).
-2. Generate or import an Age key. Either let Home Manager create one automatically on first activation or run `age-keygen -o ~/.config/sops/age/keys.txt` yourself.
-3. Capture the public half with `age-keygen -y -f ~/.config/sops/age/keys.txt` and add it to the `recipients` list in each encrypted file (`age1…`). Commit the public key under version control or share it through your password manager so other hosts can decrypt.
-4. (Optional) Store the private key securely in macOS Keychain or 1Password (`security add-generic-password …`) so rebuilds work without manual prompts.
 
-## Managing secrets
-- Global shell env vars live in one encrypted YAML file: `secrets/global-env.sops.yaml`.
-- Home Manager decrypts that file to `~/.config/secrets/global-env.yaml` during activation.
-- Nushell reads `global-env.yaml` on startup and exports each top-level key as an environment variable.
-- Only the encrypted file is tracked in git; plaintext stays local.
+1. Enter `nix develop` so `age` and `sops` are available.
+2. Generate or import an Age key. Home Manager can generate one during activation. You can also run:
 
-Example Darwin configuration:
+   ```bash
+   age-keygen -o ~/.config/sops/age/keys.txt
+   ```
 
-```nix
-rsydn.secrets = {
-  enable = true;
-  defaultSopsFile = ../../../secrets/global-env.sops.yaml;
-  secrets."global-env" = {
-    format = "yaml";
-    key = "";
-    path = "${config.xdg.configHome}/secrets/global-env.yaml";
-  };
-};
+3. Get the public key:
+
+   ```bash
+   age-keygen -y -f ~/.config/sops/age/keys.txt
+   ```
+
+4. Add the public key as a recipient in each encrypted SOPS file.
+5. Store the private key in a secure backup such as 1Password or macOS Keychain.
+
+## Global environment secrets
+
+The encrypted source is `secrets/global-env.sops.yaml`. It contains a flat map of environment variable names and encrypted values.
+
+Home Manager declares each key in `modules/darwin/home/default.nix`. During activation, sops-nix writes one mode `0400` file per key:
+
+```text
+~/.config/secrets/global-env/OPENAI_API_KEY
+~/.config/secrets/global-env/ANTHROPIC_API_KEY
 ```
 
-Create or update global env vars by running:
+Zsh and Nushell read these files and export each filename as an environment variable. The loaders do not evaluate secret values as shell code.
+
+Edit the encrypted source with:
 
 ```bash
 SOPS_AGE_KEY_FILE=$HOME/.config/sops/age/keys.txt \
   sops secrets/global-env.sops.yaml
 ```
 
-Add entries like:
+Use a flat YAML structure:
 
 ```yaml
 OPENAI_API_KEY: sk-...
@@ -43,21 +48,42 @@ ANTHROPIC_API_KEY: sk-ant-...
 GITHUB_TOKEN: ghp_...
 ```
 
-After `darwin-rebuild switch --flake .#macbook-pro`, the decrypted file is refreshed and every new Nushell session automatically gets:
+When you add or remove a key, also update `globalEnvironmentSecretNames` in `modules/darwin/home/default.nix`. Then apply the configuration:
+
+```bash
+darwin-rebuild switch --flake .#macbook-pro
+```
+
+Open a new Zsh or Nushell session after activation. Access values as follows:
+
+```zsh
+print -r -- "$OPENAI_API_KEY"
+```
 
 ```nu
 $env.OPENAI_API_KEY
-$env.ANTHROPIC_API_KEY
-$env.GITHUB_TOKEN
 ```
 
-For secrets that should stay file-based instead of being auto-exported, you can still declare extra entries under `rsydn.secrets.secrets` with their own `path`, `format`, and `key`.
+Do not print real secret values during routine validation. Test only whether a variable exists.
+
+## File-based secrets
+
+Secrets that applications consume as files should stay file-based. Declare each entry under `rsydn.secrets.secrets` with its own `path`, `format`, and `key`.
+
+For project-specific environment variables, use an encrypted project file with `sops exec-env` through direnv. Do not add project secrets to the global shell environment.
 
 ## Rotating keys
-If you regenerate your Age key, re-encrypt the file with the new recipient (`sops updatekeys secrets/global-env.sops.yaml`) and re-run `darwin-rebuild --dry-run --flake .#macbook-pro` to verify the deployment. Remember to remove old recipients so machines without access can no longer decrypt.
 
-## Frequently asked questions
-- **Where do encrypted files live?** In this repo under `secrets/*.sops.yaml`; they are safe to commit.
-- **Where does plaintext live?** At runtime under `~/.config/secrets/*` (managed by Home Manager). Keep permissions tight and never add these paths to git.
-- **How do I share secrets with another machine?** Copy the Age public key from that machine into the `recipients` list, re-run `sops updatekeys`, commit, then pull and rebuild on the other host.
-- **Can I keep using `.env`?** Yes—encrypt it (e.g. `secrets/project.env.sops`) and load it with `sops exec-env` inside `direnv` so per-project shells receive the decrypted variables without storing them on disk.
+If you replace an Age key, update the recipients:
+
+```bash
+sops updatekeys secrets/global-env.sops.yaml
+```
+
+Remove old recipients, then validate the configuration:
+
+```bash
+darwin-rebuild --dry-run --flake .#macbook-pro
+```
+
+Only encrypted SOPS files belong in Git. Never add decrypted files from `~/.config/secrets/`.

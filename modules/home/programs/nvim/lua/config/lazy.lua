@@ -31,7 +31,7 @@ require("lazy").setup({
     version = false,
   },
 
-  install = { colorscheme = { "gruvbox", "habamax" } },
+  install = { colorscheme = { "catppuccin-mocha", "habamax" } },
 
   checker = { enabled = false },
   change_detection = { notify = false },

@@ -45,7 +45,7 @@ in
       default = [
         "bitwarden"
         "brave-browser"
-        "font-jetbrains-mono"
+        "font-jetbrains-mono-nerd-font"
         "pgadmin4"
         "spotify"
         "vesktop"

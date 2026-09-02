@@ -7,8 +7,8 @@ So far, the dotfiles only used for my macOS configuration, maybe in the future I
 ## Core System
 
 - OS: macOS (nix-darwin)
-- Shell: nushell with starship prompt
-- Terminal: kitty with gruvbox theme
+- Shell: Zsh with Oh My Zsh and Starship; Nushell is available through `nu`
+- Terminal: Kitty with Catppuccin Mocha theme
 - Package Management: mix of nix and homebrew 
 
 ## Developer Tools
@@ -22,7 +22,7 @@ So far, the dotfiles only used for my macOS configuration, maybe in the future I
 
 ## AI Tools
 
-- CLI-based tools: codex, crush, opencode, claude code
+- CLI-based tools: codex, crush, claude code
 - Custom z.ai gateway wrapper for claude code
 - Secret management with SOPS-nix
 

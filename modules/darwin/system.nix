@@ -54,8 +54,8 @@
 
   users.users.${user} = {
     home = lib.mkDefault "/Users/${user}";
-    # Use the Home Manager nushell which has proper config setup
-    shell = "/etc/profiles/per-user/${user}/bin/nu";
+    # Use the macOS system Zsh as the login shell. Nushell remains available as `nu`.
+    shell = "/bin/zsh";
   };
 
   system = {
