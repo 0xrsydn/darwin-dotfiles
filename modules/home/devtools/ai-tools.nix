@@ -274,7 +274,6 @@ in
   config = mkIf cfg.enable {
     home.packages = [
       llmPkgs.claude-code # latest
-      llmPkgs.opencode # latest
       llmPkgs.pi # latest
       llmPkgs.ccstatusline # latest
       llmPkgs.ccusage # latest

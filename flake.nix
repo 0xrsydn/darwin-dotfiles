@@ -219,15 +219,5 @@
         customPkgs // { inherit (pkgs) git; }
       );
 
-      checks = forEachSystem (
-        system:
-        let
-          pkgs = mkPkgs system;
-          customPkgs = import ./packages { inherit pkgs lib llm-agents; };
-        in
-        {
-          inherit (customPkgs) opencode;
-        }
-      );
     };
 }
