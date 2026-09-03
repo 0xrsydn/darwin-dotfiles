@@ -52,15 +52,26 @@
     XDG_CACHE_HOME = "$HOME/.cache";
   };
 
-  users.users.${user} = {
-    home = lib.mkDefault "/Users/${user}";
-    # Use the macOS system Zsh as the login shell. Nushell remains available as `nu`.
-    shell = "/bin/zsh";
-  };
+  users.users.${user}.home = lib.mkDefault "/Users/${user}";
 
   system = {
     primaryUser = user;
     stateVersion = 6;
+
+    # nix-darwin does not manage an existing primary user unless the user is in
+    # users.knownUsers. Manage only the login shell to avoid owning the account.
+    activationScripts.postActivation.text = lib.mkAfter ''
+      current_shell=$(
+        /usr/bin/dscl . -read ${lib.escapeShellArg "/Users/${user}"} UserShell 2>/dev/null \
+          | /usr/bin/awk '{ print $2 }' \
+          || true
+      )
+
+      if [ "$current_shell" != "/bin/zsh" ]; then
+        echo "setting ${user}'s login shell to /bin/zsh..." >&2
+        /usr/bin/dscl . -create ${lib.escapeShellArg "/Users/${user}"} UserShell /bin/zsh
+      fi
+    '';
 
     defaults = {
       NSGlobalDomain = {

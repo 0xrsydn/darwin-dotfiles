@@ -13,6 +13,31 @@ local function last_line(value)
 	return output:match("([^\r\n]+)$")
 end
 
+local function first_matching_line(value, pattern)
+	for line in (value or ""):gmatch("[^\r\n]+") do
+		local candidate = vim.trim(line)
+		if candidate:match(pattern) then
+			return candidate
+		end
+	end
+end
+
+local function first_actionable_line(value)
+	for line in (value or ""):gmatch("[^\r\n]+") do
+		local candidate = vim.trim(line)
+		if candidate ~= "" and not candidate:match("^%$ ") and not candidate:match('^error: script ".-" exited') then
+			return candidate
+		end
+	end
+end
+
+local function command_error(result)
+	return first_matching_line(result.stdout, "^ERROR%s")
+		or first_actionable_line(result.stderr)
+		or first_actionable_line(result.stdout)
+		or "Notes command failed."
+end
+
 local function run(arguments, options)
 	options = options or {}
 
@@ -39,8 +64,7 @@ local function run(arguments, options)
 		},
 		vim.schedule_wrap(function(result)
 			if result.code ~= 0 then
-				local message = last_line(result.stderr) or last_line(result.stdout) or "Notes command failed."
-				notify(message, vim.log.levels.ERROR)
+				notify(command_error(result), vim.log.levels.ERROR)
 				return
 			end
 

@@ -106,6 +106,31 @@ return {
       lspconfig.mdx_analyzer.setup({
         capabilities = capabilities,
       })
+
+      -- Harper grammar checking for prose. Keep the profile quiet so it does
+      -- not enforce capitalization, spelling, sentence length, or house style.
+      lspconfig.harper_ls.setup({
+        capabilities = capabilities,
+        filetypes = { "markdown", "text" },
+        settings = {
+          ["harper-ls"] = {
+            diagnosticSeverity = "hint",
+            linters = {
+              AvoidContractions = false,
+              AvoidCurses = false,
+              Cant = false,
+              CapitalizePersonalPronouns = false,
+              GoogleNames = false,
+              LongSentences = false,
+              OrthographicConsistency = false,
+              OxfordComma = false,
+              SentenceCapitalization = false,
+              SpellCheck = false,
+              UseTitleCase = false,
+            },
+          },
+        },
+      })
     end,
   },
 }

@@ -22,6 +22,7 @@
       pyright
       nodePackages.typescript-language-server
       mdx-language-server
+      harper # Grammar checking for Markdown and text
       rust-analyzer
       gopls
       clang-tools # provides clangd
