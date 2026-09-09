@@ -16,8 +16,10 @@ let
     "KIMI_API_KEY"
     "MOONSHOT_API_KEY"
     "OPENAI_API_KEY"
+    "OPENCODE_API_KEY"
     "OPENROUTER_API_KEY"
     "ZAI_API_KEY"
+    "TYPESAFEAI_API_KEY"
   ];
 in
 {
