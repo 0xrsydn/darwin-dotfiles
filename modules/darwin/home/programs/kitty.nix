@@ -4,6 +4,8 @@
     enable = true;
 
     settings = {
+      shell = "/bin/zsh";
+
       # JetBrainsMono Nerd Font renders the Starship powerline icons.
       font_family = "JetBrainsMono Nerd Font";
       font_size = 13.0;
