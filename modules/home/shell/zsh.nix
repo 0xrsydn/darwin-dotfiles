@@ -41,7 +41,9 @@
 
         [[ -d "$secret_dir" ]] || return 0
 
-        for secret_file in "$secret_dir"/*(N.); do
+        # `-.` matches plain files and symlinks to plain files.
+        # sops-nix links each runtime secret into this directory.
+        for secret_file in "$secret_dir"/*(N-.); do
           name="''${secret_file:t}"
           [[ "$name" =~ '^[A-Za-z_][A-Za-z0-9_]*$' ]] || continue
           value="$(<"$secret_file")"
