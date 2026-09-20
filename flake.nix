@@ -210,6 +210,10 @@
 
       formatter = forEachSystem (system: (mkPkgs system).nixfmt);
 
+      checks = forEachSystem (system: {
+        inherit (self.packages.${system}) cf pi;
+      });
+
       packages = forEachSystem (
         system:
         let

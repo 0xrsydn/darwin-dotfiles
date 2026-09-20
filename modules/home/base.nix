@@ -53,9 +53,13 @@
       # due to nixpkgs-unstable syrupy test failures breaking the font's Python build deps
       packages = with pkgs; [
         age
+        awscli2
         cloudflared
+        customPkgs.cf
         gh
+        glab
         tea
+        ffmpeg
         fzf
         htop
         jq
