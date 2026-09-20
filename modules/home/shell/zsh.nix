@@ -1,8 +1,22 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    enableBashIntegration = false;
+    enableFishIntegration = false;
+    defaultOptions = [
+      "--height=40%"
+      "--layout=reverse"
+      "--border"
+    ];
+  };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    defaultKeymap = "emacs";
+    syntaxHighlighting.enable = true;
     dotDir = config.home.homeDirectory;
 
     oh-my-zsh = {
@@ -26,6 +40,13 @@
     '';
 
     initContent = ''
+      # Home Manager loads fzf first. Load fzf-tab before plugins that wrap
+      # completion widgets, and leave syntax highlighting last.
+      zstyle ':completion:*' menu no
+      zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+      source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+      source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
       typeset -U path PATH
       path=(
         "$HOME/.cache/.bun/bin"
