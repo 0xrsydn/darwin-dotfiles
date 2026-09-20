@@ -3,6 +3,7 @@ local M = {}
 local default_root = vim.fn.expand("~/Development/MyWeb/magnum-opus/main")
 local root = vim.fs.normalize(vim.env.RASYIDANAF_SITE_ROOT or default_root)
 local notes_directory = vim.fs.normalize(root .. "/vault/public-notes")
+local blog_directory = vim.fs.normalize(root .. "/vault/blog")
 
 local function notify(message, level)
 	vim.notify(message, level or vim.log.levels.INFO, { title = "Notes" })
@@ -78,18 +79,6 @@ local function run(arguments, options)
 	)
 end
 
-local function prompt_tags(callback)
-	vim.ui.input({
-		prompt = "Tags (comma-separated, optional): ",
-	}, function(tags)
-		if tags == nil then
-			return
-		end
-
-		callback(vim.trim(tags))
-	end)
-end
-
 local function open_created_entry(output)
 	local relative_path = last_line(output)
 	if not relative_path then
@@ -106,15 +95,11 @@ local function open_created_entry(output)
 	notify("Draft created: " .. relative_path)
 end
 
-local function create_entry(kind, title, tags)
+local function create_entry(kind, title)
 	local arguments = { "notes:new", "--", "--kind", kind }
 
 	if title and title ~= "" then
 		vim.list_extend(arguments, { "--title", title })
-	end
-
-	if tags ~= "" then
-		vim.list_extend(arguments, { "--tags", tags })
 	end
 
 	run(arguments, {
@@ -131,9 +116,7 @@ function M.new_log()
 			return
 		end
 
-		prompt_tags(function(tags)
-			create_entry("log", vim.trim(title), tags)
-		end)
+		create_entry("log", vim.trim(title))
 	end)
 end
 
@@ -151,16 +134,22 @@ function M.new_note()
 			return
 		end
 
-		prompt_tags(function(tags)
-			create_entry("note", title, tags)
-		end)
+		create_entry("note", title)
 	end)
 end
 
-local function current_entry()
+local function current_path()
 	local path = vim.fs.normalize(vim.api.nvim_buf_get_name(0))
 	if path == "" then
 		notify("The current buffer has no file.", vim.log.levels.ERROR)
+		return nil
+	end
+	return path
+end
+
+local function current_entry()
+	local path = current_path()
+	if not path then
 		return nil
 	end
 
@@ -172,18 +161,43 @@ local function current_entry()
 	return path
 end
 
+local function current_taggable_content()
+	local path = current_path()
+	if not path then
+		return nil
+	end
+
+	local is_public_note = vim.startswith(path, notes_directory .. "/") and path:match("%.md$")
+	local is_blog_post = vim.startswith(path, blog_directory .. "/")
+		and (path:match("/index%.md$") or path:match("/index%.mdx$"))
+	if not is_public_note and not is_blog_post then
+		notify("Open a Draft in vault/public-notes/ or vault/blog/ first.", vim.log.levels.ERROR)
+		return nil
+	end
+
+	return path
+end
+
+local function save_current_buffer()
+	if not vim.bo.modified then
+		return true
+	end
+	local saved, error_message = pcall(vim.cmd.write)
+	if not saved then
+		notify("Could not save the content: " .. tostring(error_message), vim.log.levels.ERROR)
+		return false
+	end
+	return true
+end
+
 function M.publish()
 	local path = current_entry()
 	if not path then
 		return
 	end
 
-	if vim.bo.modified then
-		local saved, error_message = pcall(vim.cmd.write)
-		if not saved then
-			notify("Could not save the Entry: " .. tostring(error_message), vim.log.levels.ERROR)
-			return
-		end
+	if not save_current_buffer() then
+		return
 	end
 
 	vim.ui.select({ "Publish", "Cancel" }, {
@@ -201,6 +215,21 @@ function M.publish()
 			end,
 		})
 	end)
+end
+
+function M.auto_tag()
+	local path = current_taggable_content()
+	if not path or not save_current_buffer() then
+		return
+	end
+
+	run({ "content:tag", path }, {
+		progress = "Generating tags…",
+		on_success = function(output)
+			vim.cmd.edit(vim.fn.fnameescape(path))
+			notify(last_line(output) or "Tags applied.")
+		end,
+	})
 end
 
 function M.validate()
@@ -226,6 +255,9 @@ vim.api.nvim_create_user_command("NotesNewNote", M.new_note, {
 vim.api.nvim_create_user_command("NotesPublish", M.publish, {
 	desc = "Publish the current public Notes Entry",
 })
+vim.api.nvim_create_user_command("ContentAutoTag", M.auto_tag, {
+	desc = "Automatically tag the current Draft Note or Blog Post",
+})
 vim.api.nvim_create_user_command("NotesValidate", M.validate, {
 	desc = "Validate public Notes",
 })
@@ -236,6 +268,7 @@ vim.api.nvim_create_user_command("NotesBuild", M.build, {
 vim.keymap.set("n", "<localleader>nl", M.new_log, { desc = "New log" })
 vim.keymap.set("n", "<localleader>nn", M.new_note, { desc = "New note" })
 vim.keymap.set("n", "<localleader>np", M.publish, { desc = "Publish current note" })
+vim.keymap.set("n", "<localleader>nt", M.auto_tag, { desc = "Auto-tag current draft" })
 vim.keymap.set("n", "<localleader>nv", M.validate, { desc = "Validate notes" })
 vim.keymap.set("n", "<localleader>nb", M.build, { desc = "Build website" })
 
