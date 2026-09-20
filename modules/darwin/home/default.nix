@@ -20,6 +20,7 @@ let
     "OPENROUTER_API_KEY"
     "ZAI_API_KEY"
     "TYPESAFEAI_API_KEY"
+    "CLOUDFLARE_API_TOKEN"
   ];
 in
 {
