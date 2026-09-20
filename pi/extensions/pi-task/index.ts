@@ -6,17 +6,7 @@ import type {
 import { StringEnum } from "@earendil-works/pi-ai";
 import { Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
-
-type TaskStatus = "pending" | "in_progress" | "completed";
-
-interface Task {
-  text: string;
-  status: TaskStatus;
-}
-
-interface TaskDetails {
-  tasks: Task[];
-}
+import { TaskStore, type Task, type TaskDetails } from "./state.js";
 
 const TaskParams = Type.Object({
   tasks: Type.Optional(
@@ -32,10 +22,6 @@ const TaskParams = Type.Object({
     ),
   ),
 });
-
-function cloneTasks(tasks: Task[]): Task[] {
-  return tasks.map((task) => ({ ...task }));
-}
 
 function formatTask(task: Task): string {
   const marker = {
@@ -59,11 +45,14 @@ function formatThemedTask(task: Task, theme: Theme): string {
 }
 
 export default function (pi: ExtensionAPI) {
-  let tasks: Task[] = [];
+  const store = new TaskStore();
+  let turnsSinceTask = 0;
+  let reminderDue = false;
 
   const refreshTaskUI = (ctx: ExtensionContext) => {
-    if (!ctx.hasUI) return;
+    if (!ctx.hasUI || ctx.mode !== "tui") return;
 
+    const tasks = store.read();
     const completed = tasks.filter((task) => task.status === "completed").length;
     const remaining = tasks.filter((task) => task.status !== "completed");
 
@@ -91,22 +80,44 @@ export default function (pi: ExtensionAPI) {
   };
 
   const reconstructState = (ctx: ExtensionContext) => {
-    tasks = [];
-
-    for (const entry of ctx.sessionManager.getBranch()) {
-      if (entry.type !== "message") continue;
-      const message = entry.message;
-      if (message.role !== "toolResult" || message.toolName !== "task") continue;
-
-      const saved = message.details as TaskDetails | undefined;
-      if (saved && Array.isArray(saved.tasks)) tasks = cloneTasks(saved.tasks);
-    }
-
+    store.restore(ctx.sessionManager.getBranch());
+    turnsSinceTask = 0;
+    reminderDue = store.read().some((task) => task.status !== "completed");
     refreshTaskUI(ctx);
   };
 
   pi.on("session_start", async (_event, ctx) => reconstructState(ctx));
   pi.on("session_tree", async (_event, ctx) => reconstructState(ctx));
+
+  pi.on("turn_start", async () => { turnsSinceTask++; });
+  pi.on("session_compact", async () => {
+    if (store.read().some((task) => task.status !== "completed")) reminderDue = true;
+  });
+  pi.on("context", async (event) => {
+    const open = store.read().filter((task) => task.status !== "completed");
+    if (open.length === 0 || (!reminderDue && turnsSinceTask < 2)) return;
+    reminderDue = false;
+    turnsSinceTask = 0;
+    const shown = open.slice(0, 7).map((task) => `${task.status}: ${task.text.replace(/\s+/g, " ").slice(0, 120)}`);
+    const more = open.length > shown.length ? `; ${open.length - shown.length} more open` : "";
+    return {
+      messages: [
+        ...event.messages,
+        {
+          role: "user" as const,
+          content: [{ type: "text" as const, text: `Task status reminder (${open.length} open): ${shown.join("; ")}${more}. Check actual work, then call task to update the complete list before reporting completion. Do not mark unfinished work complete.` }],
+          timestamp: Date.now(),
+        },
+      ],
+    };
+  });
+  pi.on("agent_settled", async (_event, ctx) => {
+    const tasks = store.read();
+    const open = tasks.filter((task) => task.status !== "completed").length;
+    if (open > 0 && ctx.mode === "tui") {
+      ctx.ui.notify(`${open} task(s) still open. If work is complete, update the task list.`, "warning");
+    }
+  });
 
   pi.registerTool({
     name: "task",
@@ -117,36 +128,23 @@ export default function (pi: ExtensionAPI) {
     promptGuidelines: [
       "Use task for work with multiple meaningful steps; skip it for simple one-step requests.",
       "Keep task items short and outcome-oriented, and submit the complete ordered list whenever it changes.",
-      "Keep exactly one task in_progress while actively working, and complete all tasks before finishing.",
+      "Keep exactly one task in_progress while actively working. Mark each task completed after verifying it.",
+      "Before reporting work complete, call task with the full updated list; do not leave finished work in_progress.",
     ],
     parameters: TaskParams,
 
-    async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
-      const wasComplete = tasks.length > 0 && tasks.every((task) => task.status === "completed");
-
-      if (params.tasks !== undefined) {
-        const normalized = params.tasks.map((task) => ({
-          text: task.text.trim(),
-          status: task.status,
-        }));
-
-        if (normalized.some((task) => task.text.length === 0)) {
-          throw new Error("Task text cannot be empty");
-        }
-
-        const active = normalized.filter((task) => task.status === "in_progress").length;
-        if (active > 1) {
-          throw new Error("Only one task may be in_progress");
-        }
-
-        tasks = normalized;
-      }
-
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      const { tasks, wasComplete } = await store.call(params.tasks, signal);
+      turnsSinceTask = 0;
+      reminderDue = false;
       const isComplete = tasks.length > 0 && tasks.every((task) => task.status === "completed");
-      refreshTaskUI(ctx);
-      if (ctx.hasUI && isComplete && !wasComplete) {
-        ctx.ui.notify(`✓ All ${tasks.length} tasks completed`, "info");
-      }
+      // Rendering must not turn a committed task result into an error result.
+      try {
+        refreshTaskUI(ctx);
+        if (ctx.hasUI && isComplete && !wasComplete) {
+          ctx.ui.notify(`✓ All ${tasks.length} tasks completed`, "info");
+        }
+      } catch { /* Keep the saved result even if the UI is unavailable. */ }
 
       return {
         content: [
@@ -155,7 +153,7 @@ export default function (pi: ExtensionAPI) {
             text: tasks.length > 0 ? tasks.map(formatTask).join("\n") : "No tasks",
           },
         ],
-        details: { tasks: cloneTasks(tasks) } satisfies TaskDetails,
+        details: { tasks } satisfies TaskDetails,
       };
     },
   });
@@ -165,6 +163,7 @@ export default function (pi: ExtensionAPI) {
     handler: async (_args, ctx) => {
       refreshTaskUI(ctx);
       if (ctx.hasUI) {
+        const tasks = store.read();
         const remaining = tasks.filter((task) => task.status !== "completed").length;
         const message =
           tasks.length === 0
