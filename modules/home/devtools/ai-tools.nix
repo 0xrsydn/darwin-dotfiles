@@ -274,10 +274,10 @@ in
   config = mkIf cfg.enable {
     home.packages = [
       llmPkgs.claude-code # latest
-      customPkgs.pi # latest, with the local codemode worker fix
+      llmPkgs.pi # latest
       llmPkgs.ccstatusline # latest
       llmPkgs.ccusage # latest
-      llmPkgs.codex
+      customPkgs.codex # complete local package for daemon startup
       llmPkgs.rtk
       llmPkgs.cursor-agent
       llmPkgs.herdr # latest - terminal agent multiplexer
@@ -290,7 +290,7 @@ in
     ++ cfg.extraPackages;
 
     home.activation.installPiFff = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if [ -x ${lib.getExe customPkgs.pi} ]; then
+      if [ -x ${lib.getExe llmPkgs.pi} ]; then
         export PI_SKIP_VERSION_CHECK=1
         export PI_TELEMETRY=0
         export PATH=${pkgs.nodejs}/bin:${pkgs.git}/bin:$PATH
@@ -299,10 +299,10 @@ in
         mkdir -p "$(dirname "$settings_file")"
         ${pkgs.nodejs}/bin/node -e "const fs=require('fs'); const path=process.env.HOME+'/.pi/agent/settings.json'; let settings={}; if (fs.existsSync(path)) settings=JSON.parse(fs.readFileSync(path,'utf8')); settings.theme='dark'; settings.defaultProvider='openai-codex'; settings.defaultModel='gpt-5.6-sol'; fs.writeFileSync(path, JSON.stringify(settings, null, 2)+String.fromCharCode(10));"
 
-        ${lib.getExe customPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@ff-labs/pi-fff' || \
-          ${lib.getExe customPkgs.pi} install npm:@ff-labs/pi-fff@0.9.4
-        ${lib.getExe customPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@juicesharp/rpiv-ask-user-question' || \
-          ${lib.getExe customPkgs.pi} install npm:@juicesharp/rpiv-ask-user-question@1.20.0
+        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@ff-labs/pi-fff' || \
+          ${lib.getExe llmPkgs.pi} install npm:@ff-labs/pi-fff@0.9.4
+        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@juicesharp/rpiv-ask-user-question' || \
+          ${lib.getExe llmPkgs.pi} install npm:@juicesharp/rpiv-ask-user-question@1.20.0
       fi
     '';
 

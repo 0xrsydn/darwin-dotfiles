@@ -211,7 +211,7 @@
       formatter = forEachSystem (system: (mkPkgs system).nixfmt);
 
       checks = forEachSystem (system: {
-        inherit (self.packages.${system}) cf pi;
+        inherit (self.packages.${system}) cf codex;
       });
 
       packages = forEachSystem (
