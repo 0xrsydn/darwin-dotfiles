@@ -24,6 +24,9 @@
 
     try.url = "github:tobi/try";
     try.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Rust/C++ build cache (RUSTC_WRAPPER + launchd daemon, backed by R2)
+    kache.url = "github:kunobi-ninja/kache";
   };
 
   outputs =
@@ -37,6 +40,7 @@
       sops-nix,
       chaotic,
       try,
+      kache,
       ...
     }:
     let
@@ -58,7 +62,11 @@
       # No overlays needed for Darwin builds
       # - gitOverlay: removed - was causing mypy to rebuild from source
       # - chaotic: removed - only needed for NixOS, was causing nix to rebuild with failing tests
-      overlaysList = [ ];
+      # kache overlay (includes rust-overlay) so pkgs.kache builds with the
+      # toolchain pinned in kache's rust-toolchain.toml
+      overlaysList = [
+        kache.overlays.default
+      ];
 
       mkPkgs =
         system:
@@ -68,7 +76,10 @@
           config.allowUnfree = true;
         };
 
-      sharedDarwinModules = [ ./modules/darwin/system.nix ];
+      sharedDarwinModules = [
+        ./modules/darwin/system.nix
+        ./modules/darwin/kache.nix
+      ];
       sharedNixosModules = [
         ./modules/nixos/system.nix
         chaotic.nixosModules.default

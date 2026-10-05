@@ -13,3 +13,6 @@ result-*
 
 # Neovim
 modules/home/rsydn/programs/nvim/lazy-lock.json
+
+# Cloudflare CLI (cf) local cache
+.cloudflare/
