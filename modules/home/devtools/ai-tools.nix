@@ -303,6 +303,9 @@ in
           ${lib.getExe llmPkgs.pi} install npm:@ff-labs/pi-fff@0.9.4
         ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@juicesharp/rpiv-ask-user-question' || \
           ${lib.getExe llmPkgs.pi} install npm:@juicesharp/rpiv-ask-user-question@1.20.0
+        # Install pstack once as a package, not as a copied local extension.
+        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -Fq 'git:github.com/0xrsydn/pstack-pi@v0.16.0' || \
+          ${lib.getExe llmPkgs.pi} install git:github.com/0xrsydn/pstack-pi@v0.16.0
       fi
     '';
 
