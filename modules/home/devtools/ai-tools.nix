@@ -297,12 +297,15 @@ in
 
         settings_file="$HOME/.pi/agent/settings.json"
         mkdir -p "$(dirname "$settings_file")"
-        ${pkgs.nodejs}/bin/node -e "const fs=require('fs'); const path=process.env.HOME+'/.pi/agent/settings.json'; let settings={}; if (fs.existsSync(path)) settings=JSON.parse(fs.readFileSync(path,'utf8')); settings.theme='dark'; settings.defaultProvider='openai-codex'; settings.defaultModel='gpt-5.6-sol'; fs.writeFileSync(path, JSON.stringify(settings, null, 2)+String.fromCharCode(10));"
+        ${pkgs.nodejs}/bin/node -e "const fs=require('fs'); const path=process.env.HOME+'/.pi/agent/settings.json'; let settings={}; if (fs.existsSync(path)) settings=JSON.parse(fs.readFileSync(path,'utf8')); settings.theme='dark'; settings.defaultProvider='openai-codex'; settings.defaultModel='gpt-6.1-sol'; fs.writeFileSync(path, JSON.stringify(settings, null, 2)+String.fromCharCode(10));"
 
         ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@ff-labs/pi-fff' || \
           ${lib.getExe llmPkgs.pi} install npm:@ff-labs/pi-fff@0.9.4
         ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -q '@juicesharp/rpiv-ask-user-question' || \
           ${lib.getExe llmPkgs.pi} install npm:@juicesharp/rpiv-ask-user-question@1.20.0
+        # Install pstack once as a package, not as a copied local extension.
+        ${lib.getExe llmPkgs.pi} list | ${pkgs.gnugrep}/bin/grep -Fq 'git:github.com/0xrsydn/pstack-pi@v0.16.0' || \
+          ${lib.getExe llmPkgs.pi} install git:github.com/0xrsydn/pstack-pi@v0.16.0
       fi
     '';
 

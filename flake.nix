@@ -5,6 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # Stable nixpkgs for pinning packages with bugs in unstable (e.g., git 2.51.x)
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
+    # Newer nixpkgs used only for tea (0.16+); main nixpkgs stays older
+    nixpkgs-tea.url = "github:NixOS/nixpkgs/nixos-unstable";
     darwin.url = "github:LnL7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -33,6 +35,7 @@
     inputs@{
       self,
       nixpkgs,
+      nixpkgs-tea,
       darwin,
       home-manager,
       llm-agents,
@@ -66,6 +69,9 @@
       # toolchain pinned in kache's rust-toolchain.toml
       overlaysList = [
         kache.overlays.default
+        (final: _prev: {
+          inherit (nixpkgs-tea.legacyPackages.${final.stdenv.hostPlatform.system}) tea;
+        })
       ];
 
       mkPkgs =
