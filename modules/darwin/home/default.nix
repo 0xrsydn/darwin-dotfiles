@@ -21,6 +21,8 @@ let
     "ZAI_API_KEY"
     "TYPESAFEAI_API_KEY"
     "CLOUDFLARE_API_TOKEN"
+    "KACHE_S3_ACCESS_KEY"
+    "KACHE_S3_SECRET_KEY"
   ];
 in
 {
