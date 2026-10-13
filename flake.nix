@@ -85,6 +85,7 @@
       sharedDarwinModules = [
         ./modules/darwin/system.nix
         ./modules/darwin/kache.nix
+        ./modules/darwin/omp-gateway.nix
       ];
       sharedNixosModules = [
         ./modules/nixos/system.nix
