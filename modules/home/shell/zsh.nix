@@ -27,8 +27,6 @@
       ];
     };
 
-    shellAliases.ssh = "kitten ssh";
-
     profileExtra = ''
       if [[ -x /opt/homebrew/bin/brew ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -54,7 +52,13 @@
         $path
         "$HOME/.lmstudio/bin"
       )
+
       export PATH
+
+      # kitten ssh refuses to run outside a kitty window.
+      if [ -n "$KITTY_WINDOW_ID" ]; then
+        alias ssh='kitten ssh'
+      fi
 
       _load_global_secrets() {
         local secret_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/secrets/global-env"

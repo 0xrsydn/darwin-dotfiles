@@ -40,8 +40,15 @@ in
   programs.nushell.enable = lib.mkDefault true;
 
   programs.nushell.extraConfig = ''
-    # Use kitten ssh for proper terminfo on remote hosts
-    alias ssh = kitten ssh
+    # Use kitten ssh for proper terminfo on remote hosts. It refuses to run
+    # outside a kitty window.
+    def --wrapped ssh [...args] {
+      if "KITTY_WINDOW_ID" in $env {
+        ^kitten ssh ...$args
+      } else {
+        ^ssh ...$args
+      }
+    }
 
     # Dotfiles QA validation command
       def dotfiles-qa [] {
