@@ -313,6 +313,10 @@ in
       {
         ".pi/agent/models.json" = {
           source = ../../../pi/models.json;
+          # The repo copy is the source of truth. Older home-manager
+          # generations linked this file from ...-home-manager-generation/
+          # home-files/, which the link-collision check does not recognise.
+          force = true;
         };
       }
       (mkIf cfg.piInstructions.enable {
