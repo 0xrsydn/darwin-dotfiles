@@ -19,7 +19,8 @@
     "alt-comma" = "layout accordion horizontal vertical";
     "alt-space" = "layout floating tiling";
 
-    "alt-enter" = ''exec-and-forget open -na "kitty"'';
+    # Rex is a single app, so open focuses it. Cmd+N in Rex opens a new window.
+    "alt-enter" = ''exec-and-forget open -a "Rex Beta"'';
     "alt-backspace" = "close";
 
     "alt-tab" = "workspace-back-and-forth";
@@ -33,7 +34,7 @@
   // workspaceSendBindings;
 
   float.binding = {
-    enter = ''exec-and-forget open -na "kitty" && aerospace layout floating'';
+    enter = ''exec-and-forget open -a "Rex Beta" && aerospace layout floating'';
     i = [
       ''exec-and-forget open -na "iTerm.app"''
       "layout floating"

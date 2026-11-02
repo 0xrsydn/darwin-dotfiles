@@ -53,6 +53,12 @@
         "$HOME/.lmstudio/bin"
       )
 
+      # Rex prepends its own bin dir to PATH, but the fixed list above drops it.
+      # Keep it first so the CLI matches the running server. Empty outside Rex.
+      if [ -n "$REX_BIN_DIR" ]; then
+        path=("$REX_BIN_DIR" $path)
+      fi
+
       export PATH
 
       # kitten ssh refuses to run outside a kitty window.

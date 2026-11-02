@@ -30,6 +30,7 @@
       set-option -g focus-events on
       # Avoid CSI-u newline remapping that breaks Neovim pastes
       set -as terminal-features 'xterm-kitty:clipboard,RGB'
+      set -as terminal-features 'xterm-rex:clipboard,RGB'
       set -g status-interval 5
         setw -g automatic-rename on
         set -g renumber-windows on

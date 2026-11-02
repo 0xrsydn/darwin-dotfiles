@@ -32,7 +32,12 @@
       "if".window-title-regex-substring = "pet|hatch";
       run = "layout floating";
     }
-    # Exception: Kitty on workspace 5 floats
+    # Exception: Rex and Kitty on workspace 5 float
+    {
+      "if".app-id = "com.superlogical.rex";
+      "if".workspace = "5";
+      run = "layout floating";
+    }
     {
       "if".app-id = "net.kovidgoyal.kitty";
       "if".workspace = "5";
