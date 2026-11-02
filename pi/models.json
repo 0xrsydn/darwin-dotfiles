@@ -37,6 +37,285 @@
           }
         }
       ]
+    },
+    "openrouter": {
+      "modelOverrides": {
+        "z-ai/glm-5.3-flash": {
+          "compat": {
+            "openRouterRouting": {
+              "order": ["fireworks/us", "makora", "z-ai"],
+              "allow_fallbacks": false
+            }
+          }
+        }
+      },
+      "models": [
+        {
+          "id": "deepseek/deepseek-v4.1-flash-1017",
+          "name": "DeepSeek V4.1 Flash 1017 (Together, DeepSeek)",
+          "api": "openai-completions",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1048576,
+          "maxTokens": 393216,
+          "cost": {
+            "input": 0.3,
+            "output": 1.2,
+            "cacheRead": 0.006,
+            "cacheWrite": 0
+          },
+          "compat": {
+            "supportsDeveloperRole": false,
+            "thinkingFormat": "openrouter",
+            "supportsStrictMode": true,
+            "sendSessionAffinityHeaders": true,
+            "requiresReasoningContentOnAssistantMessages": true,
+            "openRouterRouting": {
+              "order": ["together", "deepseek"],
+              "allow_fallbacks": false
+            }
+          }
+        }
+      ]
+    },
+    "experiential": {
+      "baseUrl": "https://api.experientiallabs.ai/v1",
+      "api": "openai-completions",
+      "apiKey": "$EXPLABS_API_KEY",
+      "authHeader": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "supportsReasoningEffort": true,
+        "thinkingFormat": "openai",
+        "maxTokensField": "max_tokens"
+      },
+      "models": [
+        {
+          "id": "claude-haiku-5.5",
+          "name": "Experiential Claude Haiku 5.5",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": null,
+            "max": null
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "cost": {
+            "input": 0.1,
+            "output": 0.5,
+            "cacheRead": 0.01,
+            "cacheWrite": 0.125
+          }
+        },
+        {
+          "id": "gpt-6-luna",
+          "name": "Experiential GPT-6 Luna",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": null,
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1050000,
+          "maxTokens": 128000,
+          "cost": {
+            "input": 0.1,
+            "output": 0.5,
+            "cacheRead": 0.01,
+            "cacheWrite": 0.125
+          }
+        },
+        {
+          "id": "glm-5.3-flash",
+          "name": "Experiential GLM-5.3 Flash",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1048576,
+          "maxTokens": 131072,
+          "cost": {
+            "input": 0.15,
+            "output": 0.5,
+            "cacheRead": 0.03,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "glm-5.3-flash-uncensored",
+          "name": "Experiential GLM-5.3 Flash Uncensored",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1048576,
+          "maxTokens": 131072,
+          "cost": {
+            "input": 0.15,
+            "output": 0.5,
+            "cacheRead": 0.03,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "glm-5.3",
+          "name": "Experiential GLM 5.3",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "input": ["text"],
+          "contextWindow": 1048576,
+          "maxTokens": 131072,
+          "cost": {
+            "input": 1.4,
+            "output": 4.4,
+            "cacheRead": 0.078,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "kimi-k3",
+          "name": "Experiential Kimi K3",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1048576,
+          "maxTokens": 262144,
+          "cost": {
+            "input": 3.3,
+            "output": 16.5,
+            "cacheRead": 0.33,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "deepseek-v4.1-flash",
+          "name": "Experiential DeepSeek V4.1 Flash",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "contextWindow": 1048576,
+          "maxTokens": 393216,
+          "cost": {
+            "input": 0.3,
+            "output": 1.2,
+            "cacheRead": 0.006,
+            "cacheWrite": 0.3
+          }
+        },
+        {
+          "id": "deepseek-v4.1-flash-uncensored",
+          "name": "Experiential DeepSeek V4.1 Flash Uncensored",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "input": ["text"],
+          "contextWindow": 1048576,
+          "maxTokens": 393216,
+          "cost": {
+            "input": 0.3,
+            "output": 1.2,
+            "cacheRead": 0.03,
+            "cacheWrite": 0.3
+          }
+        }
+      ]
+    },
+    "refuseless": {
+      "baseUrl": "https://api.refuseless.com/v1",
+      "api": "openai-completions",
+      "apiKey": "$REFUSELESS_API_KEY",
+      "models": [
+        {
+          "id": "glm-5.3-abliterated",
+          "name": "GLM 5.3 Abliterated",
+          "contextWindow": 1048576,
+          "maxTokens": 131072
+        },
+        {
+          "id": "glm-5.3-flash-abliterated",
+          "name": "GLM 5.3 Flash Abliterated",
+          "contextWindow": 1048576,
+          "maxTokens": 131072
+        },
+        {
+          "id": "deepseek-v4.1-flash-abliterated",
+          "name": "DeepSeek V4.1 Flash Abliterated",
+          "contextWindow": 1048576,
+          "maxTokens": 130000
+        },
+        {
+          "id": "deepseek-v4.1-flash-fast",
+          "name": "DeepSeek V4.1 Flash 1017",
+          "contextWindow": 1048576,
+          "maxTokens": 131072
+        }
+      ]
     }
   }
 }
