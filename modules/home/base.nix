@@ -56,6 +56,7 @@
         awscli2
         cloudflared
         customPkgs.cf
+        dumbpipe # iroh break-glass SSH (ProxyCommand for <machine>-iroh hosts)
         gh
         glab
         tea
