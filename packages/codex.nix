@@ -1,6 +1,11 @@
 { pkgs, llm-agents }:
 let
-  upstream = llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.codex;
+  system = pkgs.stdenv.hostPlatform.system;
+  upstream =
+    if builtins.hasAttr system llm-agents.packages then
+      llm-agents.packages.${system}.codex
+    else
+      throw "codex: llm-agents does not provide packages.${system} (supported: ${builtins.concatStringsSep ", " (builtins.attrNames llm-agents.packages)})";
   manifest = pkgs.writeText "codex-package.json" (
     builtins.toJSON {
       layoutVersion = 1;

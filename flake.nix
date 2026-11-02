@@ -228,9 +228,16 @@
 
       formatter = forEachSystem (system: (mkPkgs system).nixfmt);
 
-      checks = forEachSystem (system: {
-        inherit (self.packages.${system}) cf codex;
-      });
+      checks = forEachSystem (
+        system:
+        let
+          customPkgs = self.packages.${system};
+        in
+        {
+          inherit (customPkgs) cf;
+        }
+        // lib.optionalAttrs (customPkgs ? codex) { inherit (customPkgs) codex; }
+      );
 
       packages = forEachSystem (
         system:
