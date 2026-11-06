@@ -36,6 +36,11 @@ buildNpmPackage (finalAttrs: {
 
     mkdir -p "$out/lib" "$out/bin"
     cp -r node_modules "$out/lib/"
+    ${lib.optionalString stdenv.hostPlatform.isLinux ''
+      # npm installs sharp's musl builds beside the glibc ones. glibc never
+      # loads them, and auto-patchelf cannot resolve their musl libc.
+      rm -rf "$out"/lib/node_modules/@img/*-linuxmusl-*
+    ''}
     makeWrapper ${lib.getExe nodejs_22} "$out/bin/cf" \
       --add-flags "$out/lib/node_modules/cf/bin/cf"
     ln -s cf "$out/bin/cloudflare"
