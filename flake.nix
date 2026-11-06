@@ -175,6 +175,12 @@
         macbook-pro = mkDarwin { };
       };
       nixosConfigurations = {
+        # OrbStack machine on the MacBook for company work; see hosts/work-vm/README.md.
+        work-vm = mkNixos {
+          system = "aarch64-linux";
+          extraModules = [ ./hosts/work-vm ];
+          homeFile = ./hosts/work-vm/home.nix;
+        };
         # Temporarily disabled for testing
         # dev-vm = mkNixos {
         #   system = "x86_64-linux";
