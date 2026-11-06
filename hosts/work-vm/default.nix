@@ -101,7 +101,11 @@
   # 192.168.139.3, while its Docker engine (every container on the Mac)
   # arrives from 192.168.139.2 and must not reach the company network here.
   # Chromium cannot send SOCKS passwords, so a source rule replaces auth.
+  # OrbStack also forwards the port from every Mac interface (localhost and,
+  # with expose_ports_to_lan, the Wi-Fi) into this VM as loopback traffic,
+  # so refuse loopback connections to the proxy before the loopback accept.
   networking.firewall.extraCommands = ''
+    ip46tables -I nixos-fw 1 -i lo -p tcp --dport 1080 -j nixos-fw-refuse
     iptables -A nixos-fw -p tcp -s 192.168.139.3 --dport 1080 -j nixos-fw-accept
   '';
 
@@ -115,6 +119,10 @@
     podman.enable = false;
     docker.enable = true;
   };
+
+  # An isolated OrbStack machine may not mount debugfs. Nothing here needs it,
+  # and the failed unit made every nixos-rebuild exit non-zero.
+  systemd.suppressedSystemUnits = [ "sys-kernel-debug.mount" ];
 
   # Both the shared module and the container profile set this with mkDefault.
   # Store optimisation stays off inside the container.

@@ -13,9 +13,26 @@ Mac
 ## Create (once)
 
 ```bash
-orb create nixos work-vm
+# Isolated: no Mac home folder, no `mac` command, no links to Mac SSH keys.
+# Only the dotfiles folder is shared, for nixos-rebuild.
+orb create --isolated \
+  --mount ~/Development/dotfiles:/Users/rasyidanakbar/Development/dotfiles \
+  nixos work-vm
+orb config set machines.expose_ports_to_lan false   # then: orb stop && orb start
 # OrbStack writes /etc/nixos/orbstack.nix; hosts/work-vm/orbstack.nix is a copy.
 orb -m work-vm nixos-rebuild switch --sudo --flake ~/Development/dotfiles#work-vm
+```
+
+A machine created without `--isolated` can read the whole Mac home folder
+(including `~/.config/sops/age/keys.txt`), runs Mac commands through `mac`, and
+gets symlinks to every Mac SSH private key in `~/.ssh`. To fix an existing one:
+
+```bash
+orb config set machine.work-vm.isolated true
+orb config set machine.work-vm.mounts \
+  /Users/rasyidanakbar/Development/dotfiles:/Users/rasyidanakbar/Development/dotfiles
+orb restart work-vm
+orb -m work-vm bash -c 'find ~/.ssh -maxdepth 1 -type l -lname "/mnt/mac/*" -delete'
 ```
 
 The flake only sees files that git tracks, so `git add` new files before
@@ -65,9 +82,11 @@ Run `work-browser` on the Mac. It opens a separate Brave profile
 
 ## Forward Mac tools through the VM
 
-The VM's SOCKS proxy accepts connections from the Mac only (firewall rule on
-OrbStack's host address `192.168.139.3`). Docker containers on the Mac are
-refused, so they cannot reach the company network.
+The VM's SOCKS proxy accepts connections from the Mac only, through
+`work-vm.orb.local` (firewall rule on OrbStack's host address `192.168.139.3`).
+It refuses Docker containers on the Mac and OrbStack's port forwarding from
+`localhost:1080` or the Mac's Wi-Fi address, so nothing else reaches the
+company network through it.
 
 - One command: `work-proxy curl https://internal.example.com`. It sets
   `ALL_PROXY`/`HTTPS_PROXY` to `socks5h://work-vm.orb.local:1080`. curl, git
@@ -88,7 +107,9 @@ Never share the proxy beyond this Mac (for example over Tailscale).
 
 ## Known limits
 
-- OrbStack machines share a kernel with OrbStack's Docker, mount the Mac home
-  folder, and can run Mac commands through `mac`. This is not strong isolation.
+- OrbStack machines share a kernel with OrbStack's Docker. Even isolated, this
+  is weaker than a full VM.
+- The OrbStack settings above (`isolated`, `mounts`, `expose_ports_to_lan`)
+  live in OrbStack, not in this flake. Check them with `orb config show`.
 - `/etc/resolv.conf` is managed by OrbStack. If the client cannot set DNS after
   `warp-cli connect`, that is the first place to look.
