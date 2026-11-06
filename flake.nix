@@ -86,6 +86,7 @@
         ./modules/darwin/system.nix
         ./modules/darwin/kache.nix
         ./modules/darwin/omp-gateway.nix
+        ./modules/darwin/work-access.nix
       ];
       sharedNixosModules = [
         ./modules/nixos/system.nix
@@ -172,7 +173,9 @@
     in
     {
       darwinConfigurations = {
-        macbook-pro = mkDarwin { };
+        macbook-pro = mkDarwin {
+          extraModules = [ { rsydn.workAccess.enable = true; } ];
+        };
       };
       nixosConfigurations = {
         # OrbStack machine on the MacBook for company work; see hosts/work-vm/README.md.
