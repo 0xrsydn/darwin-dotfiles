@@ -35,8 +35,19 @@ orb restart work-vm
 orb -m work-vm bash -c 'find ~/.ssh -maxdepth 1 -type l -lname "/mnt/mac/*" -delete'
 ```
 
+From a Rex terminal, also install its terminfo entry, or curses programs fail
+with `'xterm-rex': unknown terminal type`:
+
+```bash
+rex terminfo host install work-vm@orb
+```
+
 The flake only sees files that git tracks, so `git add` new files before
 rebuilding.
+
+Links that tools in the VM try to open (`BROWSER`) are printed instead,
+because an isolated machine cannot open them on the Mac. Open them in
+`work-browser`.
 
 ## Update
 
