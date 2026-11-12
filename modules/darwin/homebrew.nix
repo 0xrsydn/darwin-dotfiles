@@ -46,6 +46,7 @@ in
         "bitwarden"
         "brave-browser"
         "font-jetbrains-mono-nerd-font"
+        "hammerspoon"
         "pgadmin4"
         "spotify"
         "vesktop"

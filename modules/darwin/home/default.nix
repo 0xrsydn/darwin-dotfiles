@@ -34,6 +34,7 @@ in
     ../../home/shell/nushell.nix
     ../../home/shell/zsh.nix
     ./programs/aerospace
+    ./programs/hammerspoon
     ./programs/kitty.nix
   ];
 
