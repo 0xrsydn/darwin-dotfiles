@@ -31,6 +31,9 @@
       # Avoid CSI-u newline remapping that breaks Neovim pastes
       set -as terminal-features 'xterm-kitty:clipboard,RGB'
       set -as terminal-features 'xterm-rex:clipboard,RGB'
+      # Pass OSC 52 from programs in a pane (Nvim, etc.) to the outer terminal.
+      # The default, "external", ignores it, so yanks never reach the Mac.
+      set -g set-clipboard on
       set -g status-interval 5
         setw -g automatic-rename on
         set -g renumber-windows on
