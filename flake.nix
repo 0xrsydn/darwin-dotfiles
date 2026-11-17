@@ -87,6 +87,7 @@
         ./modules/darwin/kache.nix
         ./modules/darwin/omp-gateway.nix
         ./modules/darwin/work-access.nix
+        ./modules/darwin/wacom.nix
       ];
       sharedNixosModules = [
         ./modules/nixos/system.nix
@@ -174,7 +175,12 @@
     {
       darwinConfigurations = {
         macbook-pro = mkDarwin {
-          extraModules = [ { rsydn.workAccess.enable = true; } ];
+          extraModules = [
+            {
+              rsydn.workAccess.enable = true;
+              rsydn.wacom.enable = true;
+            }
+          ];
         };
       };
       nixosConfigurations = {
