@@ -290,28 +290,72 @@
       "baseUrl": "https://api.refuseless.com/v1",
       "api": "openai-completions",
       "apiKey": "$REFUSELESS_API_KEY",
+      "compat": {
+        "supportsReasoningEffort": true,
+        "thinkingFormat": "openai"
+      },
       "models": [
         {
           "id": "glm-5.3-abliterated",
           "name": "GLM 5.3 Abliterated",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
           "contextWindow": 1048576,
           "maxTokens": 131072
         },
         {
           "id": "glm-5.3-flash-abliterated",
           "name": "GLM 5.3 Flash Abliterated",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
           "contextWindow": 1048576,
           "maxTokens": 131072
         },
         {
           "id": "deepseek-v4.1-flash-abliterated",
           "name": "DeepSeek V4.1 Flash Abliterated",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "off",
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
           "contextWindow": 1048576,
           "maxTokens": 130000
         },
         {
           "id": "deepseek-v4.1-flash-fast",
           "name": "DeepSeek V4.1 Flash 1017",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "off",
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
           "contextWindow": 1048576,
           "maxTokens": 131072
         }
