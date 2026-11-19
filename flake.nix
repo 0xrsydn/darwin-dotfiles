@@ -92,6 +92,7 @@
         ./modules/darwin/omp-gateway.nix
         ./modules/darwin/work-access.nix
         ./modules/darwin/wacom.nix
+        ./modules/darwin/mocktab.nix
       ];
       sharedNixosModules = [
         ./modules/nixos/system.nix
@@ -182,7 +183,10 @@
           extraModules = [
             {
               rsydn.workAccess.enable = true;
-              rsydn.wacom.enable = true;
+              # Off: the CTH-480 runs on MockTab (no official driver for
+              # macOS 13+). Re-enable to go back to Wacom's 6.3.46-2.
+              rsydn.wacom.enable = false;
+              rsydn.mocktab.enable = true;
             }
           ];
         };
