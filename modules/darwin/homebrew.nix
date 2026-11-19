@@ -47,6 +47,7 @@ in
         "brave-browser"
         "font-jetbrains-mono-nerd-font"
         "hammerspoon"
+        "krita"
         "pgadmin4"
         "spotify"
         "vesktop"
