@@ -29,6 +29,10 @@
 
     # Rust/C++ build cache (RUSTC_WRAPPER + launchd daemon, backed by R2)
     kache.url = "github:kunobi-ninja/kache";
+
+    # Fleet repo; provides `agent-access` (aac) for the Mac listener.
+    # nixpkgs not followed: the package is built and tested against the clan pin.
+    personal-clan.url = "git+ssh://git@git.rasyidanaf.com/0xrsydn/personal-clan-nix.git";
   };
 
   outputs =
