@@ -37,6 +37,7 @@ in
     ./programs/agent-access.nix
     ./programs/hammerspoon
     ./programs/kitty.nix
+    ./programs/rex
   ];
 
   # Decrypt each global environment variable to a separate runtime file.
