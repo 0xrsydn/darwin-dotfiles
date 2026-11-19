@@ -23,6 +23,19 @@ let
   bitwardenCli = clan.inputs.nixpkgs.legacyPackages.${system}.bitwarden-cli;
   tmux = "${config.programs.tmux.package}/bin/tmux";
 
+  # `aac listen` exits once its relay connection drops, and the first
+  # terminal event after that (a tmux attach resizes the pane) ends it, which
+  # takes the tmux session with it. Restart it instead, so the session is
+  # always there to attach to; it comes back locked, so `/unlock` again.
+  # Stop it for good with `tmux kill-session -t aac`.
+  listenLoop = pkgs.writeShellScript "aac-listen-loop" ''
+    while true; do
+      ${agentAccess}/bin/aac listen --reusable-psk
+      printf '\naac listen exited (status %s); restarting in 5s. Ctrl-C stops it.\n' "$?"
+      sleep 5
+    done
+  '';
+
   # Same tmux as the shell's, so `tmux attach -t aac` talks to this server.
   # Waits for the relay (Tailscale may not be up yet at login) before starting.
   startListener = pkgs.writeShellScript "aac-listen-tmux" ''
@@ -36,7 +49,7 @@ let
       sleep 2
     done
 
-    exec ${tmux} new-session -d -s aac '${agentAccess}/bin/aac listen --reusable-psk'
+    exec ${tmux} new-session -d -s aac ${listenLoop}
   '';
 in
 {
